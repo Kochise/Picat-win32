@@ -12,6 +12,7 @@ The aim is to agressively update the source code in order to :
 - Remove all those GOTO (seriously, even though it's generated code...)
 - Reformat the source code (remove the FF, get something homogeneous)
 - Add more modules and compilers ( https://github.com/slhGit/Picat )
+- Use makeit as make engine (https://github.com/Kochise/makeit )
 
 Currently there are several limitations, mostly due to __stdcall vs. __cdecl from JNI inclusion.
 
