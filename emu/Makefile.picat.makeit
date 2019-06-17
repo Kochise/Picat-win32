@@ -86,8 +86,8 @@ CPP_INC="${LOC_SRC}\maple"
 CPP_INC="${LOC_SRC}\picosat"
 CPP_INC="${LOC_SRC}\python"
 CPP_INC="${LOC_SRC}\windows"
-CPP_INC="C:\JAVA\x86_64\jdk1.8.0_162\include"
-CPP_INC="C:\JAVA\x86_64\jdk1.8.0_162\include\win32"
+CPP_INC="${LOC_SRC}\jdk\include"
+CPP_INC="${LOC_SRC}\jdk\include\win32"
 CPP_LIB=/Fo "$[LOC_DST]/$[NAME].o"
 
 LNK_EXE=polink.exe
