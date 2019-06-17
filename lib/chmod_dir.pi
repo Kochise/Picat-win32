@@ -1,0 +1,22 @@
+/* copy all the plain files from subdirectories to the current directory */
+
+import os.
+
+main =>
+    Wd = pwd(),
+    chmod_dir(Wd, Wd).
+
+chmod_dir(Wd, Dir) =>
+    Items = listdir(Dir),
+    foreach (Item in Items, Item !== ".", Item !== "..")
+       FullName = full_path(Dir, Item),
+       command("chmod +rw " ++ FullName) = _,
+       (directory(FullName) ->
+           chmod_dir(Wd, FullName)
+        ;
+           true
+        )
+    end.
+         
+full_path(Dir,Name) =
+    Dir ++ [separator()] ++ Name.
