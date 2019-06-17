@@ -1,10 +1,10 @@
 /********************************************************************
- *   File   : basicd.h
- *   Author : Neng-Fa ZHOU Copyright (C) 1994-2019
+ *	File	: basicd.h
+ *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
 #include "basic.h"
@@ -20,7 +20,7 @@ int redefine_warning = 0;
 int confirm_copy_right = 1;
 
 #ifdef LINUX
-BPLONG addr_top_bit = -1LL; /* will be changed to 1000... or 0 later */
+BPLONG addr_top_bit = -1LL;	/* will be changed to 1000... or 0 later */
 #endif
 
 int     use_tabling = 0;
@@ -38,21 +38,21 @@ UW16 dg_flag_word;
 FILE *curr_in, *curr_out;
 
 BPLONG n_backtracks = 0;
-BPLONG_PTR  stack_low_addr; 
-BPLONG_PTR  parea_low_addr = NULL; 
-BPLONG_PTR  parea_water_mark; 
-BPLONG_PTR  trail_low_addr;         
-BPLONG_PTR  trail_water_mark;   
-BPLONG_PTR  trail_water_mark0;   
+BPLONG_PTR  stack_low_addr;
+BPLONG_PTR  parea_low_addr = NULL;
+BPLONG_PTR  parea_water_mark;
+BPLONG_PTR  trail_low_addr;
+BPLONG_PTR  trail_water_mark;
+BPLONG_PTR  trail_water_mark0;
 
 BPLONG_PTR  stack_up_addr;
 BPLONG_PTR  stack_low_addr;
 BPLONG_PTR  trail_up_addr;
 
 BPLONG_PTR cpreg;
-CHAR_PTR  curr_fence;         /* ptr to next free byte in perm space */
-BPLONG_PTR  parea_up_addr;   /* ptr to last+1 free byte in perm space */
-BPLONG_PTR  inst_begin;      /* ptr to the beginning of inst. array */
+CHAR_PTR  curr_fence;			/* ptr to next free byte in perm space */
+BPLONG_PTR  parea_up_addr;		/* ptr to last+1 free byte in perm space */
+BPLONG_PTR  inst_begin;			/* ptr to the beginning of inst. array */
 BPLONG_PTR  addr_halt;
 BPLONG_PTR  addr_halt0;
 BPLONG_PTR  addr_fail;
@@ -64,22 +64,22 @@ int      gc_is_working;
 BPLONG_PTR  copy_area_low, copy_area_high;
 
 BPLONG_PTR  top;
-BPLONG_PTR  arreg = NULL;    /* latest activation record       */
+BPLONG_PTR  arreg = NULL;		/* latest activation record       */
 BPLONG_PTR  local_top;
 BPLONG_PTR  local_top0;
-BPLONG_PTR  breg = NULL;     /* latest choice point            */
-BPLONG_PTR  breg0;           /* choice point where global variables for cglib are stored */
-BPLONG_PTR  heap_top;        /* top of heap                  */
-BPLONG_PTR  trail_top;       /* top of trail stack           */
-BPLONG_PTR  hbreg;           /* heap back track point        */
-BPLONG_PTR  sfreg = NULL;    /* latest suspension frame      */
+BPLONG_PTR  breg = NULL;		/* latest choice point            */
+BPLONG_PTR  breg0;				/* choice point where global variables for cglib are stored */
+BPLONG_PTR  heap_top;			/* top of heap                  */
+BPLONG_PTR  trail_top;			/* top of trail stack           */
+BPLONG_PTR  hbreg;				/* heap back track point        */
+BPLONG_PTR  sfreg = NULL;		/* latest suspension frame      */
 BPLONG_PTR  gc_b;
 
 BPLONG_PTR  triggeredCs[MAXTRIGGERS];
 int       event_flag[MAXTRIGGERS];
 BPLONG_PTR   triggering_frame[MAXTRIGGERS];
-BPLONG       event_object[MAXTRIGGERS];    /* dom(X,E), etc. */
-BPLONG       trigger_no = 0;               /* list of woken frames         */
+BPLONG       event_object[MAXTRIGGERS];		/* dom(X, E), etc. */
+BPLONG       trigger_no = 0;					/* list of woken frames         */
 BPULONG  toam_signal_vec;
 int	 user_signal;
 EVENT_FUNC event_func;
@@ -93,7 +93,7 @@ BPLONG      number_of_symbols = 0;
 BPLONG      curr_line_no = 1 ;
 
 int      disassem;
-BPLONG       num_line;        /* print instruction addresses on trace and disassem */
+BPLONG       num_line;			/* print instruction addresses on trace and disassem */
 int      trace_toam = 0;
 
 BPLONG       global_var_num;
@@ -110,9 +110,9 @@ SYM_REC_PTR  planner_explored_depth_psc;
 BPLONG list_psc_int;
 BPLONG list_psc_hashcode;
 SYM_REC_PTR  error_psc;
-SYM_REC_PTR  v2_psc; 
-SYM_REC_PTR  v3_psc; 
-SYM_REC_PTR  v4_psc; 
+SYM_REC_PTR  v2_psc;
+SYM_REC_PTR  v3_psc;
+SYM_REC_PTR  v4_psc;
 SYM_REC_PTR  findall_result0;
 SYM_REC_PTR  findall_result1;
 SYM_REC_PTR  findall_result2;
@@ -140,7 +140,7 @@ SYM_REC_PTR u_eq_uc_arc;
 SYM_REC_PTR register_event_listener;
 
 /* $addr(int) */
-SYM_REC_PTR c_object_ref_sym; 
+SYM_REC_PTR c_object_ref_sym;
 SYM_REC_PTR picat_log_psc;
 
 BPLONG windows_atom;
@@ -159,7 +159,7 @@ BPLONG dummy_event_object;
 BPLONG failure_atom;
 BPLONG empty_set;
 BPLONG  not_care_symbol;
-BPLONG  nil_sym, period_sym,varid;
+BPLONG  nil_sym, period_sym, varid;
 BPLONG  atom_expected;
 BPLONG  string_expected;
 BPLONG  input_stream_expected;
@@ -214,7 +214,7 @@ int debugging_susp = 0;
 BPLONG main_args;
 
 BPLONG  eolcom_flag = 1;
-BPLONG  lastc = ' ';    /* previous character */
+BPLONG  lastc = ' ';		/* previous character */
 
 /* for threads */
 SYM_REC_PTR thread_psc;
@@ -241,78 +241,78 @@ BPLONG num_stack_expansions=0;
 BPLONG num_trail_expansions=0;
 BPLONG num_parea_expansions= -1;
 
-SYM_REC_PTR 
-  str_BUILTIN_ERROR1,
-  str_BUILTIN_ERROR2,
-  str_BUILTIN_ERROR3,
-  str_BUILTIN_ERROR4,
-  str_DOMAIN_ERROR,
-  str_UPDATE_ERROR,
-  str_EVALUATION_ERROR,
-  str_EXISTENCE_ERROR,
-  str_PERMISSION_ERROR,
-  str_REPRESENTATION_ERROR,
-  str_RESOURCE_ERROR,
-  str_TYPE_ERROR,
-  str_SYNTAX_ERROR;
+SYM_REC_PTR
+	str_BUILTIN_ERROR1,
+	str_BUILTIN_ERROR2,
+	str_BUILTIN_ERROR3,
+	str_BUILTIN_ERROR4,
+	str_DOMAIN_ERROR,
+	str_UPDATE_ERROR,
+	str_EVALUATION_ERROR,
+	str_EXISTENCE_ERROR,
+	str_PERMISSION_ERROR,
+	str_REPRESENTATION_ERROR,
+	str_RESOURCE_ERROR,
+	str_TYPE_ERROR,
+	str_SYNTAX_ERROR;
 
-BPLONG 
-  et_OUT_OF_MEMORY,
-  et_OUT_OF_MEMORY_STACK,
-  et_OUT_OF_MEMORY_TABLE,
-  et_UPDATE,
-  et_ACCESS, 
-  et_ATOM,
-  et_ATOMIC,
-  et_BINARY_STREAM,
-  et_BYTE,
-  et_CALLABLE,
-  et_CHARACTER,
-  et_CHARACTER_CODE,
-  et_COMPOUND,
-  et_CREATE, 
-  et_EVALUABLE,
-  et_FLAG,
-  et_FLAG_VALUE,
-  et_FLOAT_OVERFLOW,
-  et_INPUT, 
-  et_INTEGER,
-  et_INT_OVERFLOW,
-  et_IN_BYTE,
-  et_IN_CHARACTER,
-  et_IN_ESCCHARACTER,
-  et_IN_CHARACTER_CODE,
-  et_INSTANTIATION_ERROR,
-  et_IO_MODE,
-  et_LIST,
-  et_MAX_ARITY,
-  et_MAX_INTEGER,
-  et_MODIFY, 
-  et_NON_EMPTY_LIST,
-  et_NOT_LESS_THAN_ZERO,
-  et_NUMBER,
-  et_OPEN, 
-  et_OPERATOR,
-  et_OPERATOR_PRIORITY,
-  et_OUTPUT, 
-  et_PAST_END_OF_STREAM,
-  et_PREDICATE_INDICATOR,
-  et_PRIVATE_PROCEDURE,
-  et_PROCEDURE,
-  et_PROLOG_FLAG,
-  et_READ_OPTION,
-  et_REPOSITION, 
-  et_SOURCE_SINK,
-  et_STATIC_PROCEDURE,
-  et_STREAM,
-  et_STREAM_OPTION,
-  et_STREAM_OR_ALIAS,
-  et_STREAM_PROPERTY,
-  et_TEXT_STREAM,
-  et_UNDEFINED,
-  et_UNDERFLOW,
-  et_VARIABLE,
-  et_WRITE_OPTION,
-  et_ZERO_DIVISOR,
-  et_BIGINT_TOO_LONG,
-  et_STRING_TOO_LONG;
+BPLONG
+	et_OUT_OF_MEMORY,
+	et_OUT_OF_MEMORY_STACK,
+	et_OUT_OF_MEMORY_TABLE,
+	et_UPDATE,
+	et_ACCESS,
+	et_ATOM,
+	et_ATOMIC,
+	et_BINARY_STREAM,
+	et_BYTE,
+	et_CALLABLE,
+	et_CHARACTER,
+	et_CHARACTER_CODE,
+	et_COMPOUND,
+	et_CREATE,
+	et_EVALUABLE,
+	et_FLAG,
+	et_FLAG_VALUE,
+	et_FLOAT_OVERFLOW,
+	et_INPUT,
+	et_INTEGER,
+	et_INT_OVERFLOW,
+	et_IN_BYTE,
+	et_IN_CHARACTER,
+	et_IN_ESCCHARACTER,
+	et_IN_CHARACTER_CODE,
+	et_INSTANTIATION_ERROR,
+	et_IO_MODE,
+	et_LIST,
+	et_MAX_ARITY,
+	et_MAX_INTEGER,
+	et_MODIFY,
+	et_NON_EMPTY_LIST,
+	et_NOT_LESS_THAN_ZERO,
+	et_NUMBER,
+	et_OPEN,
+	et_OPERATOR,
+	et_OPERATOR_PRIORITY,
+	et_OUTPUT,
+	et_PAST_END_OF_STREAM,
+	et_PREDICATE_INDICATOR,
+	et_PRIVATE_PROCEDURE,
+	et_PROCEDURE,
+	et_PROLOG_FLAG,
+	et_READ_OPTION,
+	et_REPOSITION,
+	et_SOURCE_SINK,
+	et_STATIC_PROCEDURE,
+	et_STREAM,
+	et_STREAM_OPTION,
+	et_STREAM_OR_ALIAS,
+	et_STREAM_PROPERTY,
+	et_TEXT_STREAM,
+	et_UNDEFINED,
+	et_UNDERFLOW,
+	et_VARIABLE,
+	et_WRITE_OPTION,
+	et_ZERO_DIVISOR,
+	et_BIGINT_TOO_LONG,
+	et_STRING_TOO_LONG;

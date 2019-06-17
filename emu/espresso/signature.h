@@ -1,23 +1,25 @@
 #if BPI == 16
-#define ODD_MASK 0xaaaa
-#define EVEN_MASK 0x5555
+#define ODD_MASK	0xaaaa
+#define EVEN_MASK	0x5555
+
 #else
-#define ODD_MASK 0xaaaaaaaa
-#define EVEN_MASK 0x55555555
+
+#define ODD_MASK	0xaaaaaaaa
+#define EVEN_MASK	0x55555555
 #endif
 
-#define POSITIVE 1
-#define NEGATIVE 0
+#define POSITIVE	1
+#define NEGATIVE	0
 
-#define PRESENT 1
-#define ABSENT 0
+#define PRESENT		1
+#define ABSENT		0
 
-#define RAISED 2
+#define RAISED		2
 
 typedef struct {
 	int variable;
 	int free_count;
-	} VAR;
+} VAR;
 
 /* black_white.c */ extern void setup_bw (pset_family R, pset c);
 /* black_white.c */ extern void free_bw (void);

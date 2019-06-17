@@ -3,9 +3,9 @@
  * Purpose: The main signature algorithm
  * Routines;
  * pcover signature():
- *	Entry point for the signature cubes algorithm.	
+ *	Entry point for the signature cubes algorithm.
  * pcover generate_primes():
- *	Generates the set of primes corresponding to 
+ *	Generates the set of primes corresponding to
  *	the Essential Signature Cubes
  */
 
@@ -15,14 +15,13 @@
 #include "espresso.h"
 #include "signature.h"
 
-static long start_time; /* yuk */
+static long start_time;	/* yuk */
 
-pcover
-signature(pset_family F1, pset_family D1, pset_family R1)
+pcover signature(pset_family F1, pset_family D1, pset_family R1)
 {
-	pcover ESC,ESSet,ESSENTIAL;
-	pcover F,D,R;
-	pcube last,p;
+	pcover ESC, ESSet, ESSENTIAL;
+	pcover F, D, R;
+	pcube last, p;
 	struct sigaction xcpu_action;
 
 	/* make scratch copy */
@@ -49,22 +48,22 @@ signature(pset_family F1, pset_family D1, pset_family R1)
 	S_EXECUTE(F = irredundant(F, D), ESSEN_TIME);
 	S_EXECUTE(ESSENTIAL = essential(&F,&D), ESSEN_TIME);
 
-	S_EXECUTE(ESC = find_canonical_cover(F,D,R), FCC_TIME);
+	S_EXECUTE(ESC = find_canonical_cover(F, D, R), FCC_TIME);
 	/**************************************************
 	printf("ESCubes %d\n", ESC->count + ESSENTIAL->count);
 	fflush(stdout);
 	**************************************************/
 
-	S_EXECUTE(ESSet = generate_primes(ESC,R), PRIMES_TIME);
+	S_EXECUTE(ESSet = generate_primes(ESC, R), PRIMES_TIME);
 	/**************************************************
-	printf("ESSet %d\n",ESSet->count + ESSENTIAL->count);
+	printf("ESSet %d\n", ESSet->count + ESSENTIAL->count);
 	fflush(stdout);
 	**************************************************/
 
-	S_EXECUTE(F = signature_minimize_exact(ESC,ESSet), MINCOV_TIME);
-	sf_append(F,ESSENTIAL);
+	S_EXECUTE(F = signature_minimize_exact(ESC, ESSet), MINCOV_TIME);
+	sf_append(F, ESSENTIAL);
 	/**************************************************
-	printf("Exact_Minimum %d\n",F->count);
+	printf("Exact_Minimum %d\n", F->count);
 	print_cover(F,"Exact Minimum");
 	**************************************************/
 
@@ -79,15 +78,13 @@ signature(pset_family F1, pset_family D1, pset_family R1)
 	return F;
 }
 
-
-pcover
-generate_primes(pset_family F, pset_family R)
+pcover generate_primes(pset_family F, pset_family R)
 {
-	pcube c,r,lastc,b,lastb;
-	pcover BB,PRIMES;
-	pcube odd,even,out_part_r;
+	pcube c, r, lastc, b, lastb;
+	pcover BB, PRIMES;
+	pcube odd, even, out_part_r;
 	register int i;
-    	register int w, last;
+	register int w, last;
 	register unsigned int x;
 	int count;
 
@@ -97,12 +94,12 @@ generate_primes(pset_family F, pset_family R)
 
 	count = 0;
 	PRIMES = new_cover(F->count);
-	foreach_set(F,lastc,c){
+	foreach_set(F, lastc, c){
 		BB = new_cover(R->count);
 		BB->count = R->count;
-		/* BB = get_blocking_matrix(R,c); */
-		foreachi_set(R,i,r){
-			b = GETSET(BB,i);
+		/* BB = get_blocking_matrix(R, c); */
+		foreachi_set(R, i, r){
+			b = GETSET(BB, i);
 			if ((last = cube.inword) != -1) {
 				/* Check the partial word of binary variables */
 				x = r[last] & c[last];
@@ -110,24 +107,24 @@ generate_primes(pset_family F, pset_family R)
 				b[last] = r[last] & (x | x << 1);
 				/* Check the full words of binary variables */
 				for(w = 1; w < last; w++) {
-		    			x = r[w] & c[w];
-		    			x = ~(x | x >> 1) & DISJOINT;
+						x = r[w] & c[w];
+						x = ~(x | x >> 1) & DISJOINT;
 					b[w] = r[w] & (x | x << 1);
 				}
-	    		}
-			PUTLOOP(b,LOOP(r));
-			INLINEset_and(b,b,cube.binary_mask);
-			INLINEset_and(out_part_r,cube.mv_mask,r);
-			if(!setp_implies(out_part_r,c)){
-				INLINEset_or(b,b,out_part_r);
+			}
+			PUTLOOP(b, LOOP(r));
+			INLINEset_and(b, b, cube.binary_mask);
+			INLINEset_and(out_part_r, cube.mv_mask, r);
+			if(!setp_implies(out_part_r, c)){
+				INLINEset_or(b, b, out_part_r);
 			}
 		}
 		BB = unate_compl(BB);
 		if(BB != NULL){
-			foreach_set(BB,lastb,b){
+			foreach_set(BB, lastb, b){
 				set_not(b);
 			}
-			sf_append(PRIMES,BB);
+			sf_append(PRIMES, BB);
 		}
 		count++;
 		if(count % 100 == 0){
@@ -141,10 +138,9 @@ generate_primes(pset_family F, pset_family R)
 	return PRIMES;
 }
 
-void
-cleanup(void)
+void cleanup(void)
 {
-	s_runtime(ptime() - start_time);	
+	s_runtime(ptime() - start_time);
 	printf("CPU Limit Exceeded\n");
 	exit(1);
 }

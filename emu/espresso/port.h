@@ -18,11 +18,11 @@ typedef int (* qsort_compare_func)(const void *, const void *);
 typedef int int32;
 typedef short int16;
 #else
-     /* Ansi-C promises that these definitions should always work */
+		/* Ansi-C promises that these definitions should always work */
 typedef long int32;
 typedef int int16;
-#endif /* vax */
-#endif /* MACHDEP_INCLUDED */
+#endif	/* vax */
+#endif	/* MACHDEP_INCLUDED */
 
 
 #ifndef __STDC__
@@ -31,17 +31,17 @@ typedef int int16;
 #define __DATE__	CUR_DATE
 #else
 #define __DATE__	"unknown-date"
-#endif /* CUR_DATE */
-#endif /* __DATE__ */
+#endif	/* CUR_DATE */
+#endif	/* __DATE__ */
 
 #ifndef __TIME__
 #ifdef CUR_TIME
 #define __TIME__	CUR_TIME
 #else
 #define __TIME__	"unknown-time"
-#endif /* CUR_TIME */
-#endif /* __TIME__ */
-#endif /* __STDC__ */
+#endif	/* CUR_TIME */
+#endif	/* __TIME__ */
+#endif	/* __STDC__ */
 
 #ifdef sun386
 #define PORTAR
@@ -86,7 +86,7 @@ typedef int int16;
 
 #ifndef NULL
 #define NULL 0
-#endif /* NULL */
+#endif	/* NULL */
 
 /*
  * CHARBITS should be defined only if the compiler lacks "unsigned char".
@@ -103,11 +103,11 @@ typedef int int16;
 
 #ifdef __STDC__
 #define CONST const
-#define VOIDSTAR   void *
+#define VOIDSTAR	void *
 #else
 #define CONST
-#define VOIDSTAR   char *
-#endif /* __STDC__ */
+#define VOIDSTAR	char *
+#endif	/* __STDC__ */
 
 
 /* Some machines fail to define some functions in stdio.h */
@@ -116,11 +116,11 @@ extern FILE *popen(), *tmpfile();
 extern int pclose();
 #ifndef clearerr		/* is a macro on many machines, but not all */
 extern VOID_HACK clearerr();
-#endif /* clearerr */
+#endif	/* clearerr */
 #ifndef rewind
 extern VOID_HACK rewind();
-#endif /* rewind */
-#endif /* __STDC__ */
+#endif	/* rewind */
+#endif	/* __STDC__ */
 
 
 /* most machines don't give us a header file for these */
@@ -132,7 +132,7 @@ extern int abort();
 extern void free(), exit(), perror();
 #else
 extern VOID_HACK abort(), free(), exit(), perror();
-#endif /* hpux */
+#endif	/* hpux */
 extern char *getenv(), *malloc(), *realloc(), *calloc();
 #ifdef aiws
 extern int sprintf();
@@ -142,7 +142,7 @@ extern char *sprintf();
 extern int system();
 extern double atof();
 extern int sscanf();
-#endif /* __STDC__ */
+#endif	/* __STDC__ */
 
 
 /* some call it strings.h, some call it string.h; others, also have memory.h */
@@ -155,24 +155,28 @@ extern char *strpbrk(), *strtok(), *strchr(), *strrchr(), *strstr();
 extern int strcoll(), strxfrm(), strncmp(), strlen(), strspn(), strcspn();
 extern char *memmove(), *memccpy(), *memchr(), *memcpy(), *memset();
 extern int memcmp(), strcmp();
-#endif /* __STDC__ */
+#endif	/* __STDC__ */
 
 /* assertion macro */
 
 #ifndef assert
 #ifdef __STDC__
 #include <assert.h>
+
 #else
+
 #ifndef NDEBUG
-#define assert(ex) {\
-    if (! (ex)) {\
-	(void) fprintf(stderr, "Assertion failed: file %s, line %d\n",\
-	    __FILE__, __LINE__);\
-	(void) fflush(stdout);\
-	abort();\
-    }\
-}
+#define assert(ex) {															\
+				if (! (ex)) {													\
+					(void) fprintf(stderr, "Assertion failed: file %s, line %d\n",	\
+						__FILE__, __LINE__);									\
+					(void) fflush(stdout);										\
+					abort();													\
+				}																\
+			}
+
 #else
+
 #define assert(ex) {;}
 #endif
 #endif
@@ -181,7 +185,9 @@ extern int memcmp(), strcmp();
 /* handle the various limits */
 #if defined(__STDC__) || defined(POSIX)
 #include <limits.h>
+
 #else
+
 #define USHRT_MAX	(~ (unsigned short int) 0)
 #define UINT_MAX	(~ (unsigned int) 0)
 #define ULONG_MAX	(~ (unsigned long int) 0)
@@ -190,5 +196,4 @@ extern int memcmp(), strcmp();
 #define LONG_MAX	((long int) (ULONG_MAX >> 1))
 #endif
 
-#endif /* PORT_H */
-
+#endif	/* PORT_H */

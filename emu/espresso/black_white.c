@@ -82,7 +82,7 @@ static void delete(int element)
 		else{
 			white_head = white_tail = -1;
 		}
-	}	
+	}
 }
 
 static void insert(int element)
@@ -120,7 +120,7 @@ static void print_links(int size, int *list)
 {
 	int i;
 	for(i = 0; i < size; i++){
-		printf("%d%c",list[i],(i+1)%10?'\t':'\n');
+		printf("%d%c", list[i],(i+1)%10?'\t':'\n');
 	}
 	printf("\n");
 }
@@ -128,15 +128,15 @@ static void print_links(int size, int *list)
 void print_bw(int size)
 {
 	printf("white_head %d\twhite_tail %d\tblack_head %d\tblack_tail %d\n",
-		white_head,white_tail,black_head,black_tail);
-	print_links(size,forward);
-	print_links(size,backward);
+		white_head, white_tail, black_head, black_tail);
+	print_links(size, forward);
+	print_links(size, backward);
 }
 
 static void alloc_stack(int size)
 {
-	stack_head = (int *)calloc(size,sizeof(int));
-	stack_tail = (int *)calloc(size,sizeof(int));
+	stack_head = (int *)calloc(size, sizeof(int));
+	stack_tail = (int *)calloc(size, sizeof(int));
 	if(!stack_head || !stack_tail){
 		perror("alloc_stack");
 		exit(1);
@@ -171,8 +171,8 @@ void setup_bw(pset_family R, pset c)
 	pcube out_part_r;
 	int size = R->count;
 	register int i;
-	pcube b,r;
-    	register int w, last;
+	pcube b, r;
+	register int w, last;
 	register unsigned int x;
 
 	/* Allocate memory */
@@ -186,8 +186,8 @@ void setup_bw(pset_family R, pset c)
 	clear();
 	/* form BB */
 	/* Blocking Matrix formed here is bit-complement of that in sigma  */
-	foreachi_set(R,i,r){
-		b = GETSET(BB,i);
+	foreachi_set(R, i, r){
+		b = GETSET(BB, i);
 		if ((last = cube.inword) != -1) {
 			/* Check the partial word of binary variables */
 			x = r[last] & c[last];
@@ -195,16 +195,16 @@ void setup_bw(pset_family R, pset c)
 			b[last] = r[last] & (x | x << 1);
 			/* Check the full words of binary variables */
 			for(w = 1; w < last; w++) {
-	    			x = r[w] & c[w];
-	    			x = ~(x | x >> 1) & DISJOINT;
+				x = r[w] & c[w];
+				x = ~(x | x >> 1) & DISJOINT;
 				b[w] = r[w] & (x | x << 1);
 			}
-    		}
-		PUTLOOP(b,LOOP(r));
-		INLINEset_and(b,b,cube.binary_mask);
-		INLINEset_and(out_part_r,cube.mv_mask,r);
-		if(!setp_implies(out_part_r,c)){
-			INLINEset_or(b,b,out_part_r);
+		}
+		PUTLOOP(b, LOOP(r));
+		INLINEset_and(b, b, cube.binary_mask);
+		INLINEset_and(out_part_r, cube.mv_mask, r);
+		if(!setp_implies(out_part_r, c)){
+			INLINEset_or(b, b, out_part_r);
 		}
 		set_not(b);
 	}
@@ -225,11 +225,11 @@ int black_white(void)
 	for(b_index = black_head; b_index != -1; b_index = forward[b_index]){
 		containment = FALSE;
 		for(w_index = white_head; w_index != -1; w_index = forward[w_index]){
-			if(setp_implies(GETSET(BB,b_index), GETSET(BB,w_index))){
+			if(setp_implies(GETSET(BB, b_index), GETSET(BB, w_index))){
 				containment = TRUE;
 				break;
 			}
-		}	
+		}
 		if(containment == FALSE){
 			return FALSE;
 		}
@@ -257,11 +257,11 @@ void split_list(pset_family R, int v)
 }
 
 /* Data Structures for ordering variables in ess_test_and_reduction */
-static int variable_count; /* Number of variables currently in the list */
-static int *variable_forward_chain; /* Next */
-static int *variable_backward_chain; /* Previous */
-static int variable_head; /* first element in the list */
-static int variable_tail; /* last element in the list */
+static int variable_count;	/* Number of variables currently in the list */
+static int *variable_forward_chain;	/* Next */
+static int *variable_backward_chain;	/* Previous */
+static int variable_head;	/* first element in the list */
+static int variable_tail;	/* last element in the list */
 
 void variable_list_alloc(int size)
 {
@@ -287,7 +287,7 @@ void variable_list_init(int reduced_c_free_count, int *reduced_c_free_list)
 	variable_tail = reduced_c_free_list[variable_count - 1];
 	variable_forward_chain[variable_tail] = -1;
 	variable_backward_chain[variable_head] = -1;
-	
+
 	next_v = variable_head;
 	for(i = 1; i < variable_count; i++){
 		v = next_v; next_v = reduced_c_free_list[i];
@@ -320,7 +320,7 @@ void variable_list_delete(int element)
 		else{
 			variable_head = variable_tail = -1;
 		}
-	}	
+	}
 }
 
 void variable_list_insert(int element)
@@ -346,10 +346,10 @@ int variable_list_empty(void)
 
 void get_next_variable(int *pv, int *pphase, pset_family R)
 {
-	int v,e0,e1;
-	int e0_black_count,e1_black_count;
+	int v, e0, e1;
+	int e0_black_count, e1_black_count;
 	int w_index;
-	int max_black_count,max_variable, max_phase;
+	int max_black_count, max_variable, max_phase;
 	pcube r;
 
 	max_black_count = -1;
@@ -357,9 +357,9 @@ void get_next_variable(int *pv, int *pphase, pset_family R)
 		e0 = v<<1; e1 = e0 + 1;
 		e0_black_count = e1_black_count = 0;
 		for(w_index = white_head; w_index != -1; w_index = forward[w_index]){
-			r = GETSET(R,w_index);
-			if(is_in_set(r,e0)){	
-				if(is_in_set(r,e1)){
+			r = GETSET(R, w_index);
+			if(is_in_set(r, e0)){
+				if(is_in_set(r, e1)){
 					continue;
 				}
 				else{
@@ -384,7 +384,7 @@ void get_next_variable(int *pv, int *pphase, pset_family R)
 					max_phase = 1;
 			}
 		}
-	}	
+	}
 	*pv = max_variable;
 	*pphase = max_phase;
 }
@@ -392,8 +392,7 @@ void get_next_variable(int *pv, int *pphase, pset_family R)
 void print_variable_list(void)
 {
 	printf("Variable_Forward_Chain:\n");
-	print_links(cube.num_binary_vars,variable_forward_chain);
+	print_links(cube.num_binary_vars, variable_forward_chain);
 	printf("Variable_Backward_Chain:\n");
-	print_links(cube.num_binary_vars,variable_backward_chain);
+	print_links(cube.num_binary_vars, variable_backward_chain);
 }
-

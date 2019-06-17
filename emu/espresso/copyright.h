@@ -1,5 +1,6 @@
 #ifndef OCTTOOLS_COPYRIGHT_H
 #define OCTTOOLS_COPYRIGHT_H
+
 /*
  * Oct Tools Distribution 3.0
  *
@@ -24,4 +25,5 @@
  */
 
 static char octtools_copyright[] = "Copyright (c) 1988, 1989, Regents of the University of California.  All rights reserved.";
+
 #endif
