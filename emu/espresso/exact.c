@@ -102,7 +102,7 @@ do_minimize(pset_family F, pset_family D, pset_family R, int exact_cover, int we
     debug = debug_save;
     return newF;
 }
-
+
 static void
 dump_irredundant(pset_family E, pset_family Rt, pset_family Rp, sm_matrix *table)
 {

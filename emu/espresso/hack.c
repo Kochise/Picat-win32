@@ -72,7 +72,7 @@ void map_dcset(pPLA PLA)
     PLA->F = sf_delc(PLA->F, 2*var, 2*var+1);
     PLA->D = sf_delc(PLA->D, 2*var, 2*var+1);
 }
-
+
 void map_output_symbolic(pPLA PLA)
 {
     pset_family newF, newD;
@@ -265,7 +265,7 @@ pcover *newF, *newD;
     free_cover(A);
 }
 #endif
-
+
 void map_symbolic(pPLA PLA)
 {
     symbolic_t *p1;

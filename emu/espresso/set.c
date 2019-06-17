@@ -186,7 +186,7 @@ bool setp_implies(register pset a, register pset b)
   do if (a[i] & ~b[i]) return FALSE; while (--i > 0);
   return TRUE;
 }
-
+
 /* sf_or -- form the "or" of all sets in a set family */
 pset sf_or(pset_family A)
 {

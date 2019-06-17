@@ -68,7 +68,7 @@ pcover complement(pset *T)
 
     return Tbar;
 }
-
+
 static bool compl_special_cases(pset *T, pset_family *Tbar)
          			/* will be disposed if answer is determined */
              			/* returned only if answer determined */
@@ -136,7 +136,7 @@ static bool compl_special_cases(pset *T, pset_family *Tbar)
 	return MAYBE;
     }
 }
-
+
 /*
  *  compl_merge -- merge the two cofactors around the splitting
  *  variable
@@ -223,7 +223,7 @@ static pcover compl_merge(pset *T1, pset_family L, pset_family R, register pset 
     free_cover(R);
     return Tbar;
 }
-
+
 /*
  *  compl_lift_simple -- expand in the splitting variable using single
  *  cube containment against the other recursion branch to check
@@ -289,7 +289,7 @@ nolift : ;
 	}
     }
 }
-
+
 /*
  *  compl_lift_complex -- expand in the splitting variable, but expand all
  *  parts which can possibly expand.
@@ -377,7 +377,7 @@ static pcover compl_cube(register pset p)
     }
     return R;
 }
-
+
 /* simp_comp -- quick simplification of T */
 void simp_comp(pset *T, pset_family *Tnew, pset_family *Tbar)
          			/* T will be disposed of */
@@ -419,7 +419,7 @@ void simp_comp(pset *T, pset_family *Tnew, pset_family *Tbar)
     }
 
 }
-
+
 static bool simp_comp_special_cases(pset *T, pset_family *Tnew, pset_family *Tbar)
          			/* will be disposed if answer is determined */
              			/* returned only if answer determined */
@@ -510,7 +510,7 @@ static bool simp_comp_special_cases(pset *T, pset_family *Tnew, pset_family *Tba
 	return MAYBE;
     }
 }
-
+
 /* simplify -- quick simplification of T */
 pcover simplify(pset *T)
          			/* T will be disposed of */
@@ -549,7 +549,7 @@ pcover simplify(pset *T)
 
     return Tbar;
 }
-
+
 static bool simplify_special_cases(pset *T, pset_family *Tnew)
          			/* will be disposed if answer is determined */
              			/* returned only if answer determined */

@@ -12,7 +12,7 @@
 
 #undef NO_INLINE
 
-
+
 /*-----THIS USED TO BE set.h----- */
 
 /*
@@ -226,7 +226,7 @@ typedef struct set_family {
 /* Table for efficient bit counting */
 extern int bit_count[256];
 /*----- END OF set.h ----- */
-
+
 /* Define a boolean type */
 #define bool	int
 #define FALSE	0
@@ -406,7 +406,7 @@ typedef struct {
 /* lightweight EXECUTE */
 #define S_EXECUTE(fct,i)\
     {long t=ptime();fct;s_totals(t,i);}
-
+
 /*
  *    Global Variable Declarations
  */
@@ -496,7 +496,7 @@ extern struct cdata_struct cdata, temp_cdata_save;
 #define DISJOINT 0x5555
 #endif
 
-
+
 /* function declarations */
 
 /* cofactor.c */ extern int binate_split_select (pset *T, register pset cleft, register pset cright, int debug_flag);

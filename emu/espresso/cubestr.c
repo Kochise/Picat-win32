@@ -72,7 +72,7 @@ void cube_setup(void)
     cdata.parts_active = ALLOC(int, cube.num_vars);
     cdata.is_unate = ALLOC(int, cube.num_vars);
 }
-
+
 /*
     setdown_cube -- free memory allocated for the cube/cdata structs
     (free's all but the part_size array)

@@ -47,7 +47,7 @@ pcover map_cover_to_unate(pset *T)
 
     return A;
 }
-
+
 pcover map_unate_to_cover(pset_family A)
 {
     register int i, ncol, lp;
@@ -95,7 +95,7 @@ pcover map_unate_to_cover(pset_family A)
     FREE(unate);
     return B;
 }
-
+
 /*
  *  unate_compl
  */
@@ -207,7 +207,7 @@ pset_family unate_complement(pset_family A)
 
     return Abar;
 }
-
+
 pset_family exact_minimum_cover(pset_family T)
 {
     register pset p, last, p1;
@@ -277,7 +277,7 @@ pset_family exact_minimum_cover(pset_family T)
     sf_free(T);         /* this is the copy of T we made ... */
     return temp;
 }
-
+
 /*
  *  unate_intersect -- intersect two unate covers
  *
@@ -344,7 +344,7 @@ pset_family unate_intersect(pset_family A, pset_family B, int largest_only)
 
     return Tsave;
 }
-
+
 /*
  *  abs_covered -- after selecting a new column for the selected set,
  *  create a new matrix which is only those rows which are still uncovered

@@ -93,7 +93,7 @@ sm_minimum_cover(sm_matrix *A, int *weight, int heuristic, int debug_level)
     solution_free(best);
     return sol;
 }
-
+
 /*
  *  Find the best cover for 'A' (given that 'select' already selected);
  *
@@ -247,7 +247,7 @@ sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int bound, int 
 
     return best;
 }
-
+
 static int 
 select_column(sm_matrix *A, int *weight, solution_t *indep)
 {
@@ -301,7 +301,7 @@ select_column(sm_matrix *A, int *weight, solution_t *indep)
     sm_row_free(indep_cols);
     return best_col;
 }
-
+
 static void 
 select_essential(sm_matrix *A, solution_t *select, int *weight, int bound)
              
@@ -342,7 +342,7 @@ select_essential(sm_matrix *A, solution_t *select, int *weight, int bound)
 
     } while (delcols > 0 || delrows > 0 || essen_count > 0);
 }
-
+
 static int 
 verify_cover(sm_matrix *A, sm_row *cover)
 {

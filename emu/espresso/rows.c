@@ -137,7 +137,7 @@ sm_row_find(sm_row *prow, int col)
 	return NIL(sm_element);
     }
 }
-
+
 /*
  *  return 1 if row p2 contains row p1; 0 otherwise
  */
@@ -250,7 +250,7 @@ sm_row_and(sm_row *p1, sm_row *p2)
 	}
     }
 }
-
+
 int 
 sm_row_hash(sm_row *prow, int modulus)
 {
@@ -263,7 +263,7 @@ sm_row_hash(sm_row *prow, int modulus)
     }
     return sum;
 }
-
+
 /*
  *  remove an element from a row vector (given a pointer to the element) 
  */

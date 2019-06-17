@@ -29,7 +29,7 @@ pcover primes_consensus(pset *T)
 
     return Tnew;
 }
-
+
 static bool 
 primes_consensus_special_cases(pset *T, pset_family *Tnew)
          			/* will be disposed if answer is determined */
@@ -104,7 +104,7 @@ primes_consensus_special_cases(pset *T, pset_family *Tnew)
 	return MAYBE;
     }
 }
-
+
 static pcover 
 primes_consensus_merge(pset_family Tl, pset_family Tr, pset cl, pset cr)
 {

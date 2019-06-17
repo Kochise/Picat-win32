@@ -62,7 +62,7 @@ visit_row(sm_matrix *A, sm_row *prow, int *rows_visited, int *cols_visited)
 }
 
 
-
+
 int
 sm_block_partition(sm_matrix *A, sm_matrix **L, sm_matrix **R)
 {

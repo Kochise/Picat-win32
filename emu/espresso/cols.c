@@ -131,7 +131,7 @@ sm_element * sm_col_find(sm_col *pcol, int row)
 	return NIL(sm_element);
     }
 }
-
+
 /*
  *  return 1 if col p2 contains col p1; 0 otherwise
  */
@@ -240,7 +240,7 @@ sm_col * sm_col_and(sm_col *p1, sm_col *p2)
 	}
     }
 }
-
+
 int sm_col_hash(sm_col *pcol, int modulus)
 {
     register int sum;
@@ -252,7 +252,7 @@ int sm_col_hash(sm_col *pcol, int modulus)
     }
     return sum;
 }
-
+
 /*
  *  remove an element from a col vector (given a pointer to the element) 
  */

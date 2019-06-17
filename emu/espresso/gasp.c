@@ -58,7 +58,7 @@ static pcover reduce_gasp(pset_family F, pset_family D)
     free_cubelist(FD);
     return G;
 }
-
+
 /*
  *  expand_gasp -- expand each nonprime cube of F into a prime implicant
  *
@@ -170,7 +170,7 @@ void expand1_gasp(pset_family F, pset_family D, pset_family R, pset_family Forig
     free_cube(FREESET);
     free_cube(temp);
 }
-
+
 /* irred_gasp -- Add new primes to F and find an irredundant subset */
 pcover irred_gasp(pset_family F, pset_family D, pset_family G)
                                 /* G is disposed of */

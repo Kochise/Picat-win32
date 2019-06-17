@@ -6,7 +6,7 @@ static bool ftaut_special_cases(pset *T, sm_matrix *table);
 
 
 static int Rp_current;
-
+
 /*
  *   irredundant -- Return a minimal subset of F
  */
@@ -59,7 +59,7 @@ mark_irredundant(pset_family F, pset_family D)
     sm_free(table);
     sm_row_free(cover);
 }
-
+
 /*
  *  irred_split_cover -- find E, Rt, and Rp from the cover F, D
  *
@@ -112,7 +112,7 @@ irred_split_cover(pset_family F, pset_family D, pset_family *E, pset_family *Rt,
 
     free_cover(R);
 }
-
+
 /*
  *  irred_derive_table -- given the covers D, E and the set of
  *  partially redundant primes Rp, build a covering table showing
@@ -159,7 +159,7 @@ irred_derive_table(pset_family D, pset_family E, pset_family Rp)
 
     return table;
 }
-
+
 /* cube_is_covered -- determine if a cubelist "covers" a single cube */
 bool
 cube_is_covered(pset *T, pset c)
@@ -191,7 +191,7 @@ tautology(pset *T)
 
     return result;
 }
-
+
 /*
  *  taut_special_cases -- check special cases for tautology
  */
@@ -275,7 +275,7 @@ start:
     /* We tried as hard as we could, but must recurse from here on */
     return MAYBE;
 }
-
+
 /* fcube_is_covered -- determine exactly how a cubelist "covers" a cube */
 static void
 fcube_is_covered(pset *T, pset c, sm_matrix *table)
@@ -308,7 +308,7 @@ ftautology(pset *T, sm_matrix *table)
     }
 
 }
-
+
 static bool
 ftaut_special_cases(pset *T, sm_matrix *table)
                           /* will be disposed if answer is determined */

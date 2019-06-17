@@ -78,7 +78,7 @@ pcover reduce(pset_family F, pset_family D)
     /* Delete any cubes of F which reduced to the empty cube */
     return sf_inactive(F);
 }
-
+
 /* reduce_cube -- find the maximal reduction of a cube */
 pcube reduce_cube(pset *FD, pset p)
 {
@@ -152,7 +152,7 @@ pcube sccc_cube(register pset result, register pset p)
     }
     return result;
 }
-
+
 /*
  *   sccc_special_cases -- check the special cases for sccc
  */

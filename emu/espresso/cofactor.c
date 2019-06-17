@@ -68,7 +68,7 @@ pcube *cofactor(pset *T, register pset c)
     Tc_save[1] = (pcube) Tc;                    /* save pointer to last */
     return Tc_save;
 }
-
+
 /*
     scofactor -- compute the cofactor of a cover with respect to a cube,
     where the cube is "active" in only a single variable.
@@ -111,7 +111,7 @@ pcube *scofactor(pset *T, pset c, int var)
     Tc_save[1] = (pcube) Tc;                    /* save pointer to last */
     return Tc_save;
 }
-
+
 void massive_count(pset *T)
 {
     int *count = cdata.part_zeros;
@@ -243,7 +243,7 @@ void massive_count(pset *T)
     cdata.best = best;
  }
 }
-
+
 int binate_split_select(pset *T, register pset cleft, register pset cright, int debug_flag)
 {
     int best = cdata.best;
@@ -344,7 +344,7 @@ pcover cubeunlist(pset *A1)
     A->count = CUBELISTSIZE(A1);
     return A;
 }
-
+
 void simplify_cubelist(pset *T)
 {
     register pcube *Tdest;

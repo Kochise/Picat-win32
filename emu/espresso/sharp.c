@@ -79,7 +79,7 @@ pcover sharp(pset a, pset b)
     }
     return r;
 }
-
+
 pcover make_disjoint(pset_family A)
 {
     pcover R, new;
@@ -182,7 +182,7 @@ pcover dsharp(pset a, pset b)
     }
     return r;
 }
-
+
 /* cv_intersect -- form the intersection of two covers */
 
 #define MAGIC 500               /* save 500 cubes before containment */

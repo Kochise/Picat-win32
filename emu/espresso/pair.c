@@ -107,7 +107,7 @@ void set_pair1(pPLA PLA, int adjust_labels)
 	cube.sparse[cube.num_binary_vars + var] = 0;
     FREE(paired);
 }
-
+
 pcover pairvar(pset_family A, ppair pair)
 {
     register pcube last, p;
@@ -171,7 +171,7 @@ pcover delvar(pset_family A, int *paired)
 	A = sf_delcol(A, first_run-offset, run_length);
     return A;
 }
-
+
 /*
     find_optimal_pairing -- find which binary variables should be paired
     to maximally reduce the number of terms
@@ -239,7 +239,7 @@ void find_optimal_pairing(pPLA PLA, int strategy)
     set_pair(PLA);
     EXEC_S(PLA->F=espresso(PLA->F,PLA->D,PLA->R),"ESPRESSO  ",PLA->F);
 }
-
+
 int **find_pairing_cost(pPLA PLA, int strategy)
 {
     int var1, var2, **cost_array;
@@ -338,7 +338,7 @@ int **find_pairing_cost(pPLA PLA, int strategy)
     PLA->pair = NULL;
     return cost_array;
 }
-
+
 static int best_cost;
 static int **cost_array;
 static ppair best_pair;
@@ -431,7 +431,7 @@ void find_best_cost(register ppair pair)
 	print_pair(pair);
     }
 }
-
+
 /*
     pair_all: brute-force approach to try all possible pairings
 
@@ -555,7 +555,7 @@ void minimize_pair(ppair pair)
     global_PLA->pair = NULL;
     global_PLA->phase = NULL;
 }
-
+
 void generate_all_pairs(ppair pair, int n, pset candidate, void (*action) (ppair))
 {
     int i, j;
@@ -605,7 +605,7 @@ void generate_all_pairs(ppair pair, int n, pset candidate, void (*action) (ppair
     pair_free(recur_pair);
     set_free(recur_candidate);
 }
-
+
 ppair pair_new(register int n)
 {
     register ppair pair1;

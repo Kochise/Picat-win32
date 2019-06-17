@@ -47,7 +47,7 @@ bool full_row(register pset p, register pset cof)
     do if ((p[i] | cof[i]) != cube.fullset[i]) return FALSE; while (--i > 0);
     return TRUE;
 }
-
+
 /*
     cdist0 -- return TRUE if a and b are distance 0 apart
 */
@@ -85,7 +85,7 @@ bool cdist0(register pset a, register pset b)
  }
     return TRUE;
 }
-
+
 /*
     cdist01 -- return the "distance" between two cubes (defined as the
     number of null variables in their intersection).  If the distance
@@ -130,7 +130,7 @@ int cdist01(register pset a, register pset b)
  }
     return dist;
 }
-
+
 /*
     cdist -- return the "distance" between two cubes (defined as the
     number of null variables in their intersection).
@@ -171,7 +171,7 @@ int cdist(register pset a, register pset b)
  }
     return dist;
 }
-
+
 /*
     force_lower -- Determine which variables of a do not intersect b.
 */
@@ -211,7 +211,7 @@ pset force_lower(pset xlower, register pset a, register pset b)
  }
     return xlower;
 }
-
+
 /*
     consensus -- multiple-valued consensus
 
@@ -264,7 +264,7 @@ void consensus(pset r, register pset a, register pset b)
     }
  }
 }
-
+
 /*
     cactive -- return the index of the single active variable in
     the cube, or return -1 if there are none or more than 2.
@@ -316,7 +316,7 @@ int cactive(register pset a)
  }
  return active;
 }
-
+
 /*
     ccommon -- return TRUE if a and b are share "active" variables
     active variables include variables that are empty;
@@ -366,7 +366,7 @@ bool ccommon(register pset a, register pset b, register pset cof)
  }
     return FALSE;
 }
-
+
 /*
     These routines compare two sets (cubes) for the qsort() routine and
     return:

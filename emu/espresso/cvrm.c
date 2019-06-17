@@ -96,7 +96,7 @@ pcover unravel(pset_family B, int start)
 {
     return unravel_range(B, start, cube.num_vars-1);
 }
-
+
 /* lex_sort -- sort cubes in a standard lexical fashion */
 pcover lex_sort(pset_family T)
 {
@@ -198,7 +198,7 @@ pcover random_order(register pset_family F)
     set_free(temp);
     return F;
 }
-
+
 /*
  *  cubelist_partition -- take a cubelist T and see if it has any components;
  *  if so, return cubelist's of the two partitions A and B; the return value
@@ -279,7 +279,7 @@ int cubelist_partition(pset *T, pset **A, pset **B, unsigned int comp_debug)
 
     return numcube - count;
 }
-
+
 /*
  *  quick cofactor against a single output function
  */
@@ -367,7 +367,7 @@ void foreach_output_function(pPLA PLA, int (*func) (pPLA, int), int (*func1) (pP
 
     }
 }
-
+
 static pcover Fmin;
 static pcube phase;
 
