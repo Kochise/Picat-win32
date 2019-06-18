@@ -391,7 +391,7 @@ extern BPLONG no_gcs;
 #define GRA(i, arity)	*(AR+arity-i+1)
 
 #ifdef GCC
-#define CONTCASE		goto	**(void	**)P++
+#define CONTCASE		goto	**((void **)P++)
 #else
 #define CONTCASE		goto	contcase
 #endif

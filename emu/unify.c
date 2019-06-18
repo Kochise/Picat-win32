@@ -327,7 +327,7 @@ int unify_dvar_dvar(BPLONG_PTR dv_ptr1, BPLONG_PTR dv_ptr2)
 		}
 	else if (IS_IT_DOMAIN(dv_ptr2)){
 		top = dv_ptr1; dv_ptr1 = dv_ptr2; dv_ptr2 = top;
-		goto itdvar_bvdvar;
+		goto bvdvar_bvdvar;
 	}
 
 bvdvar_bvdvar:

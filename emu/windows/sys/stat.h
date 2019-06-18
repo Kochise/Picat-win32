@@ -31,6 +31,8 @@
 #define	_S_IFBLK	0x3000	/* Block: Is this ever set under w32? */
 #define	_S_IFDIR	0x4000	/* Directory */
 #define	_S_IFREG	0x8000	/* Regular */
+#define	_S_IFLNK	0xA000	/* Link */
+#define	_S_IFSOCK	0xC000	/* Socket */
 
 #define	_S_IFMT		0xF000	/* File type mask */
 
@@ -43,11 +45,13 @@
 #define	_S_IWUSR	_S_IWRITE
 #define	_S_IRUSR	_S_IREAD
 
-#define	_S_ISDIR(m)	(((m) & _S_IFMT) == _S_IFDIR)
+#define	_S_ISDIR(m)		(((m) & _S_IFMT) == _S_IFDIR)
 #define	_S_ISFIFO(m)	(((m) & _S_IFMT) == _S_IFIFO)
-#define	_S_ISCHR(m)	(((m) & _S_IFMT) == _S_IFCHR)
-#define	_S_ISBLK(m)	(((m) & _S_IFMT) == _S_IFBLK)
-#define	_S_ISREG(m)	(((m) & _S_IFMT) == _S_IFREG)
+#define	_S_ISCHR(m)		(((m) & _S_IFMT) == _S_IFCHR)
+#define	_S_ISBLK(m)		(((m) & _S_IFMT) == _S_IFBLK)
+#define	_S_ISREG(m)		(((m) & _S_IFMT) == _S_IFREG)
+#define	_S_ISLNK(m)		(((m) & _S_IFMT) == _S_IFLNK)
+#define	_S_ISSOCK(m)	(((m) & _S_IFMT) == _S_IFSOCK)
 
 #ifndef _NO_OLDNAMES
 
@@ -56,10 +60,15 @@
 #define	S_IFBLK		_S_IFBLK
 #define	S_IFDIR		_S_IFDIR
 #define	S_IFREG		_S_IFREG
+#define	S_IFLNK		_S_IFLNK
+#define	S_IFSOCK	_S_IFSOCK
+
 #define	S_IFMT		_S_IFMT
+
 #define	S_IEXEC		_S_IEXEC
 #define	S_IWRITE	_S_IWRITE
 #define	S_IREAD		_S_IREAD
+
 #define	S_IRWXU		_S_IRWXU
 #define	S_IXUSR		_S_IXUSR
 #define	S_IWUSR		_S_IWUSR
@@ -70,6 +79,8 @@
 #define	S_ISCHR(m)	(((m) & S_IFMT) == S_IFCHR)
 #define	S_ISBLK(m)	(((m) & S_IFMT) == S_IFBLK)
 #define	S_ISREG(m)	(((m) & S_IFMT) == S_IFREG)
+#define	S_ISLNK(m)	(((m) & S_IFMT) == S_IFLNK)
+#define	S_ISSOCK(m)	(((m) & S_IFMT) == S_IFSOCK)
 
 #endif	/* Not _NO_OLDNAMES */
 

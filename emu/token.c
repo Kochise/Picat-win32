@@ -360,7 +360,7 @@ int next_token_index = 0;
 						printAtomStr(tok2long);									\
 					} else {													\
 						CHAR_PTR  s1;											\
-						s1 = utf8_codepoint_to_str(code, s);						\
+						s1 = utf8_codepoint_to_str(code, s);					\
 						n -= (s1-s);											\
 						s = s1;													\
 					}															\

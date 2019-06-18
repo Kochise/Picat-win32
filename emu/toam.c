@@ -132,7 +132,7 @@ int toam(register BPLONG_PTR P, register BPLONG_PTR AR, register BPLONG_PTR LOCA
 	register SYM_REC_PTR     sym_ptr = NULL;
 	register BPLONG   arity, i;
 	register BPLONG_PTR dv_ptr;
-	BYTE     table_flag;
+//	BYTE     table_flag;
 	BPLONG_PTR ep;
 
 	BPLONG head_arity;
@@ -143,7 +143,7 @@ int toam(register BPLONG_PTR P, register BPLONG_PTR AR, register BPLONG_PTR LOCA
 	BPLONG_PTR subgoal_entry;
 	BPLONG_PTR  stack_water_mark, heap_water_mark;
 	BPLONG_PTR constr_ar;
-	
+
 	op1 = 0;
 	i = 0;
 
@@ -184,7 +184,7 @@ contcase:							/* LOCAL_TOP OF EXECUTION LOOP : Read Mode */
 #endif
 
 #ifdef GCC
-	goto **(void **)P++;
+	CONTCASE;
 #endif
 
 #ifdef ToamProfile

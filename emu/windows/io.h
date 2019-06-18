@@ -47,6 +47,8 @@ typedef	unsigned long	_fsize_t;
 #define _FSIZE_T_DEFINED
 #endif
 
+#ifndef _UWIN
+#endif /* _UWIN */
 /*
  * The maximum length of a file name. You should use GetVolumeInformation
  * instead of this constant. But hey, this works.
@@ -296,9 +298,9 @@ __CRT_INLINE off64_t lseek64 (int fd, off64_t offset, int whence)
 
 #ifndef _NO_OLDNAMES
 
-#ifndef _UWIN
 _CRTIMP int __cdecl __MINGW_NOTHROW chdir (const char*);
 _CRTIMP char* __cdecl __MINGW_NOTHROW getcwd (char*, int);
+#ifndef _UWIN
 _CRTIMP int __cdecl __MINGW_NOTHROW mkdir (const char*);
 _CRTIMP char* __cdecl __MINGW_NOTHROW mktemp (char*);
 _CRTIMP int __cdecl __MINGW_NOTHROW rmdir (const char*);
@@ -317,6 +319,7 @@ _CRTIMP int __cdecl __MINGW_NOTHROW chmod (const char*, int);
  * it the same as FOPEN_MAX. */
 #define	HANDLE_MAX	FOPEN_MAX
 
+#ifndef _UWIN
 /* Some defines for _access nAccessMode (MS doesn't define them, but
  * it doesn't seem to hurt to add them). */
 #define	F_OK	0	/* Check for file existence */
@@ -325,6 +328,7 @@ _CRTIMP int __cdecl __MINGW_NOTHROW chmod (const char*, int);
 #define	X_OK	1	/* MS access() doesn't check for execute permission. */
 #define	W_OK	2	/* Check for write permission */
 #define	R_OK	4	/* Check for read permission */
+#endif /* _UWIN */
 
 #ifndef RC_INVOKED
 
@@ -437,8 +441,8 @@ _CRTALIAS int  __cdecl __MINGW_NOTHROW	_wfindnexti64 (long _v1, struct _wfinddat
  * These functions live in libmoldname.a.
  */
 
-#ifndef _UWIN
 _CRTIMP int __cdecl __MINGW_NOTHROW access (const char*, int);
+#ifndef _UWIN
 _CRTIMP int __cdecl __MINGW_NOTHROW chsize (int, long );
 _CRTIMP int __cdecl __MINGW_NOTHROW close (int);
 _CRTIMP int __cdecl __MINGW_NOTHROW creat (const char*, int);

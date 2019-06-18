@@ -23,3 +23,5 @@ But right now, let's clean a bit this project :)
 
 Some include files from https://github.com/pilight/windows-cli/tree/master/include and https://github.com/schanur/libplatform/tree/master/src/platform
 
+PicoSAT (SAT solver) comes from http://fmv.jku.at/picosat/
+

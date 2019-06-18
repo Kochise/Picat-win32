@@ -13,21 +13,24 @@ switch (*P++){
 #endif
 #ifndef GCC
  case noop:	/* E */
-#endif
+#else
  lab_noop:
+#endif
 	CONTCASE;
 
 #ifndef GCC
  case noop1:	/* i */
-#endif
+#else
  lab_noop1:
+#endif
 	P++;
 	CONTCASE;
 
 #ifndef GCC
  case allocate_det_b:	/* i, i, s, i */
-#endif
+#else
  lab_allocate_det_b:
+#endif
 	AR_B(AR) = (BPLONG)B;
 	AR_BTM(AR) = ADDTAG((AR+Operand0), FLAT_B_FRAME_TAG);
 	LOCAL_TOP =  AR-Operand(1);
@@ -40,8 +43,9 @@ switch (*P++){
 
 #ifndef GCC
  case nondet:	/* i */
-#endif
+#else
  lab_nondet:
+#endif
 	if ((BPLONG)LOCAL_TOP == AR_TOP(AR)){	/* turn this frame into a nondet frame */
 		AR_B(AR) = (BPLONG)B;
 		AR_H(AR) = (BPLONG)H;
@@ -78,24 +82,27 @@ switch (*P++){
 
 #ifndef GCC
  case cut_return:	/* E */
-#endif
+#else
  lab_cut_return:
+#endif
 	/* cut, return_det */
 	CUT0;
 	/* goto lab_return_det; */
 
 #ifndef GCC
  case return_det:	/* E */
-#endif
+#else
  lab_return_det:
+#endif
 	RETURN_DET;
 	CATCH_WAKE_EVENT;
 	CONTCASE;
 
 #ifndef GCC
  case unify_constant_return_det:	/* y, c */
-#endif
+#else
  lab_unify_constant_return_det:
+#endif
 	op1 = NextOperandYC;
 	op2 = NextOperandLiteral;
 	SWITCH_OP_ATM(op1, rr_unify_constant_return_det,
@@ -110,14 +117,16 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_value_return_det:	/* y, y */
-#endif
+#else
  lab_cut_unify_value_return_det:
+#endif
 	CUT0;
 
 #ifndef GCC
  case unify_value_return_det:	/* y, y */
-#endif
+#else
  lab_unify_value_return_det:
+#endif
 	/* followed by return_det */
 	op1 = NextOperandYC;
 	op2 = NextOperandYC;
@@ -135,16 +144,18 @@ switch (*P++){
 
 #ifndef GCC
  case return_nondet:	/* E */
-#endif
+#else
  lab_return_nondet:
+#endif
 	RETURN_NONDET;
 	CATCH_WAKE_EVENT;
 	CONTCASE;
 
 #ifndef GCC
  case unify_constant_return_nondet:	/* y, c */
-#endif
+#else
  lab_unify_constant_return_nondet:
+#endif
 	op1 = NextOperandYC;
 	op2 = NextOperandLiteral;
 	SWITCH_OP_ATM(op1, rr_unify_constant_return_nondet,
@@ -159,8 +170,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_constant_return_nondet:	/* l, y, c */
-#endif
+#else
  lab_fork_unify_constant_return_nondet:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -180,8 +192,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_nil_unify_value_return_nondet:	/* l, y, y, y */
-#endif
+#else
  lab_fork_unify_nil_unify_value_return_nondet:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -201,8 +214,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_value_return_nondet:	/* y, y */
-#endif
+#else
  lab_unify_value_return_nondet:
+#endif
 	op1 = NextOperandYC;
 	op2 = NextOperandYC;
 	SWITCH_OP(op1, rr_unify_value_return_nondet,
@@ -219,29 +233,33 @@ switch (*P++){
 
 #ifndef GCC
  case bp_fork:	/* l */
-#endif
+#else
  lab_bp_fork:
+#endif
 	FORK;
 	CONTCASE;
 
 #ifndef GCC
  case cut:	/* E */
-#endif
+#else
  lab_cut:
+#endif
 	CUT;
 	CONTCASE;
 
 #ifndef GCC
  case cut0:	/* E */
-#endif
+#else
  lab_cut0:
+#endif
 	CUT0;
 	CONTCASE;
 
 #ifndef GCC
  case unify_value_cut:	/* y, y */
-#endif
+#else
  lab_unify_value_cut:
+#endif
 	/* followed by cut0 */
 	op1 = NextOperandYC;
 	op2 = NextOperandYC;
@@ -254,8 +272,9 @@ switch (*P++){
 
 #ifndef GCC
  case fail:	/* E */
-#endif
+#else
  lab_fail:
+#endif
 	#ifdef ToamProfile
 	execute_inst(fail);
 	#endif
@@ -286,8 +305,9 @@ switch (*P++){
 
 #ifndef GCC
  case cut_fail:	/* E */
-#endif
+#else
  lab_cut_fail:
+#endif
 	/* cut0, fail */
 	/* ROLL_TABLED_FRAME(AR_B(AR)); */
 	rr_cut_fail:
@@ -300,8 +320,9 @@ switch (*P++){
 
 #ifndef GCC
  case fail0:	/* E */
-#endif
+#else
  lab_fail0:
+#endif
 	#ifdef ToamProfile
 	execute_inst(fail0);
 	#endif
@@ -327,16 +348,18 @@ switch (*P++){
 
 #ifndef GCC
  case getbreg_y:	/* y */
-#endif
+#else
  lab_getbreg_y:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	FOLLOW(op1) = ADDTAG((BPULONG)stack_up_addr-(BPULONG)B, INT_TAG);
 	CONTCASE;
 
 #ifndef GCC
  case putbreg_y:	/* y */
-#endif
+#else
  lab_putbreg_y:
+#endif
 	op1 = NextOperandYC;
 	op1 = UNTAGGED_CONT(op1);
 	sreg = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)op1);	/* borrow sreg here */
@@ -349,8 +372,9 @@ switch (*P++){
 
 #ifndef GCC
  case getpbreg_y:	/* y */
-#endif
+#else
  lab_getpbreg_y:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	if (AR==B){
 		top = (BPLONG_PTR)AR_B(AR);
@@ -362,23 +386,26 @@ switch (*P++){
 
 #ifndef GCC
  case halt:	/* E */
-#endif
+#else
  lab_halt:
+#endif
 	SAVE_AR;SAVE_TOP;
 	if (exception == (BPLONG)NULL) return BP_TRUE; else return BP_ERROR;
 
 #ifndef GCC
  case halt0:	/* E */
-#endif
+#else
  lab_halt0:
+#endif
 	SAVE_AR;SAVE_TOP;
 	curr_toam_status = TOAM_DONE;
 	if (exception == (BPLONG)NULL) return BP_FALSE; else return BP_ERROR;
 
 #ifndef GCC
  case call0:	/* s, i */
-#endif
+#else
  lab_call0:
+#endif
 	sym_ptr = (SYM_REC_PTR)NextOperandSym; P++;	/* skip MaxS for GC */
 	call_sub:							/* call a struct (psc) */
 	*LOCAL_TOP = (BPLONG)AR;
@@ -469,8 +496,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uv_d:	/* l, y, y, i */
-#endif
+#else
  lab_call_uv_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -503,8 +531,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uv_det:	/* l, y, y, i */
-#endif
+#else
  lab_call_uv_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -520,8 +549,9 @@ switch (*P++){
 
 #ifndef GCC
  case allocate_det:	/* i, i, s, i */
-#endif
+#else
  lab_allocate_det:
+#endif
 	AR_BTM(AR) = ADDTAG((AR+Operand0), FLAT_FRAME_TAG);
 	LOCAL_TOP =  AR-Operand(1);
 	P += 4;
@@ -534,8 +564,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uv_nondet:	/* l, y, y, i */
-#endif
+#else
  lab_call_uv_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -551,8 +582,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uv_ot:	/* l, y, y, i */
-#endif
+#else
  lab_call_uv_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -568,8 +600,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuv_d:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uuv_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -602,8 +635,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuv_det:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uuv_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -620,8 +654,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuv_nondet:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uuv_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -638,8 +673,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuv_ot:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uuv_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -656,8 +692,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvv_d:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvv_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -690,8 +727,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvv_det:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvv_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -708,8 +746,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvv_nondet:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvv_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -726,8 +765,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvv_ot:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvv_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -744,8 +784,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvc_d:	/* l, y, y, c, i */
-#endif
+#else
  lab_call_uvc_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -778,8 +819,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvc_det:	/* l, y, y, c, i */
-#endif
+#else
  lab_call_uvc_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -796,8 +838,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvc_nondet:	/* l, y, y, c, i */
-#endif
+#else
  lab_call_uvc_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -814,8 +857,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvc_ot:	/* l, y, y, c, i */
-#endif
+#else
  lab_call_uvc_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -832,8 +876,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvu_d:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvu_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -866,8 +911,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvu_det:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvu_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -884,8 +930,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvu_nondet:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvu_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -902,8 +949,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvu_ot:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_uvu_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -920,8 +968,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvuv_d:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uvuv_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -954,8 +1003,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvuv_det:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uvuv_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -973,8 +1023,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvuv_nondet:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uvuv_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -992,8 +1043,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uvuv_ot:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uvuv_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -1011,8 +1063,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuv_d:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuv_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1045,8 +1098,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuv_det:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuv_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -1064,8 +1118,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuv_nondet:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuv_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -1083,8 +1138,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuv_ot:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuv_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -1102,8 +1158,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuuv_d:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuuv_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1136,8 +1193,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuuv_det:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuuv_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -1156,8 +1214,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuuv_nondet:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuuv_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -1176,8 +1235,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_uuuuv_ot:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_uuuuv_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*LOCAL_TOP = YC(*(P+1));
@@ -1196,8 +1256,9 @@ switch (*P++){
 
 #ifndef GCC
  case call0_d:	/* l, i */
-#endif
+#else
  lab_call0_d:
+#endif
 	*LOCAL_TOP = (BPLONG)AR;
 	AR = LOCAL_TOP;
 	AR_CPS(AR) = (BPLONG)(P+2);	/* skip MaxS for GC */
@@ -1206,8 +1267,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_v_d:	/* l, y, i */
-#endif
+#else
  lab_call_v_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1240,8 +1302,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_v_det:	/* l, y, i */
-#endif
+#else
  lab_call_v_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P++;
 		op1 = (BPLONG)Y(*P); P += 2; FOLLOW(op1) = op1; *LOCAL_TOP-- = op1;
@@ -1255,8 +1318,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_v_nondet:	/* l, y, i */
-#endif
+#else
  lab_call_v_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P++;
 		op1 = (BPLONG)Y(*P); P += 2; FOLLOW(op1) = op1; *LOCAL_TOP-- = op1;
@@ -1270,8 +1334,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_v_ot:	/* l, y, i */
-#endif
+#else
  lab_call_v_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P++;
 		op1 = (BPLONG)Y(*P); P += 2; FOLLOW(op1) = op1; *LOCAL_TOP-- = op1;
@@ -1285,8 +1350,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_u_d:	/* l, y, i */
-#endif
+#else
  lab_call_u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1319,8 +1385,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_u_det:	/* l, y, i */
-#endif
+#else
  lab_call_u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P++;
 		*LOCAL_TOP-- = YC(*P); P += 2;
@@ -1334,8 +1401,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_u_nondet:	/* l, y, i */
-#endif
+#else
  lab_call_u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P++;
 		*LOCAL_TOP-- = YC(*P); P += 2;
@@ -1349,8 +1417,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_u_ot:	/* l, y, i */
-#endif
+#else
  lab_call_u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P++;
 		*LOCAL_TOP-- = YC(*P); P += 2;
@@ -1364,8 +1433,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_2u_d:	/* l, y, y, i */
-#endif
+#else
  lab_call_2u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1398,8 +1468,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_2u_det:	/* l, y, y, i */
-#endif
+#else
  lab_call_2u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1415,8 +1486,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_2u_nondet:	/* l, y, y, i */
-#endif
+#else
  lab_call_2u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1432,8 +1504,9 @@ switch (*P++){
 
 #ifndef GCC
  case allocate_nondet:	/* i, i, s, i */
-#endif
+#else
  lab_allocate_nondet:
+#endif
 	AR_BTM(AR) = ADDTAG((AR+Operand0), NONDET_FRAME_TAG);
 	LOCAL_TOP = AR - Operand(1);
 	P += 4;
@@ -1454,8 +1527,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_2u_ot:	/* l, y, y, i */
-#endif
+#else
  lab_call_2u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1471,8 +1545,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_3u_d:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_3u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1506,8 +1581,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_3u_det:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_3u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1524,8 +1600,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_3u_nondet:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_3u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1542,8 +1619,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_3u_ot:	/* l, y, y, y, i */
-#endif
+#else
  lab_call_3u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1560,8 +1638,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_4u_d:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_4u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1594,8 +1673,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_4u_det:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_4u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1613,8 +1693,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_4u_nondet:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_4u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1632,8 +1713,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_4u_ot:	/* l, y, y, y, y, i */
-#endif
+#else
  lab_call_4u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1651,8 +1733,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_5u_d:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_5u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1685,8 +1768,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_5u_det:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_5u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1705,8 +1789,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_5u_nondet:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_5u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1725,8 +1810,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_5u_ot:	/* l, y, y, y, y, y, i */
-#endif
+#else
  lab_call_5u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1745,8 +1831,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_6u_d:	/* l, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_6u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1779,8 +1866,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_6u_det:	/* l, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_6u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1800,8 +1888,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_6u_nondet:	/* l, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_6u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1821,8 +1910,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_6u_ot:	/* l, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_6u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1842,8 +1932,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_7u_d:	/* l, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_7u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1876,8 +1967,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_7u_det:	/* l, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_7u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1898,8 +1990,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_7u_nondet:	/* l, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_7u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1920,8 +2013,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_7u_ot:	/* l, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_7u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1942,8 +2036,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_8u_d:	/* l, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_8u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -1976,8 +2071,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_8u_det:	/* l, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_8u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -1999,8 +2095,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_8u_nondet:	/* l, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_8u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -2022,8 +2119,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_8u_ot:	/* l, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_8u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -2045,8 +2143,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_9u_d:	/* l, y, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_9u_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -2079,8 +2178,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_9u_det:	/* l, y, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_9u_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -2103,8 +2203,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_9u_nondet:	/* l, y, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_9u_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -2127,8 +2228,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_9u_ot:	/* l, y, y, y, y, y, y, y, y, y, i */
-#endif
+#else
  lab_call_9u_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = YC(*(P+1));
@@ -2151,8 +2253,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cu_d:	/* l, c, y, i */
-#endif
+#else
  lab_call_cu_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -2185,8 +2288,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cu_det:	/* l, c, y, i */
-#endif
+#else
  lab_call_cu_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2202,8 +2306,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cu_nondet:	/* l, c, y, i */
-#endif
+#else
  lab_call_cu_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2219,8 +2324,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cu_ot:	/* l, c, y, i */
-#endif
+#else
  lab_call_cu_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2236,8 +2342,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuu_d:	/* l, c, y, y, i */
-#endif
+#else
  lab_call_cuu_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -2271,8 +2378,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuu_det:	/* l, c, y, y, i */
-#endif
+#else
  lab_call_cuu_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2289,8 +2397,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuu_nondet:	/* l, c, y, y, i */
-#endif
+#else
  lab_call_cuu_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2307,8 +2416,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuu_ot:	/* l, c, y, y, i */
-#endif
+#else
  lab_call_cuu_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2325,8 +2435,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuu_d:	/* l, c, y, y, y, i */
-#endif
+#else
  lab_call_cuuu_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -2359,8 +2470,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuu_det:	/* l, c, y, y, y, i */
-#endif
+#else
  lab_call_cuuu_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2378,8 +2490,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuu_nondet:	/* l, c, y, y, y, i */
-#endif
+#else
  lab_call_cuuu_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2397,8 +2510,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuu_ot:	/* l, c, y, y, y, i */
-#endif
+#else
  lab_call_cuuu_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2416,8 +2530,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuuu_d:	/* l, c, y, y, y, y, i */
-#endif
+#else
  lab_call_cuuuu_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -2450,8 +2565,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuuu_det:	/* l, c, y, y, y, y, i */
-#endif
+#else
  lab_call_cuuuu_det:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2470,8 +2586,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuuu_nondet:	/* l, c, y, y, y, y, i */
-#endif
+#else
  lab_call_cuuuu_nondet:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2490,8 +2607,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_cuuuu_ot:	/* l, c, y, y, y, y, i */
-#endif
+#else
  lab_call_cuuuu_ot:
+#endif
 	{BPLONG_PTR ep;
 		ep = (BPLONG_PTR)*P;
 		*(LOCAL_TOP) = *(P+1);
@@ -2510,8 +2628,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_var:	/* i, zs(-1), i */
-#endif
+#else
  lab_call_var:
+#endif
 	arity = NextOperandLiteral;
 	op1 = *P++; OP_ZC_DEREF(op1);
 	if (ISSTRUCT(op1)){
@@ -2552,8 +2671,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_var0:	/* y, i */
-#endif
+#else
  lab_call_var0:
+#endif
 	op1 = NextOperandYC; DEREF(op1); P++;	/* skip MaxS for GC */
 	if (ISSTRUCT(op1)){
 		top = (BPLONG_PTR)UNTAGGED_ADDR(op1);
@@ -2582,15 +2702,17 @@ switch (*P++){
 
 #ifndef GCC
  case jmp:	/* l */
-#endif
+#else
  lab_jmp:
+#endif
 	P = (BPLONG_PTR)*P;
 	CONTCASE;
 
 #ifndef GCC
  case jmpn_eq_constant:	/* y, c, l, l */
-#endif
+#else
  lab_jmpn_eq_constant:
+#endif
 	op1 = NextOperandYC;
 	op2 = NextOperandConstant;
 	SWITCH_OP_ATM(op1, rr_jmpn_eq_constant,
@@ -2602,8 +2724,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_nil:	/* y, l, l */
-#endif
+#else
  lab_jmpn_nil:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_NIL(op1, rr_jmpn_nil,
 		{P = (BPLONG_PTR)*(P+1);CONTCASE;},
@@ -2614,8 +2737,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_eq_struct:	/* y, s, l, l */
-#endif
+#else
  lab_jmpn_eq_struct:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_jmpn_eq_struct1,
@@ -2632,8 +2756,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_eq_struct_fetch_v:	/* y, s, l, l, y */
-#endif
+#else
  lab_jmpn_eq_struct_fetch_v:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_jmpn_eq_struct_fetch_v1,
@@ -2651,8 +2776,9 @@ switch (*P++){
 
 #ifndef GCC
  case switch_cons:	/* y, l, l, l, y, y */
-#endif
+#else
  lab_switch_cons:
+#endif
 	op1 = NextOperandYC;
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1); CONTCASE;});
 	if (!ISLIST(op1)) goto rr_switch_cons_nolst;
@@ -2670,8 +2796,9 @@ switch (*P++){
 
 #ifndef GCC
  case switch_cons_car:	/* y, l, l, l, y */
-#endif
+#else
  lab_switch_cons_car:
+#endif
 	op2 = (BPLONG)NextOperandY;
 	op1 = FOLLOW(op2);
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1); CONTCASE;});
@@ -2685,8 +2812,9 @@ switch (*P++){
 
 #ifndef GCC
  case switch_cons_910:	/* y, l, l, l */
-#endif
+#else
  lab_switch_cons_910:
+#endif
 	op1 = NextOperandYC;
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1); CONTCASE;});
 	if (!ISLIST(op1)) goto rr_switch_cons_nolst;
@@ -2697,8 +2825,9 @@ switch (*P++){
 
 #ifndef GCC
  case switch_cons_vv:	/* y, l, l, l, y, y */
-#endif
+#else
  lab_switch_cons_vv:
+#endif
 	op1 = NextOperandYC;
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1); CONTCASE;});
 	if (!ISLIST(op1)) goto rr_switch_cons_nolst;
@@ -2710,8 +2839,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_eql_uu:	/* y, y, l */
-#endif
+#else
  lab_jmpn_eql_uu:
+#endif
 	op1 = YC(*P++);
 	op2 = YC(*P++);
 	SWITCH_OP_INT(op1, rr_jmpn_eql_uu1,{},
@@ -2742,8 +2872,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_eql_uc:	/* y, c, l */
-#endif
+#else
  lab_jmpn_eql_uc:
+#endif
 	op1 = YC(*P++);
 	op2 = *P++;
 	SWITCH_OP_INT(op1, rr_jmpn_eql_uc1,{},
@@ -2759,8 +2890,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_eql_uu:	/* y, y, l */
-#endif
+#else
  lab_jmp_eql_uu:
+#endif
 	op1 = *(P+2);
 	op1 = FOLLOW(op1);	/* the label */
 	#ifdef GCC
@@ -2783,8 +2915,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_eql_uu_fail:	/* y, y, l */
-#endif
+#else
  lab_jmp_eql_uu_fail:
+#endif
 	op1 = YC(*P++);
 	op2 = YC(*P++);
 	SWITCH_OP_INT(op1, rr_jmp_eql_uu_fail1,{},
@@ -2802,8 +2935,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_eql_uu_ot:	/* y, y, l */
-#endif
+#else
  lab_jmp_eql_uu_ot:
+#endif
 	op1 = YC(*P++);
 	op2 = YC(*P++);
 	SWITCH_OP_INT(op1, rr_jmp_eql_uu1,{},
@@ -2833,8 +2967,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_eql_uc:	/* y, c, l */
-#endif
+#else
  lab_jmp_eql_uc:
+#endif
 	op1 = YC(*P++);
 	op2 = *P++;
 	SWITCH_OP_INT(op1, rr_jmp_eql_uc,{},
@@ -2850,8 +2985,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_gt_uu:	/* y, y, l */
-#endif
+#else
  lab_jmpn_gt_uu:
+#endif
 	op1 = YC(*P++);
 	op2 = YC(*P++);
 	SWITCH_OP_INT(op1, rr_jmpn_gt_uu1,
@@ -2883,8 +3019,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_gt_ui:	/* y, i, l */
-#endif
+#else
  lab_jmpn_gt_ui:
+#endif
 	op1 = YC(*P++);
 	op2 = *P++;
 	SWITCH_OP_INT(op1, rr_jmpn_gt_ui,
@@ -2902,8 +3039,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_gt_iu:	/* i, y, l */
-#endif
+#else
  lab_jmpn_gt_iu:
+#endif
 	op1 = *P++;
 	op2 = YC(*P++);
 	SWITCH_OP_INT(op2, rr_jmpn_gt_iu,
@@ -2922,8 +3060,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_ge_uu:	/* y, y, l */
-#endif
+#else
  lab_jmpn_ge_uu:
+#endif
 	op1 = YC(*P++);
 	op2 = YC(*P++);
 	SWITCH_OP_INT(op1, rr_jmpn_ge_uu1,{},
@@ -2953,8 +3092,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_ge_ui:	/* y, i, l */
-#endif
+#else
  lab_jmpn_ge_ui:
+#endif
 	op1 = YC(*P++);
 	op2 = *P++;
 	SWITCH_OP_INT(op1, rr_jmpn_ge_ui,
@@ -2972,8 +3112,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_ge_iu:	/* i, y, l */
-#endif
+#else
  lab_jmpn_ge_iu:
+#endif
 	op1 = *P++;
 	op2 = YC(*P++);DEREF(op2);
 	SWITCH_OP_INT(op2, rr_jmpn_ge_iu,
@@ -2991,8 +3132,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_id_uu:	/* y, y, l */
-#endif
+#else
  lab_jmpn_id_uu:
+#endif
 	op1 = YC(*P++); DEREF(op1);
 	op2 = YC(*P++); DEREF(op2);
 	if (op1 == op2 || (ISCOMPOUND(op1) && bp_identical(op1, op2))){
@@ -3005,8 +3147,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_id_uc:	/* y, c, l */
-#endif
+#else
  lab_jmpn_id_uc:
+#endif
 	op1 = YC(*P++); DEREF(op1);
 	op2 = *P++;
 	if (op1 == op2){
@@ -3019,8 +3162,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_id_uu:	/* y, y, l */
-#endif
+#else
  lab_jmp_id_uu:
+#endif
 	op1 = YC(*P++); DEREF(op1);
 	op2 = YC(*P++); DEREF(op2);
 	if (op1 == op2 || (ISCOMPOUND(op1) && bp_identical(op1, op2))){
@@ -3033,8 +3177,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_id_uc:	/* y, c, l */
-#endif
+#else
  lab_jmp_id_uc:
+#endif
 	op1 = YC(*P++); DEREF(op1);
 	op2 = *P++;
 	if (op1 == op2){
@@ -3047,8 +3192,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_var_y:	/* y, l */
-#endif
+#else
  lab_jmpn_var_y:
+#endif
 	op1 = *(P+1);
 	op1 = FOLLOW(op1);	/* the label */
 	#ifdef GCC
@@ -3071,8 +3217,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_var_y_fail0:	/* y, l */
-#endif
+#else
  lab_jmpn_var_y_fail0:
+#endif
 	op1 = YC(*P);
 	DEREF2(op1,{P += 2;CONTCASE;});
 	if (IS_SUSP_VAR(op1)){P += 2;CONTCASE;}
@@ -3080,8 +3227,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_var_y_ot:	/* y, l */
-#endif
+#else
  lab_jmpn_var_y_ot:
+#endif
 	op1 = YC(*P);
 	DEREF2(op1,{P += 2;CONTCASE;});
 	if (IS_SUSP_VAR(op1)){P += 2;CONTCASE;}
@@ -3090,8 +3238,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_var_y:	/* y, l */
-#endif
+#else
  lab_jmp_var_y:
+#endif
 	op1 = YC(*P);
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1);CONTCASE;});
 	if (IS_SUSP_VAR(op1)) {P = (BPLONG_PTR)*(P+1);CONTCASE;}
@@ -3100,8 +3249,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_atom_y:	/* y, l */
-#endif
+#else
  lab_jmpn_atom_y:
+#endif
 	op1 = YC(*P);
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1);CONTCASE;});
 	if (ISATOM(op1)){
@@ -3113,8 +3263,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_atomic_y:	/* y, l */
-#endif
+#else
  lab_jmpn_atomic_y:
+#endif
 	op1 = *(P+1);
 	op1 = FOLLOW(op1);	/* the label */
 	#ifdef GCC
@@ -3137,8 +3288,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_atomic_y_fail0:	/* y, l */
-#endif
+#else
  lab_jmpn_atomic_y_fail0:
+#endif
 	op1 = YC(*P);
 	DEREF2(op1,{goto lab_fail0;});
 	if (TAG(op1)==ATM || (ISSTRUCT(op1) && (IS_FLOAT_PSC(op1) || IS_BIGINT_PSC(op1)))){
@@ -3149,8 +3301,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_atomic_y_ot:	/* y, l */
-#endif
+#else
  lab_jmpn_atomic_y_ot:
+#endif
 	op1 = YC(*P);
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1); CONTCASE;});
 	if (TAG(op1)==ATM || (ISSTRUCT(op1) && (IS_FLOAT_PSC(op1) || IS_BIGINT_PSC(op1)))){
@@ -3162,8 +3315,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_num_y:	/* y, l */
-#endif
+#else
  lab_jmpn_num_y:
+#endif
 	op1 = NextOperandYC;
 	DEREF(op1);
 	if (ISNUM(op1)) {
@@ -3175,8 +3329,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_float_y:	/* y, l */
-#endif
+#else
  lab_jmpn_float_y:
+#endif
 	op1 = NextOperandYC;
 	DEREF(op1);
 	if (ISFLOAT(op1)){
@@ -3188,8 +3343,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_int_y:	/* y, l */
-#endif
+#else
  lab_jmpn_int_y:
+#endif
 	op1 = YC(*P);
 	DEREF2(op1,{P = (BPLONG_PTR)*(P+1);CONTCASE;});
 	if (ISINT(op1) || IS_BIGINT(op1)) {
@@ -3201,8 +3357,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash:	/* y, i, i, l */
-#endif
+#else
  lab_hash:
+#endif
 	op1 = *P; op1 = YC(op1);
 	SWITCH_OP(op1, nhash,
 		{P = (BPLONG_PTR)*(P+3); CONTCASE;},
@@ -3219,8 +3376,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash_jmpn_constant:	/* c, l */
-#endif
+#else
  lab_hash_jmpn_constant:
+#endif
 	op2 = NextOperandLiteral;
 	if (op1==op2) {
 		P++;
@@ -3232,8 +3390,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash_branch_constant:	/* c, l, l */
-#endif
+#else
  lab_hash_branch_constant:
+#endif
 	/* c, l_neq, l_eq */
 	op2 = Operand0;
 	if (op1==op2) {
@@ -3246,8 +3405,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash_jmpn_nil:	/* l */
-#endif
+#else
  lab_hash_jmpn_nil:
+#endif
 	if (ISNIL(op1)) {
 		P++;
 		CONTCASE;
@@ -3259,8 +3419,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash_jmpn_struct:	/* s, l */
-#endif
+#else
  lab_hash_jmpn_struct:
+#endif
 	op2 = NextOperandSym;
 	if ((BPLONG)sym_ptr == op2) {	/* sreg and sym_ptr got value at hash */
 		P++;
@@ -3271,8 +3432,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash_branch_struct:	/* s, l */
-#endif
+#else
  lab_hash_branch_struct:
+#endif
 	/* s, l_neq, l_eq */
 	op2 = Operand0;
 	if ((BPLONG)sym_ptr == op2) {	/* sym_ptr got value at hash */
@@ -3285,8 +3447,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash_jmpn_list0:	/* l */
-#endif
+#else
  lab_hash_jmpn_list0:
+#endif
 	if (ISLIST(op1)) {
 		P++;
 		CONTCASE;
@@ -3297,8 +3460,9 @@ switch (*P++){
 
 #ifndef GCC
  case hash_jmpn_list:	/* l, y, y */
-#endif
+#else
  lab_hash_jmpn_list:
+#endif
 	if (ISLIST(op1)) {
 		sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);
 		op1=*(P+1);if (op1!=0) YC(op1) = FOLLOW(sreg);
@@ -3312,8 +3476,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uuuv:	/* y, y, y, y */
-#endif
+#else
  lab_para_uuuv:
+#endif
 	*LOCAL_TOP = YC(*P);
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	*(LOCAL_TOP-2) = YC(*(P+2));
@@ -3323,8 +3488,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uuv:	/* y, y, y */
-#endif
+#else
  lab_para_uuv:
+#endif
 	*LOCAL_TOP = YC(*P);
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	op1 = (BPLONG)Y(*(P+2)); *(LOCAL_TOP-2) = FOLLOW(op1) = op1;
@@ -3333,8 +3499,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uv:	/* y, y */
-#endif
+#else
  lab_para_uv:
+#endif
 	*LOCAL_TOP = YC(*P);
 	op1 = (BPLONG)Y(*(P+1)); *(LOCAL_TOP-1) = FOLLOW(op1) = op1;
 	LOCAL_TOP -= 2; P += 2;
@@ -3342,8 +3509,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uuu:	/* y, y, y */
-#endif
+#else
  lab_para_uuu:
+#endif
 	*LOCAL_TOP = YC(*P);
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	*(LOCAL_TOP-2) = YC(*(P+2));
@@ -3352,28 +3520,32 @@ switch (*P++){
 
 #ifndef GCC
  case para_uuuw:	/* y, y, y */
-#endif
+#else
  lab_para_uuuw:
+#endif
 	*LOCAL_TOP-- = NextOperandYC;
 
 #ifndef GCC
  case para_uuw:	/* y, y */
-#endif
+#else
  lab_para_uuw:
+#endif
 	*LOCAL_TOP-- = NextOperandYC;
 
 #ifndef GCC
  case para_uw:	/* y */
-#endif
+#else
  lab_para_uw:
+#endif
 	*LOCAL_TOP-- = NextOperandYC;
 	*LOCAL_TOP = (BPLONG)LOCAL_TOP; LOCAL_TOP--;
 	CONTCASE;
 
 #ifndef GCC
  case para_vv:	/* y, y */
-#endif
+#else
  lab_para_vv:
+#endif
 	op1 = (BPLONG)Y(*P); *LOCAL_TOP = FOLLOW(op1) = op1;
 	op1 = (BPLONG)Y(*(P+1)); *(LOCAL_TOP-1) = FOLLOW(op1) = op1;
 	LOCAL_TOP -= 2; P += 2;
@@ -3381,8 +3553,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_cuv:	/* c, y, y */
-#endif
+#else
  lab_para_cuv:
+#endif
 	*LOCAL_TOP = *P;
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	op1 = (BPLONG)Y(*(P+2)); *(LOCAL_TOP-2) = FOLLOW(op1) = op1;
@@ -3391,8 +3564,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_cuuv:	/* c, y, y, y */
-#endif
+#else
  lab_para_cuuv:
+#endif
 	*LOCAL_TOP = *P;
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	*(LOCAL_TOP-2) = YC(*(P+2));
@@ -3402,8 +3576,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uuuc:	/* y, y, y, c */
-#endif
+#else
  lab_para_uuuc:
+#endif
 	*LOCAL_TOP = YC(*P);
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	*(LOCAL_TOP-2) = YC(*(P+2));
@@ -3413,8 +3588,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uuc:	/* y, y, c */
-#endif
+#else
  lab_para_uuc:
+#endif
 	*LOCAL_TOP = YC(*P);
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	*(LOCAL_TOP-2) = *(P+2);
@@ -3423,8 +3599,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uu:	/* y, y */
-#endif
+#else
  lab_para_uu:
+#endif
 	*LOCAL_TOP = YC(*P);
 	*(LOCAL_TOP-1) = YC(*(P+1));
 	LOCAL_TOP -= 2; P += 2;
@@ -3432,8 +3609,9 @@ switch (*P++){
 
 #ifndef GCC
  case para_uc:	/* y, c */
-#endif
+#else
  lab_para_uc:
+#endif
 	*LOCAL_TOP = YC(*P);
 	*(LOCAL_TOP-1) = *(P+1);
 	LOCAL_TOP -= 2; P += 2;
@@ -3441,44 +3619,50 @@ switch (*P++){
 
 #ifndef GCC
  case para_u:	/* y */
-#endif
+#else
  lab_para_u:
+#endif
 	*LOCAL_TOP-- = NextOperandYC;
 	CONTCASE;
 
 #ifndef GCC
  case para_v:	/* y */
-#endif
+#else
  lab_para_v:
+#endif
 	op1 = (BPLONG)NextOperandY; *LOCAL_TOP-- = FOLLOW(op1) = op1;
 	CONTCASE;
 
 
 #ifndef GCC
  case para_w:	/* E */
-#endif
+#else
  lab_para_w:
+#endif
 	*LOCAL_TOP = (BPLONG)LOCAL_TOP; LOCAL_TOP--;
 	CONTCASE;
 
 #ifndef GCC
  case para_c:	/* c */
-#endif
+#else
  lab_para_c:
+#endif
 	*LOCAL_TOP-- = *P++;
 	CONTCASE;
 
 #ifndef GCC
  case para_nil:	/* E */
-#endif
+#else
  lab_para_nil:
+#endif
 	*LOCAL_TOP-- = nil_sym;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_4v:	/* y, y, y, y */
-#endif
+#else
  lab_fetch_4v:
+#endif
 	YC(*P) = FOLLOW(sreg);
 	YC(*(P+1)) = FOLLOW(sreg+1);
 	YC(*(P+2)) = FOLLOW(sreg+2);
@@ -3488,8 +3672,9 @@ switch (*P++){
 
 #ifndef GCC
  case fetch_3v:	/* y, y, y */
-#endif
+#else
  lab_fetch_3v:
+#endif
 	YC(*P) = FOLLOW(sreg);
 	YC(*(P+1)) = FOLLOW(sreg+1);
 	YC(*(P+2)) = FOLLOW(sreg+2);
@@ -3499,8 +3684,9 @@ switch (*P++){
 
 #ifndef GCC
  case fetch_2v:	/* y, y */
-#endif
+#else
  lab_fetch_2v:
+#endif
 	YC(*P) = FOLLOW(sreg);
 	YC(*(P+1)) = FOLLOW(sreg+1);
 	P += 2; sreg += 2;
@@ -3508,88 +3694,100 @@ switch (*P++){
 
 #ifndef GCC
  case fetch_v:	/* y */
-#endif
+#else
  lab_fetch_v:
+#endif
 	YC(*P++) = FOLLOW(sreg++);
 	CONTCASE;
 
 #ifndef GCC
  case fetch_vw:	/* y */
-#endif
+#else
  lab_fetch_vw:
+#endif
 	YC(*P++) = FOLLOW(sreg); sreg += 2;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_wv:	/* y */
-#endif
+#else
  lab_fetch_wv:
+#endif
 	YC(*P++) = FOLLOW(sreg+1); sreg += 2;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_w:	/* E */
-#endif
+#else
  lab_fetch_w:
+#endif
 	sreg++;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_2w:	/* E */
-#endif
+#else
  lab_fetch_2w:
+#endif
 	sreg += 2;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_3w:	/* E */
-#endif
+#else
  lab_fetch_3w:
+#endif
 	sreg += 3;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_4w:	/* E */
-#endif
+#else
  lab_fetch_4w:
+#endif
 	sreg += 4;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_ws:	/* i */
-#endif
+#else
  lab_fetch_ws:
+#endif
 	sreg += NextOperandLiteral;
 	CONTCASE;
 
 #ifndef GCC
  case fetch_910:	/* E */
-#endif
+#else
  lab_fetch_910:
+#endif
 	YC(-9) = FOLLOW(sreg++);
 	YC(-10) = FOLLOW(sreg++);
 	CONTCASE;
 
 #ifndef GCC
  case fetch_45:	/* E */
-#endif
+#else
  lab_fetch_45:
+#endif
 	YC(-4) = FOLLOW(sreg++);
 	YC(-5) = FOLLOW(sreg++);
 	CONTCASE;
 
 #ifndef GCC
  case unify_constant:	/* y, c */
-#endif
+#else
  lab_unify_constant:
+#endif
 	op1 = NextOperandYC;
 	op2 = NextOperandLiteral;
 	UNIFY_CONSTANT_12(op1, op2, rr_unify_constant,{PUSHTRAIL(op1);},{},{BACKTRACK;});
 
 #ifndef GCC
  case fork_unify_constant:	/* l, y, c */
-#endif
+#else
  lab_fork_unify_constant:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -3599,16 +3797,18 @@ switch (*P++){
 
 #ifndef GCC
  case unify_nil:	/* y */
-#endif
+#else
  lab_unify_nil:
+#endif
 	op1 = NextOperandYC;
 	UNIFY_NIL_Y(op1, rr_unify_nil_y,{PUSHTRAIL(op1);},{},{BACKTRACK;});
 
 
 #ifndef GCC
  case fork_unify_nil:	/* l, y */
-#endif
+#else
  lab_fork_unify_nil:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -3617,8 +3817,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct:	/* y, s */
-#endif
+#else
  lab_unify_struct:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_unify_struct,
@@ -3640,8 +3841,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_struct:	/* l, y, s */
-#endif
+#else
  lab_fork_unify_struct:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -3669,8 +3871,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_cut:	/* y, s */
-#endif
+#else
  lab_unify_struct_cut:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 
@@ -3698,8 +3901,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_arg_uv0:	/* y, s, y, y */
-#endif
+#else
  lab_unify_struct_arg_uv0:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_unify_struct_arg_uv0,
@@ -3730,8 +3934,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_arg_2v0:	/* y, s, y, y */
-#endif
+#else
  lab_unify_struct_arg_2v0:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_unify_struct_arg_2v0,
@@ -3759,8 +3964,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_arg_v0:	/* y, s, y */
-#endif
+#else
  lab_unify_struct_arg_v0:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_unify_struct_arg_v0,
@@ -3785,8 +3991,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_arg_2u:	/* y, s, y, y */
-#endif
+#else
  lab_unify_struct_arg_2u:
+#endif
 	/* Y A2 A1: notice arguments in reversed order */
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
@@ -3813,8 +4020,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_arg_u:	/* y, s, y */
-#endif
+#else
  lab_unify_struct_arg_u:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_unify_struct_arg_u,
@@ -3837,8 +4045,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_arg_c:	/* y, s, c */
-#endif
+#else
  lab_unify_struct_arg_c:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_unify_struct_arg_c,
@@ -3862,8 +4071,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_struct_arg_wc:	/* y, s, c */
-#endif
+#else
  lab_unify_struct_arg_wc:
+#endif
 	op1 = NextOperandYC;
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	SWITCH_OP_STRUCT(op1, rr_unify_struct_arg_wc,
@@ -3890,8 +4100,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_c:	/* c */
-#endif
+#else
  lab_unify_arg_c:
+#endif
 	if (sreg==NULL){	/* write mode */
 		FOLLOW(H++) = *P++;
 		CONTCASE;
@@ -3910,8 +4121,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_u:	/* y */
-#endif
+#else
  lab_unify_arg_u:
+#endif
 	if (sreg==NULL){	/* build mode */
 	rr_unify_arg_u_write:
 		op1 = YC(*P++);  BUILD_ARG_U_VALUE(op1, r_unify_arg_u); H++;
@@ -3931,8 +4143,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_read_u:	/* y */
-#endif
+#else
  lab_unify_arg_read_u:
+#endif
 	op1 = FOLLOW(sreg++);
 	op2 = YC(*P++);
 	SWITCH_OP(op1, rrr_unify_arg_read_u,
@@ -3946,8 +4159,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_v:	/* y */
-#endif
+#else
  lab_unify_arg_v:
+#endif
 	if (sreg==NULL){	/* build mode */
 		op1 = *P++; BUILD_ARG_V(op1); H++;
 		CONTCASE;
@@ -3959,8 +4173,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_v0:	/* y */
-#endif
+#else
  lab_unify_arg_v0:
+#endif
 	if (sreg==NULL){	/* build mode */
 		BUILD_V0;
 		CONTCASE;
@@ -3972,8 +4187,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_w:	/* E */
-#endif
+#else
  lab_unify_arg_w:
+#endif
 	if (sreg==NULL){	/* build mode */
 		FOLLOW(H) = (BPLONG)H; H++;
 		CONTCASE;
@@ -3985,8 +4201,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_struct:	/* s */
-#endif
+#else
  lab_unify_arg_struct:
+#endif
 	sym_ptr = (SYM_REC_PTR)NextOperandSym;
 	if (sreg==NULL){
 		H++;
@@ -4015,8 +4232,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_list:	/* i, zs(-1)+1 */
-#endif
+#else
  lab_unify_arg_list:
+#endif
 	if (sreg==NULL){
 		goto lab_build_arg_list;
 	} else {
@@ -4027,8 +4245,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_2c:	/* c, c */
-#endif
+#else
  lab_unify_arg_2c:
+#endif
 	if (sreg==NULL){	/* write mode */
 		FOLLOW(H++) = *P++;
 		FOLLOW(H++) = *P++;
@@ -4045,8 +4264,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_3c:	/* c, c, c */
-#endif
+#else
  lab_unify_arg_3c:
+#endif
 	if (sreg==NULL){	/* write mode */
 		FOLLOW(H++) = *P++;
 		FOLLOW(H++) = *P++;
@@ -4068,8 +4288,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_v0u:	/* y, y */
-#endif
+#else
  lab_unify_arg_v0u:
+#endif
 	if (sreg==NULL){	/* build mode */
 		BUILD_V0;
 		BUILD_U(r_unify_arg_vu);
@@ -4082,8 +4303,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_v0c:	/* y, c */
-#endif
+#else
  lab_unify_arg_v0c:
+#endif
 	if (sreg==NULL){	/* write mode */
 		BUILD_V0;
 		FOLLOW(H++) = *P++;
@@ -4096,8 +4318,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_uv0:	/* y, y */
-#endif
+#else
  lab_unify_arg_uv0:
+#endif
 	if (sreg==NULL){	/* build mode */
 		BUILD_U(r_unify_arg_uv0);
 		BUILD_V0;
@@ -4111,8 +4334,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_v0w:	/* y */
-#endif
+#else
  lab_unify_arg_v0w:
+#endif
 	if (sreg==NULL){	/* build mode */
 		BUILD_V0;
 		BUILD_W;
@@ -4125,8 +4349,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_wc:	/* c */
-#endif
+#else
  lab_unify_arg_wc:
+#endif
 	if (sreg==NULL){	/* write mode */
 		BUILD_W;
 		FOLLOW(H++) = *P++;
@@ -4139,8 +4364,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_2v0:	/* y, y */
-#endif
+#else
  lab_unify_arg_2v0:
+#endif
 	if (sreg==NULL){	/* build mode */
 		BUILD_V0;
 		BUILD_V0;
@@ -4154,8 +4380,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_3v0:	/* y, y, y */
-#endif
+#else
  lab_unify_arg_3v0:
+#endif
 	if (sreg==NULL){	/* build mode */
 		BUILD_V0;
 		BUILD_V0;
@@ -4171,8 +4398,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_4v0:	/* y, y, y, y */
-#endif
+#else
  lab_unify_arg_4v0:
+#endif
 	if (sreg==NULL){	/* build mode */
 		BUILD_V0;
 		BUILD_V0;
@@ -4190,8 +4418,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_3u:	/* y, y, y */
-#endif
+#else
  lab_unify_arg_3u:
+#endif
 	/* A3 A2 A1: notice arguments in reversed order */
 	if (sreg==NULL){	/* build mode */
 		op1 = YC(*(P+2));  BUILD_ARG_U_VALUE(op1, r_unify_arg_3u); H++;
@@ -4206,8 +4435,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_2u:	/* y, y */
-#endif
+#else
  lab_unify_arg_2u:
+#endif
 	/* A2 A1: notice arguments in reversed order */
 	if (sreg==NULL){	/* build mode */
 	rr_unify_arg_2u_write:
@@ -4222,8 +4452,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_2w:	/* E */
-#endif
+#else
  lab_unify_arg_2w:
+#endif
 	if (sreg==NULL){	/* build mode */
 		FOLLOW(H) = (BPLONG)H; H++;
 		FOLLOW(H) = (BPLONG)H; H++;
@@ -4236,8 +4467,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_3w:	/* E */
-#endif
+#else
  lab_unify_arg_3w:
+#endif
 	if (sreg==NULL){	/* build mode */
 		FOLLOW(H) = (BPLONG)H; H++;
 		FOLLOW(H) = (BPLONG)H; H++;
@@ -4250,8 +4482,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_4w:	/* E */
-#endif
+#else
  lab_unify_arg_4w:
+#endif
 	if (sreg==NULL){	/* build mode */
 		FOLLOW(H) = (BPLONG)H; H++;
 		FOLLOW(H) = (BPLONG)H; H++;
@@ -4265,8 +4498,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_arg_5w:	/* E */
-#endif
+#else
  lab_unify_arg_5w:
+#endif
 	if (sreg==NULL){	/* build mode */
 		FOLLOW(H) = (BPLONG)H; H++;
 		FOLLOW(H) = (BPLONG)H; H++;
@@ -4281,24 +4515,27 @@ switch (*P++){
 
 #ifndef GCC
  case build_arg_c:	/* c */
-#endif
+#else
  lab_build_arg_c:
+#endif
 	FOLLOW(H++) = *P++;
 	CONTCASE;
 
 
 #ifndef GCC
  case build_arg_v:	/* y */
-#endif
+#else
  lab_build_arg_v:
+#endif
 	op1 = *P++; BUILD_ARG_V(op1); H++;
 	CONTCASE;
 
 
 #ifndef GCC
  case build_arg_struct:	/* s */
-#endif
+#else
  lab_build_arg_struct:
+#endif
 	H++;
 	*(H-1) = ADDTAG(H, STR);
 	*H++ = NextOperandSym;
@@ -4306,8 +4543,9 @@ switch (*P++){
 
 #ifndef GCC
  case build_arg_list:	/* i, zs(-1)+1 */
-#endif
+#else
  lab_build_arg_list:
+#endif
 	H++;
 	*(H-1) = ADDTAG(H, LST);
 	goto rr_build_list;
@@ -4315,16 +4553,18 @@ switch (*P++){
 
 #ifndef GCC
  case build_arg_2c:	/* c, c */
-#endif
+#else
  lab_build_arg_2c:
+#endif
 	FOLLOW(H++) = *P++;
 	FOLLOW(H++) = *P++;
 	CONTCASE;
 
 #ifndef GCC
  case build_arg_3c:	/* c, c, c */
-#endif
+#else
  lab_build_arg_3c:
+#endif
 	FOLLOW(H++) = *P++;
 	FOLLOW(H++) = *P++;
 	FOLLOW(H++) = *P++;
@@ -4332,133 +4572,152 @@ switch (*P++){
 
 #ifndef GCC
  case build_arg_v0u:	/* y, y */
-#endif
+#else
  lab_build_arg_v0u:
+#endif
 	BUILD_V0;
 	BUILD_U(r_build_arg_vu);
 	CONTCASE;
 
 #ifndef GCC
  case build_arg_v0c:	/* y, c */
-#endif
+#else
  lab_build_arg_v0c:
+#endif
 	BUILD_V0;
 	FOLLOW(H++) = *P++;
 	CONTCASE;
 
 #ifndef GCC
  case build_arg_uv0:	/* y, y */
-#endif
+#else
  lab_build_arg_uv0:
+#endif
 	BUILD_U(r_build_arg_uv0);
 	BUILD_V0;
 	CONTCASE;
 
 #ifndef GCC
  case build_arg_v0w:	/* y */
-#endif
+#else
  lab_build_arg_v0w:
+#endif
 	BUILD_V0;
 	BUILD_W;
 	CONTCASE;
 
 #ifndef GCC
  case build_arg_wc:	/* c */
-#endif
+#else
  lab_build_arg_wc:
+#endif
 	BUILD_W;
 	FOLLOW(H++) = *P++;
 	CONTCASE;
 
 #ifndef GCC
  case build_arg_4v0:	/* y, y, y, y */
-#endif
+#else
  lab_build_arg_4v0:
+#endif
 	BUILD_V0;
 
 #ifndef GCC
  case build_arg_3v0:	/* y, y, y */
-#endif
+#else
  lab_build_arg_3v0:
+#endif
 	BUILD_V0;
 
 #ifndef GCC
  case build_arg_2v0:	/* y, y */
-#endif
+#else
  lab_build_arg_2v0:
+#endif
 	BUILD_V0;
 
 #ifndef GCC
  case build_arg_v0:	/* y */
-#endif
+#else
  lab_build_arg_v0:
+#endif
 	BUILD_V0;
 	CONTCASE;
 
 
 #ifndef GCC
  case build_arg_5w:	/* E */
-#endif
+#else
  lab_build_arg_5w:
+#endif
 	FOLLOW(H) = (BPLONG)H; H++;
 
 
 #ifndef GCC
  case build_arg_4w:	/* E */
-#endif
+#else
  lab_build_arg_4w:
+#endif
 	FOLLOW(H) = (BPLONG)H; H++;
 
 
 #ifndef GCC
  case build_arg_3w:	/* E */
-#endif
+#else
  lab_build_arg_3w:
+#endif
 	FOLLOW(H) = (BPLONG)H; H++;
 
 #ifndef GCC
  case build_arg_2w:	/* E */
-#endif
+#else
  lab_build_arg_2w:
+#endif
 	FOLLOW(H) = (BPLONG)H; H++;
 
 #ifndef GCC
  case build_arg_w:	/* E */
-#endif
+#else
  lab_build_arg_w:
+#endif
 	FOLLOW(H) = (BPLONG)H; H++;
 	CONTCASE;
 
 
 #ifndef GCC
  case build_arg_4u:	/* y, y, y, y */
-#endif
+#else
  lab_build_arg_4u:
+#endif
 	op1 = YC(*P++);  BUILD_ARG_U_VALUE(op1, r_build_arg_4u); H++;
 
 #ifndef GCC
  case build_arg_3u:	/* y, y, y */
-#endif
+#else
  lab_build_arg_3u:
+#endif
 	op1 = YC(*P++);  BUILD_ARG_U_VALUE(op1, r_build_arg_3u); H++;
 
 #ifndef GCC
  case build_arg_2u:	/* y, y */
-#endif
+#else
  lab_build_arg_2u:
+#endif
 	op1 = YC(*P++);  BUILD_ARG_U_VALUE(op1, r_build_arg_2u); H++;
 
 #ifndef GCC
  case build_arg_u:	/* y */
-#endif
+#else
  lab_build_arg_u:
+#endif
 	op1 = YC(*P++);  BUILD_ARG_U_VALUE(op1, r_build_arg_u); H++;
 	CONTCASE;
 
 #ifndef GCC
  case unify_list:	/* y, i, zs(-1)+1 */
-#endif
+#else
  lab_unify_list:
+#endif
 	op1 = NextOperandYC;
 	arity = NextOperandLiteral;
 
@@ -4485,8 +4744,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_comp_list:	/* y, i, zs(-1) */
-#endif
+#else
  lab_unify_comp_list:
+#endif
 	op1 = NextOperandYC;
 	arity = NextOperandLiteral;
 
@@ -4513,8 +4773,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons:	/* y, z, z */
-#endif
+#else
  lab_unify_cons:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons,
 		{rr_unify_cons_var:
@@ -4540,15 +4801,17 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_cons_w:	/* y */
-#endif
+#else
  lab_cut_unify_cons_w:
+#endif
 	CUT0;
 
 
 #ifndef GCC
  case unify_cons_w:	/* y */
-#endif
+#else
  lab_unify_cons_w:
+#endif
 	op3 = (BPLONG)NextOperandY;
 	op1 = FOLLOW(op3);
 	SWITCH_OP_LST(op1, rr_unify_cons_w,
@@ -4570,8 +4833,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_u:	/* y, y */
-#endif
+#else
  lab_unify_cons_u:
+#endif
 	op3 = (BPLONG)NextOperandY;
 	op1 = FOLLOW(op3);
 	SWITCH_OP_LST(op1, rr_unify_cons_u,
@@ -4597,8 +4861,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_v0:	/* y, y */
-#endif
+#else
  lab_unify_cons_v0:
+#endif
 	op3 = (BPLONG)NextOperandY;
 	op1 = FOLLOW(op3);
 	SWITCH_OP_LST(op1, rr_unify_cons_v0,
@@ -4621,14 +4886,16 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_cons_uu:	/* y, y, y */
-#endif
+#else
  lab_cut_unify_cons_uu:
+#endif
 	CUT0;
 
 #ifndef GCC
  case unify_cons_uu:	/* y, y, y */
-#endif
+#else
  lab_unify_cons_uu:
+#endif
 	/* unify_cons_uu y y1 y2
 		always followed by unify_arg_u y2 */
 	op1 = NextOperandYC;
@@ -4660,14 +4927,16 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_cons_uv:	/* y, y, y */
-#endif
+#else
  lab_cut_unify_cons_uv:
+#endif
 	CUT0;
 
 #ifndef GCC
  case unify_cons_uv0:	/* y, y, y */
-#endif
+#else
  lab_unify_cons_uv0:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_uv0,
 		{rr_unify_cons_uv0_var:
@@ -4694,8 +4963,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_uw:	/* y, y */
-#endif
+#else
  lab_unify_cons_uw:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_uw,
 		{rr_unify_cons_uw_var:
@@ -4721,8 +4991,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_uc:	/* y, y, c */
-#endif
+#else
  lab_unify_cons_uc:
+#endif
 	/* followed by unify_arg_c */
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_uc,
@@ -4751,14 +5022,16 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_cons_vv:	/* y, y, y */
-#endif
+#else
  lab_cut_unify_cons_vv:
+#endif
 	CUT0;
 
 #ifndef GCC
  case unify_cons_v0v0:	/* y, y, y */
-#endif
+#else
  lab_unify_cons_v0v0:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_v0v0,
 		{rr_unify_cons_v0v0_var:
@@ -4786,14 +5059,16 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_cons_vu:	/* y, y, y */
-#endif
+#else
  lab_cut_unify_cons_vu:
+#endif
 	CUT0;
 
 #ifndef GCC
  case unify_cons_v0u:	/* y, y, y */
-#endif
+#else
  lab_unify_cons_v0u:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_v0u,
 		{rr_unify_cons_v0u_var:
@@ -4820,8 +5095,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_v0w:	/* y, y */
-#endif
+#else
  lab_unify_cons_v0w:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_v0w,
 		{rr_unify_cons_v0w_var:
@@ -4845,14 +5121,16 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_cons_vc:	/* y, y, c */
-#endif
+#else
  lab_cut_unify_cons_vc:
+#endif
 	CUT0;
 
 #ifndef GCC
  case unify_cons_v0c:	/* y, y, c */
-#endif
+#else
  lab_unify_cons_v0c:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_v0c,
 		{rr_unify_cons_v0c_var:
@@ -4879,8 +5157,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_wv0:	/* y, y */
-#endif
+#else
  lab_unify_cons_wv0:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_wv0,
 		{rr_unify_cons_wv0_var:
@@ -4904,8 +5183,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_cu:	/* y, c, y */
-#endif
+#else
  lab_unify_cons_cu:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_cu,
 		{rr_unify_cons_cu_var:
@@ -4934,14 +5214,16 @@ switch (*P++){
 
 #ifndef GCC
  case cut_unify_cons_cv:	/* y, c, y */
-#endif
+#else
  lab_cut_unify_cons_cv:
+#endif
 	CUT0;
 
 #ifndef GCC
  case unify_cons_cv0:	/* y, c, y */
-#endif
+#else
  lab_unify_cons_cv0:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_cv0,
 		{rr_unify_cons_cv0_var:
@@ -4968,8 +5250,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_cc:	/* y, c, c */
-#endif
+#else
  lab_unify_cons_cc:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_cc,
 		{rr_unify_cons_cc_var:
@@ -4998,8 +5281,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons_ww:	/* y */
-#endif
+#else
  lab_unify_cons_ww:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons_ww,
 		{rr_unify_cons_ww_var:
@@ -5021,8 +5305,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_cons0_v910:	/* y */
-#endif
+#else
  lab_unify_cons0_v910:
+#endif
 	op1 = NextOperandYC;
 	SWITCH_OP_LST(op1, rr_unify_cons0_v910,
 		{rr_unify_cons0_v910_var:
@@ -5047,8 +5332,9 @@ switch (*P++){
 
 #ifndef GCC
  case conc:	/* y, y, l */
-#endif
+#else
  lab_conc:
+#endif
 	/*
 		Do special case of append fast. This instruction is followed by:
 		label(lab0)
@@ -5090,8 +5376,9 @@ switch (*P++){
 
 #ifndef GCC
  case leng:	/* y, y, l */
-#endif
+#else
  lab_leng:
+#endif
 	/* compute the length of a list. Followed by
 		switch_cons(Y1, LabNil, LabVar, LabFail, 0, Y1),
 		add1(Y2),
@@ -5122,8 +5409,9 @@ switch (*P++){
 
 #ifndef GCC
  case memb_le:	/* l */
-#endif
+#else
  lab_memb_le:
+#endif
 	/* check member. Followed by
 		switch_cons(2, LabNil, LabVar, LabFail,-9,-10),
 		bp_fork(LabAlt),
@@ -5155,8 +5443,9 @@ switch (*P++){
 
 #ifndef GCC
  case memb_el:	/* l */
-#endif
+#else
  lab_memb_el:
+#endif
 	/* check member. Followed by
 		switch_cons(1, LabNil, LabVar, LabFail,-9,-10),
 		bp_fork(LabAlt),
@@ -5187,8 +5476,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons:	/* l, y, z, z */
-#endif
+#else
  lab_fork_unify_cons:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5216,8 +5506,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_uu:	/* l, y, y, y */
-#endif
+#else
  lab_fork_unify_cons_uu:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5232,8 +5523,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_uv:	/* l, y, y, y */
-#endif
+#else
  lab_fork_unify_cons_uv:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5248,8 +5540,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_uc:	/* l, y, y, c */
-#endif
+#else
  lab_fork_unify_cons_uc:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5264,8 +5557,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_uw:	/* l, y, y */
-#endif
+#else
  lab_fork_unify_cons_uw:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5280,8 +5574,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_vu:	/* l, y, y, y */
-#endif
+#else
  lab_fork_unify_cons_vu:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5296,8 +5591,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_vv:	/* l, y, y, y */
-#endif
+#else
  lab_fork_unify_cons_vv:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5312,8 +5608,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_vw:	/* l, y, y */
-#endif
+#else
  lab_fork_unify_cons_vw:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5328,8 +5625,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_vc:	/* l, y, y, c */
-#endif
+#else
  lab_fork_unify_cons_vc:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5344,8 +5642,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_cc:	/* l, y, c, c */
-#endif
+#else
  lab_fork_unify_cons_cc:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5360,8 +5659,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_cons_v910:	/* l, y */
-#endif
+#else
  lab_fork_unify_cons_v910:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5376,8 +5676,9 @@ switch (*P++){
 
 #ifndef GCC
  case unify_value:	/* y, y */
-#endif
+#else
  lab_unify_value:
+#endif
 	op1 = NextOperandYC;
 	op2 = NextOperandYC;
 	SWITCH_OP(op1, unify_d_d,
@@ -5517,8 +5818,9 @@ switch (*P++){
 
 #ifndef GCC
  case fork_unify_value:	/* l, y, y */
-#endif
+#else
  lab_fork_unify_value:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = NextOperandAddr;
 		op1 = NextOperandYC;
@@ -5533,8 +5835,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_constant:	/* y, c */
-#endif
+#else
  lab_move_constant:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	op2 = NextOperandConstant;
 	FOLLOW(op1) = op2;
@@ -5543,8 +5846,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_struct:	/* y, s */
-#endif
+#else
  lab_move_struct:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	PUSHTRAIL_s(op1);
 	FOLLOW(op1) = ADDTAG(H, STR);
@@ -5553,16 +5857,18 @@ switch (*P++){
 
 #ifndef GCC
  case move_struct0:	/* y, s */
-#endif
+#else
  lab_move_struct0:
+#endif
 	YC(*P++) = ADDTAG(H, STR);
 	FOLLOW(H++) = NextOperandSym;
 	CONTCASE;
 
 #ifndef GCC
  case move_list:	/* y, i, zs(-1)+1 */
-#endif
+#else
  lab_move_list:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	PUSHTRAIL_s(op1);
 	FOLLOW(op1) = ADDTAG(H, LST);
@@ -5573,8 +5879,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_comp_list:	/* y, i, zs(-1) */
-#endif
+#else
  lab_move_comp_list:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	arity  = NextOperandLiteral;
 	PUSHTRAIL_s(op1);
@@ -5584,8 +5891,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_comp_list1:	/* y, z */
-#endif
+#else
  lab_move_comp_list1:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	PUSHTRAIL_s(op1);
 	FOLLOW(op1) = ADDTAG(H, LST);
@@ -5595,8 +5903,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_cons:	/* y, z, z */
-#endif
+#else
  lab_move_cons:
+#endif
 	{BPLONG tmp_op;
 		sreg = H;
 		tmp_op = (BPLONG)NextOperandY;
@@ -5609,8 +5918,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_cons0_uv:	/* y, y, y */
-#endif
+#else
  lab_move_cons0_uv:
+#endif
 	{BPLONG tmp_op;
 		tmp_op = (BPLONG)NextOperandY;
 		sreg = H;
@@ -5622,8 +5932,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_cons0_uu:	/* y, y, y */
-#endif
+#else
  lab_move_cons0_uu:
+#endif
 	{BPLONG tmp_op;
 		sreg = H;
 		tmp_op = (BPLONG)NextOperandY;
@@ -5635,16 +5946,18 @@ switch (*P++){
 
 #ifndef GCC
  case move_var:	/* y */
-#endif
+#else
  lab_move_var:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	FOLLOW(op1) = op1;
 	CONTCASE;
 
 #ifndef GCC
  case move_value:	/* y, y */
-#endif
+#else
  lab_move_value:
+#endif
 	op1 = (BPLONG)NextOperandY;
 	op2 = NextOperandYC;
 	SWITCH_OP_STACK_VAR(op2, rr_move_value,
@@ -5658,8 +5971,9 @@ switch (*P++){
 
 #ifndef GCC
  case and:	/* z, z, y */
-#endif
+#else
  lab_and:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;
@@ -5685,8 +5999,9 @@ switch (*P++){
 
 #ifndef GCC
  case or:	/* z, z, y */
-#endif
+#else
  lab_or:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;
@@ -5713,8 +6028,9 @@ switch (*P++){
 
 #ifndef GCC
  case lshiftl:	/* z, z, y */
-#endif
+#else
  lab_lshiftl:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;	/* borrow sreg */
@@ -5738,8 +6054,9 @@ switch (*P++){
 
 #ifndef GCC
  case lshiftr:	/* z, z, y */
-#endif
+#else
  lab_lshiftr:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;	/* borrow sreg */
@@ -5763,8 +6080,9 @@ switch (*P++){
 
 #ifndef GCC
  case complement:	/* z, y */
-#endif
+#else
  lab_complement:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	sreg = NextOperandY;
 	if (ISINT(op1)) {
@@ -5789,8 +6107,9 @@ switch (*P++){
 
 #ifndef GCC
  case add_uuv:	/* y, y, y */
-#endif
+#else
  lab_add_uuv:
+#endif
 	op1 = YC(*P++);
 	op2 = YC(*P++);
 	sreg = NextOperandY;	/* borrow sreg */
@@ -5823,8 +6142,9 @@ switch (*P++){
 
 #ifndef GCC
  case add_uiv:	/* y, i, y */
-#endif
+#else
  lab_add_uiv:
+#endif
 	op1 = YC(*P++);
 	op2 = *P++;
 	sreg = NextOperandY;
@@ -5844,8 +6164,9 @@ switch (*P++){
 
 #ifndef GCC
  case add_u1v:	/* y, y */
-#endif
+#else
  lab_add_u1v:
+#endif
 	op1 = YC(*P++);
 	sreg = NextOperandY;
 	SWITCH_OP_INT(op1, rr_add_u1v,{},
@@ -5865,8 +6186,9 @@ switch (*P++){
 
 #ifndef GCC
  case add1:	/* y */
-#endif
+#else
  lab_add1:
+#endif
 	sreg = Y(*P++);
 	op1 = FOLLOW(sreg);
 	SWITCH_OP_INT(op1, rr_add1,{},
@@ -5885,8 +6207,9 @@ switch (*P++){
 
 #ifndef GCC
  case sub_uuv:	/* y, y, y */
-#endif
+#else
  lab_sub_uuv:
+#endif
 	op1 = YC(*P++);
 	op2 = YC(*P++);
 	sreg = NextOperandY;
@@ -5917,8 +6240,9 @@ switch (*P++){
 
 #ifndef GCC
  case sub_uiv:	/* y, i, y */
-#endif
+#else
  lab_sub_uiv:
+#endif
 	op1 = YC(*P++);
 	op2 = *P++;
 	sreg = NextOperandY;
@@ -5938,8 +6262,9 @@ switch (*P++){
 
 #ifndef GCC
  case sub_u1v:	/* y, y */
-#endif
+#else
  lab_sub_u1v:
+#endif
 	op1 = YC(*P++);
 	sreg = NextOperandY;
 	SWITCH_OP_INT(op1, rr_sub_u1v,
@@ -5960,8 +6285,9 @@ switch (*P++){
 
 #ifndef GCC
  case sub1:	/* y */
-#endif
+#else
  lab_sub1:
+#endif
 	sreg = NextOperandY;
 	op1 = FOLLOW(sreg);
 	SWITCH_OP_INT(op1, rr_sub1,
@@ -5981,8 +6307,9 @@ switch (*P++){
 
 #ifndef GCC
  case sub_iuv:	/* i, y, y */
-#endif
+#else
  lab_sub_iuv:
+#endif
 	op1 = *P++;
 	op2 = YC(*P++);
 	sreg = NextOperandY;
@@ -6003,8 +6330,9 @@ switch (*P++){
 
 #ifndef GCC
  case mul:	/* z, z, y */
-#endif
+#else
  lab_mul:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;
@@ -6044,8 +6372,9 @@ switch (*P++){
 
 #ifndef GCC
  case mul_iuv:	/* i, y, y */
-#endif
+#else
  lab_mul_iuv:
+#endif
 	op1 = *P++;
 	op2 = YC(*P++);DEREF(op2);
 	sreg = NextOperandY;
@@ -6077,8 +6406,9 @@ switch (*P++){
 
 #ifndef GCC
  case mul_uuv:	/* y, y, y */
-#endif
+#else
  lab_mul_uuv:
+#endif
 	op1 = YC(*P++);DEREF(op1);
 	op2 = YC(*P++);DEREF(op2);
 	sreg = NextOperandY;
@@ -6086,8 +6416,9 @@ switch (*P++){
 
 #ifndef GCC
  case div:	/* z, z, y */
-#endif
+#else
  lab_div:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;
@@ -6112,8 +6443,9 @@ switch (*P++){
 
 #ifndef GCC
  case idiv:	/* z, z, y */
-#endif
+#else
  lab_idiv:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;
@@ -6137,8 +6469,9 @@ switch (*P++){
 
 #ifndef GCC
  case idiv_uiv:	/* y, i, y */
-#endif
+#else
  lab_idiv_uiv:
+#endif
 	op1 = YC(*P++); DEREF(op1);
 	op2 = *P++;
 	sreg = NextOperandY;
@@ -6152,8 +6485,9 @@ switch (*P++){
 
 #ifndef GCC
  case idiv_uuv:	/* y, y, y */
-#endif
+#else
  lab_idiv_uuv:
+#endif
 	op1 = YC(*P++); DEREF(op1);
 	op2 = YC(*P++); DEREF(op2);
 	sreg = NextOperandY;
@@ -6170,8 +6504,9 @@ switch (*P++){
 
 #ifndef GCC
  case divge:	/* z, z, y */
-#endif
+#else
  lab_divge:
+#endif
 	{BPLONG tmp_op;
 		op1 = *P++;OP_NOVY_DEREF(op1);
 		op2 = *P++;OP_NOVY_DEREF(op2);
@@ -6198,8 +6533,9 @@ switch (*P++){
 
 #ifndef GCC
  case divle:	/* z, z, y */
-#endif
+#else
  lab_divle:
+#endif
 	{BPLONG tmp_op;
 		op1 = *P++;OP_NOVY_DEREF(op1);
 		op2 = *P++;OP_NOVY_DEREF(op2);
@@ -6226,8 +6562,9 @@ switch (*P++){
 
 #ifndef GCC
  case mod:	/* z, z, y */
-#endif
+#else
  lab_mod:
+#endif
 	op1 = *P++;OP_NOVY_DEREF(op1);
 	op2 = *P++;OP_NOVY_DEREF(op2);
 	sreg = NextOperandY;
@@ -6270,8 +6607,9 @@ switch (*P++){
 
 #ifndef GCC
  case arg:	/* y, y, y */
-#endif
+#else
  lab_arg:
+#endif
 	op1 = YC(*P++);
 	arg_check_op1:
 	if (!ISINT(op1)){
@@ -6337,14 +6675,16 @@ switch (*P++){
 
 #ifndef GCC
  case arg0:	/* i, y, y */
-#endif
+#else
  lab_arg0:
+#endif
 	op1 = *P++; goto arg_idd;
 
 #ifndef GCC
  case setarg:	/* y, y, z */
-#endif
+#else
  lab_setarg:
+#endif
 	op1 = YC(*P++);DEREF(op1);
 	if (!ISINT(op1)){
 		if (ISREF(op1)){
@@ -6409,16 +6749,18 @@ switch (*P++){
 
 #ifndef GCC
  case setarg0:	/* i, y, z */
-#endif
+#else
  lab_setarg0:
+#endif
 	op1 = *P++;
 	goto setarg_idd;
 
 
 #ifndef GCC
  case functor:	/* z, z, z */
-#endif
+#else
  lab_functor:
+#endif
 	op1 = *P++; op2 = *P++; op3 = *P++;
 	if (IS_YU_OPERAND(op1)){
 		op1=YC(op1>>2);
@@ -6526,8 +6868,9 @@ switch (*P++){
 
 #ifndef GCC
  case functor_uvv:	/* y, y, y */
-#endif
+#else
  lab_functor_uvv:
+#endif
 	op1 = YC(*P++);
 	op2 = (BPLONG)Y(*P++);
 	op3 = (BPLONG)Y(*P++);
@@ -6543,8 +6886,9 @@ switch (*P++){
 
 #ifndef GCC
  case functor_vuu:	/* y, y, y */
-#endif
+#else
  lab_functor_vuu:
+#endif
 	op1 = (BPLONG)Y(*P++); op2 = YC(*P++); op3 = YC(*P++);
 	PUSHTRAIL_s(op1);
 	DEREF(op2); DEREF(op3);
@@ -6554,8 +6898,9 @@ switch (*P++){
 
 #ifndef GCC
  case functor_arity:	/* y, y */
-#endif
+#else
  lab_functor_arity:
+#endif
 	op1 = YC(*P++);
 	op2 = (BPLONG)Y(*P++);
 	SWITCH_OP(op1, rr_functor_arity,
@@ -6569,8 +6914,9 @@ switch (*P++){
 
 #ifndef GCC
  case get_clause_copy:	/* y, y, y */
-#endif
+#else
  lab_get_clause_copy:
+#endif
 	op1 = NextOperandYC;
 	op2 = NextOperandYC;
 	op3 = NextOperandYC;
@@ -6587,8 +6933,9 @@ switch (*P++){
 
 #ifndef GCC
  case garbage_collect:	/* y */
-#endif
+#else
  lab_garbage_collect:
+#endif
 	op1 = NextOperandYC;
 	DEREF(op1);
 	op1 = INTVAL(op1);
@@ -6616,8 +6963,9 @@ switch (*P++){
 
 #ifndef GCC
  case catch_clean_up:	/* E */
-#endif
+#else
  lab_catch_clean_up:
+#endif
 	if (B==AR){	/*  a catcher frame is in the form of p(Flag, Cleanup, Calll, Exception, Recovery,...) */
 		B = (BPLONG_PTR)AR_B(B);
 		HB = (BPLONG_PTR)AR_H(B);
@@ -6628,8 +6976,9 @@ switch (*P++){
 
 #ifndef GCC
  case throw_ball:	/* y, y */
-#endif
+#else
  lab_throw_ball:
+#endif
 	op1 = NextOperandYC;
 	op2 = (BPLONG)NextOperandY;
 	{
@@ -6661,8 +7010,9 @@ switch (*P++){
 
 #ifndef GCC
  case builtin0:	/* i, l */
-#endif
+#else
  lab_builtin0:
+#endif
 	SAVE_AR;SAVE_TOP;
 	EXECUTE_BUILTIN0(op1, *P++);
 	if (op1==1){
@@ -6678,8 +7028,9 @@ switch (*P++){
 
 #ifndef GCC
  case builtin1:	/* i, l, z */
-#endif
+#else
  lab_builtin1:
+#endif
 	{BPLONG res;
 		op1 = *(P+2); OP_ZC(op1);
 		SAVE_AR;SAVE_TOP;
@@ -6700,8 +7051,9 @@ switch (*P++){
 
 #ifndef GCC
  case builtin2:	/* i, l, z, z */
-#endif
+#else
  lab_builtin2:
+#endif
 	{BPLONG res;
 		op1 = *(P+2); OP_ZC(op1);
 		op2 = *(P+3); OP_ZC(op2);
@@ -6723,8 +7075,9 @@ switch (*P++){
 
 #ifndef GCC
  case builtin3:	/* i, l, z, z, z */
-#endif
+#else
  lab_builtin3:
+#endif
 	{BPLONG res;
 		op1 = *(P+2); OP_ZC(op1);
 		op2 = *(P+3); OP_ZC(op2);
@@ -6747,8 +7100,9 @@ switch (*P++){
 
 #ifndef GCC
  case builtin4:	/* i, l, z, z, z, z */
-#endif
+#else
  lab_builtin4:
+#endif
 	{BPLONG res, op4;
 		op1 = *(P+2); OP_ZC(op1);
 		op2 = *(P+3); OP_ZC(op2);
@@ -6772,8 +7126,9 @@ switch (*P++){
 
 #ifndef GCC
  case move_vars:	/* i, i */
-#endif
+#else
  lab_move_vars:
+#endif
 	op1 = *P++;
 	op2 = *P++;
 	for (i=op1;i<=op2;i++){
@@ -6784,8 +7139,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call:	/* i, s, zs(s(-1)), i */
-#endif
+#else
  lab_last_call:
+#endif
 	op3 = NextOperandLiteral;	/* misplaced args */
 	sym_ptr = (SYM_REC_PTR)*P;
 	arity = GET_ARITY(sym_ptr);
@@ -6829,8 +7185,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call_var0:	/* y, i */
-#endif
+#else
  lab_last_call_var0:
+#endif
 	if (AR_IS_TOP(AR)){	/* reuse the frame */
 		BPLONG_PTR parent_ar, parent_cps;
 
@@ -6872,8 +7229,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call0:	/* s, i */
-#endif
+#else
  lab_last_call0:
+#endif
 	sym_ptr = (SYM_REC_PTR)*P++; P++;	/* skip MaxS */
 	arity = GET_ARITY(sym_ptr);
 	head_arity = (BPLONG_PTR)UNTAGGED_ADDR(AR_BTM(AR))-AR;
@@ -6898,8 +7256,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call_d:	/* l, i, i, zs(-1), i */
-#endif
+#else
  lab_last_call_d:
+#endif
 	ep = (BPLONG_PTR)NextOperandAddr;
 	op3 = NextOperandLiteral;	/* layout bits */
 	arity = *P;
@@ -6943,8 +7302,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call1_d:	/* l, i, i, zs(-1), i */
-#endif
+#else
  lab_last_call1_d:
+#endif
 	ep = (BPLONG_PTR)NextOperandAddr;
 	op3 = NextOperandLiteral;	/* nogood arg index, the first arg is indexed 1 */
 	arity = *P;
@@ -6980,8 +7340,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call_au_d:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_last_call_au_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -7014,8 +7375,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call_au_det:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_last_call_au_det:
+#endif
 	ep = (BPLONG_PTR)NextOperandAddr;
 	op3 = NextOperandLiteral;	/* layout bits */
 	arity = *P;
@@ -7062,8 +7424,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call_au_nondet:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_last_call_au_nondet:
+#endif
 	ep = (BPLONG_PTR)NextOperandAddr;
 	op3 = NextOperandLiteral;	/* layout bits */
 	arity = *P;
@@ -7111,8 +7474,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call_au_ot:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_last_call_au_ot:
+#endif
 	ep = (BPLONG_PTR)NextOperandAddr;
 	op3 = NextOperandLiteral;	/* layout bits */
 	arity = *P;
@@ -7158,8 +7522,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call1_au_d:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_last_call1_au_d:
+#endif
 	ep = (BPLONG_PTR)NextOperandAddr;
 	op3 = NextOperandLiteral;	/* nogood arg index, the first arg is indexed 1 */
 	arity = *P;
@@ -7190,8 +7555,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call0_d:	/* l, i, i */
-#endif
+#else
  lab_last_call0_d:
+#endif
 	ep = (BPLONG_PTR)*P++;
 	arity = *P++; P++;	/* skip MaxS */
 	head_arity = (BPLONG_PTR)UNTAGGED_ADDR(AR_BTM(AR))-AR;
@@ -7218,8 +7584,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call0_sa_d:	/* l, i */
-#endif
+#else
  lab_last_call0_sa_d:
+#endif
 	ep = (BPLONG_PTR)*P;
 	op1 = *ep;
 	#ifdef GCC
@@ -7252,8 +7619,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call0_sa_det:	/* l, i */
-#endif
+#else
  lab_last_call0_sa_det:
+#endif
 	/* the current and the last call have the same arity */
 	if (AR_IS_TOP(AR)){	/* reuse the frame */
 		P = (BPLONG_PTR)*P;
@@ -7274,8 +7642,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call0_sa_nondet:	/* l, i */
-#endif
+#else
  lab_last_call0_sa_nondet:
+#endif
 	/* the current and the last call have the same arity */
 	if (AR_IS_TOP(AR)){	/* reuse the frame */
 		P = (BPLONG_PTR)*P;
@@ -7296,8 +7665,9 @@ switch (*P++){
 
 #ifndef GCC
  case last_call0_sa_ot:	/* l, i */
-#endif
+#else
  lab_last_call0_sa_ot:
+#endif
 	/* the current and the last call have the same arity */
 	if (AR_IS_TOP(AR)){	/* reuse the frame */
 		P = (BPLONG_PTR)*P;
@@ -7318,8 +7688,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_det_call_au:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_tr_det_call_au:
+#endif
 	ep = (BPLONG_PTR)*P++;
 	op3 = *P++;	/* layout bits */
 	arity = *P;
@@ -7347,8 +7718,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_det_call1_au:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_tr_det_call1_au:
+#endif
 	ep = (BPLONG_PTR)NextOperandAddr;
 	op3 = NextOperandLiteral;	/* misplaced arg index */
 	arity = *P;
@@ -7367,8 +7739,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_det_call2_au:	/* l, i, i, i, ys(-1), i */
-#endif
+#else
  lab_tr_det_call2_au:
+#endif
 	ep = (BPLONG_PTR)*P++;
 	op2 = *P++;	/* misplaced arg index */
 	op3 = *P++;
@@ -7392,8 +7765,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_det_call0:	/* l, i */
-#endif
+#else
  lab_tr_det_call0:
+#endif
 	if (AR_IS_TOP(AR)){	/* reuse the frame */
 		P = (BPLONG_PTR)*P;
 		goto rr_allocate_det;
@@ -7413,8 +7787,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_nondet_call_au:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_tr_nondet_call_au:
+#endif
 	ep = (BPLONG_PTR)*P++;
 	op3 = *P++;	/* layout bits */
 	arity = *P;
@@ -7442,8 +7817,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_nondet_call1_au:	/* l, i, i, ys(-1), i */
-#endif
+#else
  lab_tr_nondet_call1_au:
+#endif
 	ep = (BPLONG_PTR)*P++;
 	op3 = *P++;	/* misplaced arg index */
 	arity = *P;
@@ -7460,8 +7836,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_nondet_call2_au:	/* l, i, i, i, ys(-1), i */
-#endif
+#else
  lab_tr_nondet_call2_au:
+#endif
 	ep = (BPLONG_PTR)*P++;
 	op2 = *P++;	/* misplaced arg index */
 	op3 = *P++;
@@ -7483,8 +7860,9 @@ switch (*P++){
 
 #ifndef GCC
  case tr_nondet_call0:	/* l, i */
-#endif
+#else
  lab_tr_nondet_call0:
+#endif
 	if (AR_IS_TOP(AR)){	/* reuse the frame */
 		P = (BPLONG_PTR)*P;
 	rr_tr_nondet_call:
@@ -7517,8 +7895,9 @@ switch (*P++){
 
 #ifndef GCC
  case allocate_susp:	/* i, i, s, i */
-#endif
+#else
  lab_allocate_susp:
+#endif
 	op1 = *P++;
 	AR_BTM(AR) = ADDTAG((AR+op1), SUSP_FRAME_TAG);
 	op1 = *P++;
@@ -7534,8 +7913,9 @@ switch (*P++){
 
 #ifndef GCC
  case return_commit:	/* E */
-#endif
+#else
  lab_return_commit:
+#endif
 	if (FRAME_IS_START(AR) || FRAME_IS_CLONE(AR)){
 		goto lab_return_det;
 	} else {
@@ -7545,8 +7925,9 @@ switch (*P++){
 
 #ifndef GCC
  case return_delay:	/* E */
-#endif
+#else
  lab_return_delay:
+#endif
 	sreg = AR;
 	P = (BPLONG_PTR)AR_CPS(AR);
 	AR = (BPLONG_PTR)AR_AR(AR);
@@ -7566,8 +7947,9 @@ switch (*P++){
 
 #ifndef GCC
  case no_vars_gt:	/* i, i, l */
-#endif
+#else
  lab_no_vars_gt:
+#endif
 	arity = *P++;
 	op1 = *P++;	/* limit */
 	op3 = 0;	/* total no of vars */
@@ -7588,8 +7970,9 @@ switch (*P++){
 
 #ifndef GCC
  case trigger_var_ins:	/* y */
-#endif
+#else
  lab_trigger_var_ins:
+#endif
 	op2 = NextOperandYC;
 	SWITCH_OP(op2, rr_trigger_var_ins,
 		{CREATE_SUSP_VAR_ins(op2, AR);},
@@ -7601,8 +7984,9 @@ switch (*P++){
 
 #ifndef GCC
  case trigger_var_minmax:	/* y */
-#endif
+#else
  lab_trigger_var_minmax:
+#endif
 	op2 = NextOperandYC;
 	SWITCH_OP(op2, rr_trigger_var_minmax,
 		{CREATE_SUSP_VAR_minmax(op2, AR);},
@@ -7615,8 +7999,9 @@ switch (*P++){
 
 #ifndef GCC
  case trigger_var_dom:	/* y */
-#endif
+#else
  lab_trigger_var_dom:
+#endif
 	op2 = NextOperandYC;
 	SWITCH_OP(op2, rr_trigger_var_dom,
 		{CREATE_SUSP_VAR_dom(op2, AR);},
@@ -7629,8 +8014,9 @@ switch (*P++){
 
 #ifndef GCC
  case trigger_ins_min_max:	/* i */
-#endif
+#else
  lab_trigger_ins_min_max:
+#endif
 	op1 = *P++;
 	sreg = AR+2*op1+2;	/* CoesType */
 	op2 = FOLLOW(sreg);DEREF_NONVAR(op2);FOLLOW(sreg)=op2;
@@ -7655,8 +8041,9 @@ switch (*P++){
 
 #ifndef GCC
  case trigger_var_any_dom:	/* y */
-#endif
+#else
  lab_trigger_var_any_dom:
+#endif
 	op2 = NextOperandYC;
 	SWITCH_OP(op2, rr_trigger_var_any_dom,
 		{CREATE_SUSP_VAR_any_dom(op2, AR);},
@@ -7669,8 +8056,9 @@ switch (*P++){
 
 #ifndef GCC
  case trigger_cg_event_handler:	/* i, y */
-#endif
+#else
  lab_trigger_cg_event_handler:
+#endif
 	op1 = NextOperandLiteral;	/* event no */
 	op2 = NextOperandYC;
 	SAVE_AR;
@@ -7686,8 +8074,9 @@ switch (*P++){
 
 #ifndef GCC
  case fetch_event_object:	/* y */
-#endif
+#else
  lab_fetch_event_object:
+#endif
 	op2 = (BPLONG)NextOperandY;
 	op3 = AR_OUT(AR);
 	if (TAG(op3)!=ATM){PUSHTRAIL_s(op2);}	/* required by GC */
@@ -7697,8 +8086,9 @@ switch (*P++){
 
 #ifndef GCC
  case delay:	/* l, l, s, l */
-#endif
+#else
  lab_delay:
+#endif
 	if (FRAME_IS_START(AR)){
 		CONNECT_SUSP_FRAME;
 		AR_STATUS(AR) = SUSP_RUN;
@@ -7712,8 +8102,9 @@ switch (*P++){
 
 #ifndef GCC
  case end_delay:	/* E */
-#endif
+#else
  lab_end_delay:
+#endif
 	if (FRAME_IS_START(AR)){
 	} else if (!FRAME_IS_CLONE(AR)){
 /*
@@ -7728,8 +8119,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_dvar_y:	/* y, l */
-#endif
+#else
  lab_jmpn_dvar_y:
+#endif
 	op1 = NextOperandYC; DEREF(op1);
 	if (IS_SUSP_VAR(op1)){
 		dv_ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(op1);
@@ -7743,8 +8135,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_susp_var_y:	/* y, l */
-#endif
+#else
  lab_jmpn_susp_var_y:
+#endif
 	op1 = NextOperandYC; DEREF(op1);
 	if (IS_SUSP_VAR(op1)){
 		P++;
@@ -7756,8 +8149,9 @@ switch (*P++){
 
 #ifndef GCC
  case interval_consistent_eq:	/* i */
-#endif
+#else
  lab_interval_consistent_eq:
+#endif
 	op1 = NextOperandLiteral;
 	SAVE_AR;
 	op1 = nary_interval_consistent_eq(op1);
@@ -7769,8 +8163,9 @@ switch (*P++){
 
 #ifndef GCC
  case interval_consistent_eq_nocoe:	/* i */
-#endif
+#else
  lab_interval_consistent_eq_nocoe:
+#endif
 	printf("interval_consistent_eq_nocoe not supported\n");
 	exit(1);
 /*
@@ -7787,8 +8182,9 @@ switch (*P++){
 
 #ifndef GCC
  case interval_consistent_ge:	/* i */
-#endif
+#else
  lab_interval_consistent_ge:
+#endif
 	op1 = NextOperandLiteral;
 	SAVE_AR;
 	op1 = nary_interval_consistent_ge(op1);
@@ -7800,8 +8196,9 @@ switch (*P++){
 
 #ifndef GCC
  case call_binary_constr_eq:	/* i */
-#endif
+#else
  lab_call_binary_constr_eq:
+#endif
 	{
 		BPLONG c, a1, x1, a2, x2, a, x;
 		BPLONG_PTR oldP;
@@ -7924,8 +8321,9 @@ switch (*P++){
 
 #ifndef GCC
  case domain_next_inst_yyy:	/* y, y, y */
-#endif
+#else
  lab_domain_next_inst_yyy:
+#endif
 	op1 = NextOperandYC; DEREF_NONVAR(op1);
 	op2 = NextOperandYC; DEREF_NONVAR(op2); op2 = INTVAL(op2);
 /*	if (!IS_SUSP_VAR(op1)) BACKTRACK; must be a dvar */
@@ -7945,8 +8343,9 @@ switch (*P++){
 
 #ifndef GCC
  case domain_set_false_yy:	/* y, y */
-#endif
+#else
  lab_domain_set_false_yy:
+#endif
 	op1 = NextOperandYC; DEREF_NONVAR(op1);
 	op2 = NextOperandYC; DEREF_NONVAR(op2);
 	if (!IS_SUSP_VAR(op1)){	/* be sure to be a domain var */
@@ -8005,8 +8404,9 @@ switch (*P++){
 
 #ifndef GCC
  case domain_min_max_yyy:	/* y, y, y */
-#endif
+#else
  lab_domain_min_max_yyy:
+#endif
 	op1 = NextOperandYC;DEREF_NONVAR(op1);
 	if (IS_SUSP_VAR(op1)){
 		dv_ptr = (BPLONG_PTR)UNTAGGED_ADDR(op1);
@@ -8035,8 +8435,9 @@ switch (*P++){
 
 #ifndef GCC
  case domain_region:	/* y, z, z */
-#endif
+#else
  lab_domain_region:
+#endif
 	op1 = NextOperandYC; DEREF_NONVAR(op1);
 	op2 = *P++; OP_NOVY_DEREF_NONVAR(op2);
 	op3 = *P++; OP_NOVY_DEREF_NONVAR(op3);
@@ -8168,8 +8569,9 @@ switch (*P++){
 
 #ifndef GCC
  case domain_region_min:	/* y, z */
-#endif
+#else
  lab_domain_region_min:
+#endif
 	op1 = NextOperandYC; DEREF_NONVAR(op1);
 	op2 = *P++; OP_NOVY_DEREF_NONVAR(op2);op2 = INTVAL(op2);
 	op3 = BP_MAXINT_1W;
@@ -8178,8 +8580,9 @@ switch (*P++){
 
 #ifndef GCC
  case domain_region_max:	/* y, z */
-#endif
+#else
  lab_domain_region_max:
+#endif
 	op1 = NextOperandYC; DEREF_NONVAR(op1);
 	op2 = BP_MININT_1W;
 	op3 = *P++; OP_NOVY_DEREF_NONVAR(op3); op3 = INTVAL(op3);
@@ -8187,8 +8590,9 @@ switch (*P++){
 
 #ifndef GCC
  case v_in_cv_int:	/* E */
-#endif
+#else
  lab_v_in_cv_int:
+#endif
 	{BPLONG tmp_op;
 		op1 = YC(3); DEREF_NONVAR(op1);	/* X */
 		tmp_op = INTVAL(YC(2));	/* no dereference necessary, done in call_binary_constr_eq */
@@ -8217,8 +8621,9 @@ switch (*P++){
 
 #ifndef GCC
  case v_in_vc_int:	/* E */
-#endif
+#else
  lab_v_in_vc_int:
+#endif
 	/* X in Y+C */
 	{BPLONG tmp_op;
 		op1 = YC(3); DEREF_NONVAR(op1);	/* X */
@@ -8238,8 +8643,9 @@ switch (*P++){
 
 #ifndef GCC
  case u_in_cu_int:	/* E */
-#endif
+#else
  lab_u_in_cu_int:
+#endif
 	/* A*X in C-B*Y */
 	{
 		BPLONG a, b, c, tmp_op;
@@ -8268,8 +8674,9 @@ switch (*P++){
 
 #ifndef GCC
  case u_in_uc_int:	/* E */
-#endif
+#else
  lab_u_in_uc_int:
+#endif
 	/* A*X in B*Y+C */
 	{BPLONG a, b, c, tmp_op;
 		a = INTVAL(YC(5));	/* no dereference necessary, done in call_binary_constr_eq */
@@ -8297,8 +8704,9 @@ switch (*P++){
 
 #ifndef GCC
  case u_eq_cu_dom:	/* y */
-#endif
+#else
  lab_u_eq_cu_dom:
+#endif
 	{
 		/*
 			u_eq_cu_dom(A, X, C, B, Y):-
@@ -8322,8 +8730,9 @@ switch (*P++){
 
 #ifndef GCC
  case u_eq_uc_dom:	/* y */
-#endif
+#else
  lab_u_eq_uc_dom:
+#endif
 	{
 		/*
 			u_eq_uc_dom(A, X, B, Y, C):-
@@ -8347,8 +8756,9 @@ switch (*P++){
 
 #ifndef GCC
  case bcp:	/* i */
-#endif
+#else
  lab_bcp:
+#endif
 	{
 		/* perform unit propagation on a clause: (A1, ..., An, V1,..., Vn) where Ai is 1 or -1 */
 		BPLONG coe, var, op4;
@@ -8390,8 +8800,9 @@ switch (*P++){
 
 #ifndef GCC
  case activate_first_agent:	/* y, y */
-#endif
+#else
  lab_activate_first_agent:
+#endif
 	op1 = NextOperandYC;	/* agent frame */
 	op2 = NextOperandYC; DEREF(op2);	/* event object */
 	P += 2;	/* skip noop1 40 */
@@ -8401,8 +8812,9 @@ switch (*P++){
 
 #ifndef GCC
  case activate_agents_conjunction:	/* y, y, y */
-#endif
+#else
  lab_activate_agents_conjunction:
+#endif
 	{
 		BPLONG op4;
 
@@ -8445,8 +8857,9 @@ switch (*P++){
 
 #ifndef GCC
  case activate_agents_disjunction:	/* y, y, y */
-#endif
+#else
  lab_activate_agents_disjunction:
+#endif
 	{BPLONG op4;
 		op1 = NextOperandYC;DEREF(op1);	/* agent list 1 */
 		op2 = NextOperandYC;DEREF(op2);	/* agent list 2 */
@@ -8487,8 +8900,9 @@ switch (*P++){
 
 #ifndef GCC
  case table_allocate:	/* i, i, s, i */
-#endif
+#else
  lab_table_allocate:
+#endif
 	/* The table mode and cardinality are stored as operands of a table_mode instruction:
 		table_allocate Arity, Size, Sym, MaxS
 		table_mode CallMode, OptArg, CardNTArg
@@ -8607,8 +9021,9 @@ switch (*P++){
 
 #ifndef GCC
  case table_produce:	/* E */
-#endif
+#else
  lab_table_produce:
+#endif
 	/* The table modes and cardinality are stored as operands of a table_mode instruction
 
 		table_allocate Arity, Size, Sym, MaxS
@@ -8731,8 +9146,9 @@ switch (*P++){
 
 #ifndef GCC
  case table_consume:	/* E */
-#endif
+#else
  lab_table_consume:
+#endif
 	/* The table modes and cardinality are stored as operands of a table_mode instruction
 
 		table_allocate Arity, Size, Sym, MaxS
@@ -8785,8 +9201,9 @@ switch (*P++){
 
 #ifndef GCC
  case table_check_completion:	/* l */
-#endif
+#else
  lab_table_check_completion:
+#endif
 	subgoal_entry = (BPLONG_PTR)GET_AR_SUBGOAL_TABLE(AR);
 /*
 	printf("check_comp %s\n", GET_NAME((SYM_REC_PTR)GT_SYM(subgoal_entry)));
@@ -8825,8 +9242,9 @@ switch (*P++){
 
 #ifndef GCC
  case table_neck_no_reeval:	/* E */
-#endif
+#else
  lab_table_neck_no_reeval:
+#endif
 	subgoal_entry = (BPLONG_PTR)GET_AR_SUBGOAL_TABLE(AR);
 	if (SUBGOAL_IS_ITERATION(subgoal_entry)){
 		BACKTRACK;
@@ -8835,14 +9253,16 @@ switch (*P++){
 
 #ifndef GCC
  case last_tabled_call:	/* E */
-#endif
+#else
  lab_last_tabled_call:
+#endif
 	CONTCASE;
 
 #ifndef GCC
  case table_cut:	/* l */
-#endif
+#else
  lab_table_cut:
+#endif
 	ROLL_CHOICE_POINTS(AR);
 	B = AR;
 	HB = (BPLONG_PTR)AR_H(B);
@@ -8853,16 +9273,18 @@ switch (*P++){
 
 #ifndef GCC
  case table_neck:	/* E */
-#endif
+#else
  lab_table_neck:
+#endif
 	/* not used */
 	CONTCASE;
 
 
 #ifndef GCC
  case table_eager_consume:	/* E */
-#endif
+#else
  lab_table_eager_consume:
+#endif
 	printf("eager consume not supported anymore\n");
 /*
 	SET_AR_EAGER_CONSUMER(AR);
@@ -8876,8 +9298,9 @@ switch (*P++){
 
 #ifndef GCC
  case table_set_new_bit:	/* i */
-#endif
+#else
  lab_table_set_new_bit:
+#endif
 	printf("semi-naive not supported\n");
 /*
 	op1 = NextOperandLiteral;
@@ -8898,8 +9321,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmpn_unif:	/* z, z, l */
-#endif
+#else
  lab_jmpn_unif:
+#endif
 	op1 = *P++; OP_ZC_DEREF(op1);
 	op2 = *P++; OP_ZC_DEREF(op2);
 	if (op1 == op2){
@@ -8920,8 +9344,9 @@ switch (*P++){
 
 #ifndef GCC
  case jmp_unif:	/* z, z, l */
-#endif
+#else
  lab_jmp_unif:
+#endif
 	op1 = *P++; OP_ZC(op1);
 	op2 = *P++; OP_ZC(op2);
 
@@ -8935,8 +9360,9 @@ switch (*P++){
 
 #ifndef GCC
  case arg_no_chk:	/* y, y, y */
-#endif
+#else
  lab_arg_no_chk:
+#endif
 	op1 = YC(*P++); DEREF_NONVAR(op1); op1 = INTVAL(op1);
 	op2 = YC(*P++); DEREF_NONVAR(op2); op2 = UNTAGGED_ADDR(op2);
 	sreg = Y(*P++);
@@ -8947,8 +9373,9 @@ switch (*P++){
 
 #ifndef GCC
  case setarg0_no_chk:	/* i, y, y */
-#endif
+#else
  lab_setarg0_no_chk:
+#endif
 	op1 = *P++;
 	op2 = YC(*P++);DEREF_NONVAR(op2);
 	op3 = YC(*P++);DEREF_NONVAR(op3);
@@ -8961,8 +9388,9 @@ switch (*P++){
 
 #ifndef GCC
  case bcp1:	/* i */
-#endif
+#else
  lab_bcp1:
+#endif
 	{
 		/* perform unit propagation on a clause: (V1,..., Vn) */
 		BPLONG var, op4;
@@ -8999,8 +9427,9 @@ switch (*P++){
 
 #ifndef GCC
  case domain_nogood_region:	/* y, z, z */
-#endif
+#else
  lab_domain_nogood_region:
+#endif
 	op1 = NextOperandYC; DEREF_NONVAR(op1);
 	op2 = *P++; OP_NOVY_DEREF_NONVAR(op2);
 	op3 = *P++; OP_NOVY_DEREF_NONVAR(op3);
@@ -9031,51 +9460,58 @@ switch (*P++){
 
 #ifndef GCC
  case endfile:	/* l */
-#endif
+#else
  lab_endfile:
+#endif
 	P++;
 	CONTCASE;
 
 
 #ifndef GCC
  case tabsize:	/* i */
-#endif
+#else
  lab_tabsize:
+#endif
 	CONTCASE;
 
 #ifndef GCC
  case table_mode:	/* i, i, i */
-#endif
+#else
  lab_table_mode:
+#endif
 	P += 3;
 	CONTCASE;
 
 #ifndef GCC
  case asp_decode:	/* y, y, i, ys(-1) */
-#endif
+#else
  lab_asp_decode:
+#endif
 	printf("asp_decode no longer exists\n");
 	exit(0);
 
 #ifndef GCC
  case asp_add_tuple:	/* y, i, ys(-1) */
-#endif
+#else
  lab_asp_add_tuple:
+#endif
 	printf("asp_add_tuple no longer exists\n");
 	exit(0);
 
 
 #ifndef GCC
  case set_catcher_frame:	/* E */
-#endif
+#else
  lab_set_catcher_frame:
+#endif
 	AR_BTM(AR) = (AR_BTM(AR) | CATCHER_FRAME_TAG);
 	CONTCASE;
 
 #ifndef GCC
  case filter_clauses:	/* y, y, y, y */
-#endif
+#else
  lab_filter_clauses:
+#endif
 	/* Cls, Key, CallTime, NCls */
 	op1 = NextOperandYC;	/* Cls, no dereference needed */
 	op2 = NextOperandYC;	/* Key */
