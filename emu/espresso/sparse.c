@@ -48,19 +48,19 @@ pcover make_sparse(pset_family F, pset_family D, pset_family R)
 
 pcover mv_reduce(pset_family F, pset_family D)
 {
-	register int i, var;
-	register pcube p, p1, last;
-	int index;
+	register	int i, var;
+	register	pcube p, p1, last;
+	int	index;
 	pcover F1, D1;
 	pcube *F_cube_table;
 
 	/* loop for each multiple-valued variable */
-	for(var = 0; var < cube.num_vars; var++) {
+	for (var = 0; var < cube.num_vars; var++) {
 
 		if (cube.sparse[var]) {
 
 			/* loop for each part of the variable */
-			for(i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
+			for (i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
 
 			/* remember mapping of F1 cubes back to F cubes */
 			F_cube_table = ALLOC(pcube, F->count);
@@ -98,7 +98,7 @@ pcover mv_reduce(pset_family F, pset_family D)
 				/*   don't reduce a variable which is full
 				 *   (unless it is the output variable)
 				 */
-				if (var == cube.num_vars-1 ||
+				if (var == cube.num_vars - 1 ||
 					! setp_implies(cube.var_mask[var], p)) {
 					set_remove(p, i);
 				}
@@ -116,7 +116,7 @@ pcover mv_reduce(pset_family F, pset_family D)
 
 	/* Check if any cubes disappeared */
 	(void) sf_active(F);
-	for(var = 0; var < cube.num_vars; var++) {
+	for (var = 0; var < cube.num_vars; var++) {
 		if (cube.sparse[var]) {
 			foreach_active_set(F, last, p) {
 				if (setp_disjoint(p, cube.var_mask[var])) {

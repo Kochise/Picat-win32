@@ -67,16 +67,16 @@ static pcover reduce_gasp(pset_family F, pset_family D)
  */
 pcover expand_gasp(pset_family F, pset_family D, pset_family R, pset_family Foriginal)
 {
-	int c1index;
+	int	c1index;
 	pcover G;
 
 	/* Try to expand each nonprime and noncovered cube */
 	G = new_cover(10);
-	for(c1index = 0; c1index < F->count; c1index++) {
+	for (c1index = 0; c1index < F->count; c1index++) {
 		expand1_gasp(F, D, R, Foriginal, c1index, &G);
 	}
 	G = sf_dupl(G);
-	G = expand(G, R,	/*nonsparse*/ FALSE);	/* Make them prime ! */
+	G = expand(G, R,	/* nonsparse */ FALSE);	/* Make them prime ! */
 	return G;
 }
 
@@ -91,8 +91,8 @@ void expand1_gasp(pset_family F, pset_family D, pset_family R, pset_family Forig
 					/* which index of F (or Freduced) to be checked */
 
 {
-	register int c2index;
-	register pcube p, last, c2under;
+	register	int c2index;
+	register	pcube p, last, c2under;
 	pcube RAISE, FREESET, temp, *FD, c2essential;
 	pcover F1;
 

@@ -10,16 +10,16 @@
 
 static void cb_unravel(register pset c, int start, int end, pset startbase, pset_family B1)
 {
-	pcube base = cube.temp[0], p, last;
-	int expansion, place, skip, var, size, offset;
-	register int i, j, k, n;
+				pcube	base = cube.temp[0], p, last;
+				int		expansion, place, skip, var, size, offset;
+	register	int		i, j, k, n;
 
 	/* Determine how many cubes it will blow up into, and create a mask
 		for those parts that have only a single coordinate
 	*/
 	expansion = 1;
 	(void) set_copy(base, startbase);
-	for(var = start; var <= end; var++) {
+	for (var = start; var <= end; var++) {
 		if ((size = set_dist(c, cube.var_mask[var])) < 2) {
 			(void) set_or(base, base, cube.var_mask[var]);
 		} else {
@@ -31,21 +31,21 @@ static void cb_unravel(register pset c, int start, int end, pset startbase, pset
 	/* Add the unravelled sets starting at the last element of B1 */
 	offset = B1->count;
 	B1->count += expansion;
-	foreach_remaining_set(B1, last, GETSET(B1, offset-1), p) {
+	foreach_remaining_set(B1, last, GETSET(B1, offset - 1), p) {
 		INLINEset_copy(p, base);
 	}
 
 	place = expansion;
-	for(var = start; var <= end; var++) {
+	for (var = start; var <= end; var++) {
 		if ((size = set_dist(c, cube.var_mask[var])) > 1) {
 			skip = place;
 			place = place / size;
 			n = 0;
-			for(i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
+			for (i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
 				if (is_in_set(c, i)) {
-					for(j = n; j < expansion; j += skip) {
-						for(k = 0; k < place; k++) {
-							p = GETSET(B1, j+k+offset);
+					for (j = n; j < expansion; j += skip) {
+						for (k = 0; k < place; k++) {
+							p = GETSET(B1, j + k + offset);
 							(void) set_insert(p, i);
 						}
 					}
@@ -58,22 +58,22 @@ static void cb_unravel(register pset c, int start, int end, pset startbase, pset
 
 pcover unravel_range(pset_family B, int start, int end)
 {
-	pcover B1;
-	int var, total_size, expansion, size;
-	register pcube p, last, startbase = cube.temp[1];
+				pcover	B1;
+				int		var, total_size, expansion, size;
+	register	pcube	p, last, startbase = cube.temp[1];
 
 	/* Create the starting base for those variables not being unravelled */
 	(void) set_copy(startbase, cube.emptyset);
-	for(var = 0; var < start; var++)
+	for (var = 0; var < start; var++)
 		(void) set_or(startbase, startbase, cube.var_mask[var]);
-	for(var = end+1; var < cube.num_vars; var++)
+	for (var = end + 1; var < cube.num_vars; var++)
 		(void) set_or(startbase, startbase, cube.var_mask[var]);
 
 	/* Determine how many cubes it will blow up into */
 	total_size = 0;
 	foreach_set(B, last, p) {
 		expansion = 1;
-		for(var = start; var <= end; var++)
+		for (var = start; var <= end; var++)
 			if ((size = set_dist(p, cube.var_mask[var])) >= 2)
 				if ((expansion *= size) > 1000000)
 					fatal("unreasonable expansion in unravel");
@@ -91,7 +91,7 @@ pcover unravel_range(pset_family B, int start, int end)
 
 pcover unravel(pset_family B, int start)
 {
-	return unravel_range(B, start, cube.num_vars-1);
+	return unravel_range(B, start, cube.num_vars - 1);
 }
 
 /* lex_sort -- sort cubes in a standard lexical fashion */
@@ -113,10 +113,10 @@ pcover size_sort(pset_family T)
 /*  mini_sort -- sort cubes according to the heuristics of mini */
 pcover mini_sort(pset_family F, qsort_compare_func compare)
 {
-	register int *count, cnt, n = cube.size, i;
-	register pcube p, last;
-	pcover F_sorted;
-	pcube *F1;
+	register	int		*count, cnt, n = cube.size, i;
+	register	pcube	p, last;
+				pcover	F_sorted;
+				pcube	*F1;
 
 	/* Perform a column sum over the set family */
 	count = sf_count(F);
@@ -124,7 +124,7 @@ pcover mini_sort(pset_family F, qsort_compare_func compare)
 	/* weight is "inner product of the cube and the column sums" */
 	foreach_set(F, last, p) {
 		cnt = 0;
-		for(i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 			if (is_in_set(p, i))
 				cnt += count[i];
 		PUTSIZE(p, cnt);
@@ -142,10 +142,10 @@ pcover mini_sort(pset_family F, qsort_compare_func compare)
 /* sort_reduce -- Espresso strategy for ordering the cubes before reduction */
 pcover sort_reduce(pset_family T)
 {
-	register pcube p, last, largest = NULL;
-	register int bestsize = -1, size, n = cube.num_vars;
-	pcover T_sorted;
-	pcube *T1;
+	register	pcube	p, last, largest = NULL;
+	register	int		bestsize = -1, size, n = cube.num_vars;
+				pcover	T_sorted;
+				pcube	*T1;
 
 	if (T->count == 0)
 		return T;
@@ -167,14 +167,14 @@ pcover sort_reduce(pset_family T)
 
 pcover random_order(register pset_family F)
 {
-	pset temp;
-	register int i, k;
+				pset	temp;
+	register	int		i, k;
 #ifdef RANDOM
-	long random();
+				long	random();
 #endif
 
 	temp = set_new(F->sf_size);
-	for(i = F->count - 1; i > 0; i--) {
+	for (i = F->count - 1; i > 0; i--) {
 		/* Choose a random number between 0 and i */
 #ifdef RANDOM
 		k = random() % i;
@@ -182,7 +182,7 @@ pcover random_order(register pset_family F)
 		/* this is not meant to be really used; just provides an easy
 			"out" if random() and srandom() aren't around
 		*/
-		k = (i*23 + 997) % i;
+		k = (i * 23 + 997) % i;
 #endif
 		/* swap sets i and k */
 		set_copy(temp, GETSET(F, k));
@@ -203,15 +203,15 @@ int cubelist_partition(pset *T, pset **A, pset **B, unsigned int comp_debug)
 						/* a list of cubes */
 							/* cubelist of partition and remainder */
 {
-	register pcube *T1, p, seed, cof;
-	pcube *A1, *B1;
-	bool change;
-	int count, numcube;
+	register	pcube	*T1, p, seed, cof;
+				pcube	*A1, *B1;
+				bool	change;
+				int		count, numcube;
 
 	numcube = CUBELISTSIZE(T);
 
 	/* Mark all cubes -- covered cubes belong to the partition */
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		RESET(p, COVERED);
 	}
 
@@ -227,7 +227,7 @@ int cubelist_partition(pset *T, pset **A, pset **B, unsigned int comp_debug)
 
 	do {
 		change = FALSE;
-		for(T1 = T+2; (p = *T1++) != NULL; ) {
+		for (T1 = T + 2; (p = *T1++) != NULL; ) {
 			if (! TESTP(p, COVERED) && ccommon(p, seed, cof)) {
 				INLINEset_and(seed, seed, p);
 				SET(p, COVERED);
@@ -246,15 +246,15 @@ int cubelist_partition(pset *T, pset **A, pset **B, unsigned int comp_debug)
 
 	if (count != numcube) {
 		/* Allocate and setup the cubelist's for the two partitions */
-		*A = A1 = ALLOC(pcube, numcube+3);
-		*B = B1 = ALLOC(pcube, numcube+3);
+		*A = A1 = ALLOC(pcube, numcube + 3);
+		*B = B1 = ALLOC(pcube, numcube + 3);
 		(*A)[0] = set_save(T[0]);
 		(*B)[0] = set_save(T[0]);
 		A1 = *A + 2;
 		B1 = *B + 2;
 
 		/* Loop over the cubes in T and distribute to A and B */
-		for(T1 = T+2; (p = *T1++) != NULL; ) {
+		for (T1 = T + 2; (p = *T1++) != NULL; ) {
 			if (TESTP(p, COVERED)) {
 				*A1++ = p;
 			} else {
@@ -277,8 +277,8 @@ int cubelist_partition(pset *T, pset **A, pset **B, unsigned int comp_debug)
  */
 pcover cof_output(pset_family T, register int i)
 {
-	pcover T1;
-	register pcube p, last, pdest, mask;
+				pcover	T1;
+	register	pcube	p, last, pdest, mask;
 
 	mask = cube.var_mask[cube.output];
 	T1 = new_cover(T->count);
@@ -297,7 +297,7 @@ pcover cof_output(pset_family T, register int i)
  */
 pcover uncof_output(pset_family T, int i)
 {
-	register pcube p, last, mask;
+	register	pcube	p, last, mask;
 
 	if (T == NULL) {
 		return T;
@@ -322,11 +322,11 @@ pcover uncof_output(pset_family T, int i)
  */
 void foreach_output_function(pPLA PLA, int (*func) (pPLA, int), int (*func1) (pPLA, int))
 {
-	pPLA PLA1;
-	int i;
+	pPLA	PLA1;
+	int		i;
 
 	/* Loop for each output function */
-	for(i = 0; i < cube.part_size[cube.output]; i++) {
+	for (i = 0; i < cube.part_size[cube.output]; i++) {
 
 		/* cofactor on the output part */
 		PLA1 = new_PLA();
@@ -356,8 +356,8 @@ void foreach_output_function(pPLA PLA, int (*func) (pPLA, int), int (*func1) (pP
 	}
 }
 
-static pcover Fmin;
-static pcube phase;
+static	pcover	Fmin;
+static	pcube	phase;
 
 /*
  *  minimize each output function individually
@@ -394,7 +394,7 @@ void so_both_espresso(pPLA PLA, int strategy)
 
 int so_do_espresso(pPLA PLA, int i)
 {
-	char word[32];
+	char	word[32];
 
 	/* minimize the single-output function (on-set) */
 	skip_make_sparse = 1;
@@ -405,7 +405,7 @@ int so_do_espresso(pPLA PLA, int i)
 
 int so_do_exact(pPLA PLA, int i)
 {
-	char word[32];
+	char	word[32];
 
 	/* minimize the single-output function (on-set) */
 	skip_make_sparse = 1;
@@ -424,7 +424,7 @@ int so_save(pPLA PLA, int i)
 
 int so_both_do_espresso(pPLA PLA, int i)
 {
-	char word[32];
+	char	word[32];
 
 	/* minimize the single-output function (on-set) */
 	(void) sprintf(word, "ESPRESSO-POS(%d)", i);
@@ -441,7 +441,7 @@ int so_both_do_espresso(pPLA PLA, int i)
 
 int so_both_do_exact(pPLA PLA, int i)
 {
-	char word[32];
+	char	word[32];
 
 	/* minimize the single-output function (on-set) */
 	(void) sprintf(word, "EXACT-POS(%d)", i);

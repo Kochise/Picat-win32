@@ -70,8 +70,8 @@ bool PLA_verify(pPLA PLA1, pPLA PLA2)
  */
 void PLA_permute(pPLA PLA1, pPLA PLA2)
 {
-	register int i, j, *permute, npermute;
-	register char *labi;
+	register	int i, j, *permute, npermute;
+	register	char *labi;
 	char **label;
 
 	/* determine which columns of PLA1 to save, and place these in the list
@@ -79,9 +79,9 @@ void PLA_permute(pPLA PLA1, pPLA PLA2)
 	*/
 	npermute = 0;
 	permute = ALLOC(int, PLA2->F->sf_size);
-	for(i = 0; i < PLA2->F->sf_size; i++) {
+	for (i = 0; i < PLA2->F->sf_size; i++) {
 		labi = PLA2->label[i];
-		for(j = 0; j < PLA1->F->sf_size; j++) {
+		for (j = 0; j < PLA1->F->sf_size; j++) {
 			if (strcmp(labi, PLA1->label[j]) == 0) {
 				permute[npermute++] = j;
 				break;
@@ -102,10 +102,10 @@ void PLA_permute(pPLA PLA1, pPLA PLA2)
 
 	/* permute the labels */
 	label = ALLOC(char *, cube.size);
-	for(i = 0; i < npermute; i++) {
+	for (i = 0; i < npermute; i++) {
 		label[i] = PLA1->label[permute[i]];
 	}
-	for(i = npermute; i < cube.size; i++) {
+	for (i = npermute; i < cube.size; i++) {
 		label[i] = NULL;
 	}
 	FREE(PLA1->label);

@@ -24,9 +24,9 @@
 pset_family sf_contain(pset_family A)
 								/* disposes of A */
 {
-	int cnt;
-	pset *A1;
-	pset_family R;
+	int			cnt;
+	pset		*A1;
+	pset_family	R;
 
 	A1 = sf_sort(A, (qsort_compare_func) descend);				/* sort into descending order */
 	cnt = rm_equal(A1, (qsort_compare_func) descend);			/* remove duplicates */
@@ -44,9 +44,9 @@ pset_family sf_contain(pset_family A)
 pset_family sf_rev_contain(pset_family A)
 								/* disposes of A */
 {
-	int cnt;
-	pset *A1;
-	pset_family R;
+	int			cnt;
+	pset		*A1;
+	pset_family	R;
 
 	A1 = sf_sort(A, (qsort_compare_func) ascend);				/* sort into ascending order */
 	cnt = rm_equal(A1, (qsort_compare_func) ascend);			/* remove duplicates */
@@ -67,9 +67,9 @@ pset_family sf_ind_contain(pset_family A, int *row_indices)
 								/* disposes of A */
 								/* updated with the new values */
 {
-	int cnt;
-	pset *A1;
-	pset_family R;
+	int			cnt;
+	pset		*A1;
+	pset_family	R;
 
 	A1 = sf_sort(A, (qsort_compare_func) descend);				/* sort into descending order */
 	cnt = rm_equal(A1, (qsort_compare_func) descend);			/* remove duplicates */
@@ -83,9 +83,9 @@ pset_family sf_ind_contain(pset_family A, int *row_indices)
 pset_family sf_dupl(pset_family A)
 								/* disposes of A */
 {
-	register int cnt;
-	register pset *A1;
-	pset_family R;
+	register	int			cnt;
+	register	pset		*A1;
+				pset_family	R;
 
 	A1 = sf_sort(A, (qsort_compare_func) descend);				/* sort the set family */
 	cnt = rm_equal(A1, (qsort_compare_func) descend);			/* remove duplicates */
@@ -104,9 +104,9 @@ pset_family sf_dupl(pset_family A)
 pset_family sf_union(pset_family A, pset_family B)
 								/* disposes of A and B */
 {
-	int cnt;
-	pset_family R;
-	pset *A1 = sf_list(A), *B1 = sf_list(B), *E1;
+	int			cnt;
+	pset_family	R;
+	pset		*A1 = sf_list(A), *B1 = sf_list(B), *E1;
 
 	E1 = ALLOC(pset, MAX(A->count, B->count) + 1);
 	cnt = rm2_equal(A1, B1, E1, (qsort_compare_func) descend);
@@ -124,9 +124,9 @@ pset_family dist_merge(pset_family A, pset mask)
 								/* disposes of A */
 								/* defines variables to mask out */
 {
-	pset *A1;
-	int cnt;
-	pset_family R;
+	pset		*A1;
+	int			cnt;
+	pset_family	R;
 
 	set_copy(cube.temp[0], mask);
 	A1 = sf_sort(A, (qsort_compare_func) d1_order);
@@ -150,11 +150,11 @@ int d1_rm_equal(register pset *A1, qsort_compare_func compare)
 								/* array of set pointers */
 									/* comparison function */
 {
-	register int i, j, dest;
+	register	int	i, j, dest;
 
 	dest = 0;
 	if (A1[0] != (pcube) NULL) {
-		for(i = 0, j = 1; A1[j] != (pcube) NULL; j++)
+		for (i = 0, j = 1; A1[j] != (pcube) NULL; j++)
 			if ( (*compare)(&A1[i], &A1[j]) == 0) {
 				/* if sets are equal (under the mask) merge them */
 				set_or(A1[i], A1[i], A1[j]);
@@ -173,13 +173,13 @@ int d1_rm_equal(register pset *A1, qsort_compare_func compare)
 int rm_equal(pset *A1, qsort_compare_func compare)
 								/* updated in place */
 {
-	register pset *p, *pdest = A1;
+	register	pset	*p, *pdest = A1;
 
 	if (*A1 != NULL) {					/* If more than one set */
-		for(p = A1+1; *p != NULL; p++)
-			if ((*compare)(p, p-1) != 0)
-				*pdest++ = *(p-1);
-		*pdest++ = *(p-1);
+		for (p = A1 + 1; *p != NULL; p++)
+			if ((*compare)(p, p - 1) != 0)
+				*pdest++ = *(p - 1);
+		*pdest++ = *(p - 1);
 		*pdest = NULL;
 	}
 	return pdest - A1;
@@ -189,16 +189,16 @@ int rm_equal(pset *A1, qsort_compare_func compare)
 int rm_contain(pset *A1)
 								/* updated in place */
 {
-	register pset *pa, *pb, *pcheck = NULL, a, b;
-	pset *pdest = A1;
-	int last_size = -1;
+	register	pset	*pa, *pb, *pcheck = NULL, a, b;
+				pset	*pdest = A1;
+				int		last_size = -1;
 
 	/* Loop for all cubes of A1 */
-	for(pa = A1; (a = *pa++) != NULL; ) {
+	for (pa = A1; (a = *pa++) != NULL; ) {
 		/* Update the check pointer if the size has changed */
 		if (SIZE(a) != last_size)
 			last_size = SIZE(a), pcheck = pdest;
-		for(pb = A1; pb != pcheck; ) {
+		for (pb = A1; pb != pcheck; ) {
 			b = *pb++;
 			INLINEsetp_implies(a, b,	/* when_false => */ continue);
 			goto lnext1;
@@ -216,16 +216,16 @@ int rm_contain(pset *A1)
 int rm_rev_contain(pset *A1)
 								/* updated in place */
 {
-	register pset *pa, *pb, *pcheck = NULL, a, b;
-	pset *pdest = A1;
-	int last_size = -1;
+	register	pset	*pa, *pb, *pcheck = NULL, a, b;
+				pset	*pdest = A1;
+				int		last_size = -1;
 
 	/* Loop for all cubes of A1 */
-	for(pa = A1; (a = *pa++) != NULL; ) {
+	for (pa = A1; (a = *pa++) != NULL; ) {
 		/* Update the check pointer if the size has changed */
 		if (SIZE(a) != last_size)
 			last_size = SIZE(a), pcheck = pdest;
-		for(pb = A1; pb != pcheck; ) {
+		for (pb = A1; pb != pcheck; ) {
 			b = *pb++;
 			INLINEsetp_implies(b, a,	/* when_false => */ continue);
 			goto lnext1;
@@ -243,11 +243,11 @@ int rm_rev_contain(pset *A1)
 int rm2_equal(register pset *A1, register pset *B1, pset *E1, qsort_compare_func compare)
 										/* updated in place */
 {
-	register pset *pda = A1, *pdb = B1, *pde = E1;
+	register	pset	*pda = A1, *pdb = B1, *pde = E1;
 
 	/* Walk through the arrays advancing pointer to larger cube */
-	for(; *A1 != NULL && *B1 != NULL; )
-		switch((*compare)(A1, B1)) {
+	for (; *A1 != NULL && *B1 != NULL; )
+		switch ((*compare)(A1, B1)) {
 			case -1:		/* "a" comes before "b" */
 			*pda++ = *A1++; break;
 			case 0:		/* equal cubes */
@@ -271,12 +271,12 @@ int rm2_contain(pset *A1, pset *B1)
 								/* updated in place */
 								/* unchanged */
 {
-	register pset *pa, *pb, a, b, *pdest = A1;
+	register	pset	*pa, *pb, a, b, *pdest = A1;
 
 	/* for each set in the first array ... */
-	for(pa = A1; (a = *pa++) != NULL; ) {
+	for (pa = A1; (a = *pa++) != NULL; ) {
 		/* for each set in the second array which is larger ... */
-		for(pb = B1; (b = *pb++) != NULL && SIZE(b) > SIZE(a); ) {
+		for (pb = B1; (b = *pb++) != NULL && SIZE(b) > SIZE(a); ) {
 			INLINEsetp_implies(a, b,	/* when_false => */ continue);
 			/* set was contained in some set of B, so don't save pointer */
 			goto lnext1;
@@ -293,7 +293,7 @@ int rm2_contain(pset *A1, pset *B1)
 /* sf_sort -- sort the sets of A */
 pset *sf_sort(pset_family A, qsort_compare_func compare)
 {
-	register pset p, last, *pdest, *A1;
+	register	pset p, last, *pdest, *A1;
 
 	/* Create a single array pointing to each cube of A */
 	pdest = A1 = ALLOC(pset, A->count + 1);
@@ -311,7 +311,7 @@ pset *sf_sort(pset_family A, qsort_compare_func compare)
 /* sf_list -- make a list of pointers to the sets in a set family */
 pset *sf_list(register pset_family A)
 {
-	register pset p, last, *pdest, *A1;
+	register	pset	p, last, *pdest, *A1;
 
 	/* Create a single array pointing to each cube of A */
 	pdest = A1 = ALLOC(pset, A->count + 1);
@@ -324,11 +324,11 @@ pset *sf_list(register pset_family A)
 /* sf_unlist -- make a set family out of a list of pointers to sets */
 pset_family sf_unlist(pset *A1, int totcnt, int size)
 {
-	register pset pr, p, *pa;
-	pset_family R = sf_new(totcnt, size);
+	register	pset		pr, p, *pa;
+				pset_family	R = sf_new(totcnt, size);
 
 	R->count = totcnt;
-	for(pr = R->data, pa = A1; (p = *pa++) != NULL; pr += R->wsize)
+	for (pr = R->data, pa = A1; (p = *pa++) != NULL; pr += R->wsize)
 		INLINEset_copy(pr, p);
 	FREE(A1);
 	return R;
@@ -337,17 +337,17 @@ pset_family sf_unlist(pset *A1, int totcnt, int size)
 /* sf_ind_unlist -- make a set family out of a list of pointers to sets */
 pset_family sf_ind_unlist(pset *A1, int totcnt, int size, int *row_indices, register pset pfirst)
 {
-	register pset pr, p, *pa;
-	register int i, *new_row_indices;
-	pset_family R = sf_new(totcnt, size);
+	register	pset		pr, p, *pa;
+	register	int			i, *new_row_indices;
+				pset_family	R = sf_new(totcnt, size);
 
 	R->count = totcnt;
 	new_row_indices = ALLOC(int, totcnt);
-	for(pr = R->data, pa = A1, i=0; (p = *pa++) != NULL; pr += R->wsize, i++) {
+	for (pr = R->data, pa = A1, i = 0; (p = *pa++) != NULL; pr += R->wsize, i++) {
 		INLINEset_copy(pr, p);
-		new_row_indices[i] = row_indices[(p - pfirst)/R->wsize];
+		new_row_indices[i] = row_indices[(p - pfirst) / R->wsize];
 	}
-	for(i = 0; i < totcnt; i++)
+	for (i = 0; i < totcnt; i++)
 		row_indices[i] = new_row_indices[i];
 	FREE(new_row_indices);
 	FREE(A1);
@@ -358,10 +358,10 @@ pset_family sf_ind_unlist(pset *A1, int totcnt, int size, int *row_indices, regi
 pset_family sf_merge(pset *A1, pset *B1, pset *E1, int totcnt, int size)
 										/* will be disposed of */
 {
-	register pset pr, ps, *pmin, *pmid, *pmax;
-	pset_family R;
-	pset *temp[3], *swap;
-	int i, j, n;
+	register	pset		pr, ps, *pmin, *pmid, *pmax;
+				pset_family	R;
+				pset		*temp[3], *swap;
+				int			i, j, n;
 
 	/* Allocate the result set_family */
 	R = sf_new(totcnt, size);
@@ -370,8 +370,8 @@ pset_family sf_merge(pset *A1, pset *B1, pset *E1, int totcnt, int size)
 
 	/* Quick bubble sort to order the top member of the three arrays */
 	n = 3;  temp[0] = A1;  temp[1] = B1;  temp[2] = E1;
-	for(i = 0; i < n-1; i++)
-		for(j = i+1; j < n; j++)
+	for (i = 0; i < n - 1; i++)
+		for (j = i + 1; j < n; j++)
 			if (desc1(*temp[i], *temp[j]) > 0) {
 				swap = temp[j];
 				temp[j] = temp[i];

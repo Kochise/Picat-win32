@@ -37,23 +37,23 @@ pcover find_canonical_cover(pset_family F1, pset_family D, pset_family R)
 
 	ESC = new_cover(F->count);
 
-	while(F->count){
-		c = GETSET(F,--F->count);
+	while (F->count) {
+		c = GETSET(F, --F->count);
 		RESET(c, NONESSEN);
 		extended_dc = cube2list(E, F);
 		d = reduce_cube(extended_dc, c);
 		free_cubelist(extended_dc);
-		if(setp_empty(d)){
+		if (setp_empty(d)) {
 			free_cube(d);
 			continue;
 		}
 		c = get_sigma(R, d);
 		S_EXECUTE(COVER = etr_order(F, E, R, c, d), ETR_TIME);
 		free_cube(d);
-		if(TESTP(c, NONESSEN)){
+		if (TESTP(c, NONESSEN)) {
 			sf_append(F, COVER);
 		}
-		else{
+		else {
 			free_cover(COVER);
 			sf_addset(E, c);
 			sf_addset(ESC, c);

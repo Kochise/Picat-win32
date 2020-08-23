@@ -20,14 +20,14 @@ pcover signature_minimize_exact(pset_family ESCubes, pset_family ESSet)
 	sm_row *cover;
 	sm_element *pe;
 	pcover COVER;
-	int index;
+	int	index;
 	int *weights, heur, level;
 
 	/* number ESCubes, ESSet */
-	foreachi_set(ESCubes, index, p){
+	foreachi_set(ESCubes, index, p) {
 		PUTSIZE(p, index);
 	}
-	foreachi_set(ESSet, index, p){
+	foreachi_set(ESSet, index, p) {
 		PUTSIZE(p, index);
 	}
 
@@ -36,7 +36,7 @@ pcover signature_minimize_exact(pset_family ESCubes, pset_family ESSet)
 
 	/* solve the covering problem */
 	weights = NIL(int); heur = FALSE; level = 0;
-	S_EXECUTE(cover=sm_minimum_cover(table, weights, heur, level),
+	S_EXECUTE(cover = sm_minimum_cover(table, weights, heur, level),
 		MINCOV_TIME);
 
 	/* form the cover */
@@ -54,19 +54,19 @@ pcover signature_minimize_exact(pset_family ESCubes, pset_family ESSet)
 sm_matrix *signature_form_table(pset_family ESCubes, pset_family ESSet)
 {
 	sm_matrix *table;
-	int row, column;
+	int	row, column;
 	pcube c, p;
-	int col_deleted;
+	int	col_deleted;
 
 	table = sm_alloc();
 
 	col_deleted = 0;
-	foreachi_set(ESSet, column, p){
-		if(column%1000 == 0){
+	foreachi_set(ESSet, column, p) {
+		if (column%1000 == 0) {
 			col_deleted += sm_col_dominance(table, NULL);
 		}
-		foreachi_set(ESCubes, row, c){
-			if(setp_implies(c, p)){
+		foreachi_set(ESCubes, row, c) {
+			if (setp_implies(c, p)) {
 				sm_insert(table, row, column);
 			}
 		}

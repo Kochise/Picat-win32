@@ -24,6 +24,6 @@
  *   ..!ucbvax!eros!octtools
  */
 
-static char octtools_copyright[] = "Copyright (c) 1988, 1989, Regents of the University of California.  All rights reserved.";
+static	char	octtools_copyright[] = "Copyright (c) 1988, 1989, Regents of the University of California.  All rights reserved.";
 
 #endif

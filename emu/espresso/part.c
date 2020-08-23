@@ -2,16 +2,16 @@
 
 static void copy_row(register sm_matrix *A, register sm_row *prow)
 {
-	register sm_element *p;
+	register	sm_element *p;
 
-	for(p = prow->first_col; p != 0; p = p->next_col) {
+	for (p = prow->first_col; p != 0; p = p->next_col) {
 		(void) sm_insert(A, p->row_num, p->col_num);
 	}
 }
 
 static int visit_row(sm_matrix *A, sm_row *prow, int *rows_visited, int *cols_visited);
 
-static int visit_col(sm_matrix *A, sm_col *pcol, int *rows_visited, int *cols_visited)
+static	int		visit_col(sm_matrix *A, sm_col *pcol, int *rows_visited, int *cols_visited)
 {
 	sm_element *p;
 	sm_row *prow;
@@ -22,7 +22,7 @@ static int visit_col(sm_matrix *A, sm_col *pcol, int *rows_visited, int *cols_vi
 		if (*cols_visited == A->ncols) {
 			return 1;
 		}
-		for(p = pcol->first_row; p != 0; p = p->next_row) {
+		for (p = pcol->first_row; p != 0; p = p->next_row) {
 			prow = sm_get_row(A, p->row_num);
 			if (! prow->flag) {
 				if (visit_row(A, prow, rows_visited, cols_visited)) {
@@ -45,7 +45,7 @@ static int visit_row(sm_matrix *A, sm_row *prow, int *rows_visited, int *cols_vi
 		if (*rows_visited == A->nrows) {
 			return 1;
 		}
-		for(p = prow->first_col; p != 0; p = p->next_col) {
+		for (p = prow->first_col; p != 0; p = p->next_col) {
 			pcol = sm_get_col(A, p->col_num);
 			if (! pcol->flag) {
 				if (visit_col(A, pcol, rows_visited, cols_visited)) {
@@ -59,9 +59,9 @@ static int visit_row(sm_matrix *A, sm_row *prow, int *rows_visited, int *cols_vi
 
 int sm_block_partition(sm_matrix *A, sm_matrix **L, sm_matrix **R)
 {
-	int cols_visited, rows_visited;
-	register sm_row *prow;
-	register sm_col *pcol;
+	int	cols_visited, rows_visited;
+	register	sm_row *prow;
+	register	sm_col *pcol;
 
 	/* Avoid the trivial case */
 	if (A->nrows == 0) {
@@ -69,10 +69,10 @@ int sm_block_partition(sm_matrix *A, sm_matrix **L, sm_matrix **R)
 	}
 
 	/* Reset the visited flags for each row and column */
-	for(prow = A->first_row; prow != 0; prow = prow->next_row) {
+	for (prow = A->first_row; prow != 0; prow = prow->next_row) {
 		prow->flag = 0;
 	}
-	for(pcol = A->first_col; pcol != 0; pcol = pcol->next_col) {
+	for (pcol = A->first_col; pcol != 0; pcol = pcol->next_col) {
 		pcol->flag = 0;
 	}
 
@@ -83,7 +83,7 @@ int sm_block_partition(sm_matrix *A, sm_matrix **L, sm_matrix **R)
 	} else {
 		*L = sm_alloc();
 		*R = sm_alloc();
-		for(prow = A->first_row; prow != 0; prow = prow->next_row) {
+		for (prow = A->first_row; prow != 0; prow = prow->next_row) {
 			if (prow->flag) {
 				copy_row(*L, prow);
 			} else {

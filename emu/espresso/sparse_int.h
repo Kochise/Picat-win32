@@ -41,7 +41,7 @@
 				count++;														\
 			} else {															\
 				type *p;														\
-				for(p = first; p->value < newval; p = p->next)					\
+				for (p = first; p->value < newval; p = p->next)					\
 					;															\
 				if (p->value > newval) {										\
 					e->value = newval;											\
@@ -76,9 +76,9 @@
 
 
 #ifdef FAST_AND_LOOSE
-extern sm_element *sm_element_freelist;
-extern sm_row *sm_row_freelist;
-extern sm_col *sm_col_freelist;
+extern	sm_element *sm_element_freelist;
+extern	sm_row *sm_row_freelist;
+extern	sm_col *sm_col_freelist;
 
 #define sm_element_alloc(newobj)												\
 			if (sm_element_freelist == NIL(sm_element)) {						\
@@ -102,7 +102,7 @@ extern sm_col *sm_col_freelist;
 			FREE(e)
 #endif
 
-extern void sm_row_remove_element(register sm_row *prow, register sm_element *p);
-extern void sm_col_remove_element(register sm_col *pcol, register sm_element *p);
+extern	void		sm_row_remove_element(register sm_row *prow, register sm_element *p);
+extern	void		sm_col_remove_element(register sm_col *pcol, register sm_element *p);
 
 /* LINTLIBRARY */

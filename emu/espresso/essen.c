@@ -25,7 +25,7 @@
 */
 pcover essential(pset_family *Fp, pset_family *Dp)
 {
-	register pcube last, p;
+	register	pcube last, p;
 	pcover E, F = *Fp, D = *Dp;
 
 	/* set all cubes in F active */
@@ -91,10 +91,10 @@ bool essen_cube(pset_family F, pset_family D, pset c)
  */
 pcover cb_consensus(register pset_family T, register pset c)
 {
-	register pcube temp, last, p;
-	register pcover R;
+	register	pcube temp, last, p;
+	register	pcover R;
 
-	R = new_cover(T->count*2);
+	R = new_cover(T->count * 2);
 	temp = new_cube();
 	foreach_set(T, last, p) {
 		if (p != c) {
@@ -122,10 +122,10 @@ pcover cb_consensus(register pset_family T, register pset c)
  */
 pcover cb_consensus_dist0(pset_family R, register pset p, register pset c)
 {
-	int var;
+	int	var;
 	bool got_one;
-	register pcube temp, mask;
-	register pcube p_diff_c=cube.temp[0], p_and_c=cube.temp[1];
+	register	pcube temp, mask;
+	register	pcube p_diff_c = cube.temp[0], p_and_c = cube.temp[1];
 
 	/* If c contains p, then this gives us no information for essential test */
 	if (setp_implies(p, c)) {
@@ -138,7 +138,7 @@ pcover cb_consensus_dist0(pset_family R, register pset p, register pset c)
 	INLINEset_diff(p_diff_c, p, c);
 	INLINEset_and(p_and_c, p, c);
 
-	for(var = cube.num_binary_vars; var < cube.num_vars; var++) {
+	for (var = cube.num_binary_vars; var < cube.num_vars; var++) {
 		/* Check if c(var) is contained in p(var) -- if so, no news */
 		mask = cube.var_mask[var];
 		if (! setp_disjoint(p_diff_c, mask)) {

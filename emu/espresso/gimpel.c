@@ -14,16 +14,16 @@
  */
 int gimpel_reduce(sm_matrix *A, solution_t *select, int *weight, int lb, int bound, int depth, stats_t *stats, solution_t **best)
 {
-	register sm_row *prow, *save_sec;
-	register sm_col *c1 = NULL, *c2 = NULL;
-	register sm_element *p, *p1;
-	int c1_col_num, c2_col_num, primary_row_num, secondary_row_num;
-	int reduce_it;
+	register	sm_row *prow, *save_sec;
+	register	sm_col *c1 = NULL, *c2 = NULL;
+	register	sm_element *p, *p1;
+	int	c1_col_num, c2_col_num, primary_row_num, secondary_row_num;
+	int	reduce_it;
 
 	primary_row_num = 0;
 	secondary_row_num = 0;
 	reduce_it = 0;
-	for(prow = A->first_row; prow != 0; prow = prow->next_row) {
+	for (prow = A->first_row; prow != 0; prow = prow->next_row) {
 		if (prow->length == 2) {
 			c1 = sm_get_col(A, prow->first_col->col_num);
 			c2 = sm_get_col(A, prow->last_col->col_num);
@@ -51,10 +51,10 @@ int gimpel_reduce(sm_matrix *A, solution_t *select, int *weight, int lb, int bou
 		save_sec = sm_row_dup(sm_get_row(A, secondary_row_num));
 		sm_row_remove(save_sec, c1_col_num);
 
-		for(p = c2->first_row; p != 0; p = p->next_row) {
+		for (p = c2->first_row; p != 0; p = p->next_row) {
 			if (p->row_num != primary_row_num) {
 				/* merge rows S1 and T */
-				for(p1 = save_sec->first_col; p1 != 0; p1 = p1->next_col) {
+				for (p1 = save_sec->first_col; p1 != 0; p1 = p1->next_col) {
 					(void) sm_insert(A, p->row_num, p1->col_num);
 				}
 			}
@@ -67,7 +67,7 @@ int gimpel_reduce(sm_matrix *A, solution_t *select, int *weight, int lb, int bou
 
 		stats->gimpel_count++;
 		stats->gimpel++;
-		*best = sm_mincov(A, select, weight, lb-1, bound-1, depth, stats);
+		*best = sm_mincov(A, select, weight, lb - 1, bound - 1, depth, stats);
 		stats->gimpel--;
 
 		if (*best != NIL(solution_t)) {

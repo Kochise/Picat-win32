@@ -2,8 +2,8 @@
 
 void find_equiv_outputs(pPLA PLA)
 {
-	int i, j, ipart, jpart, some_equiv;
-	pcover *R, *F;
+	int		i, j, ipart, jpart, some_equiv;
+	pcover	*R, *F;
 
 	some_equiv = FALSE;
 
@@ -12,14 +12,14 @@ void find_equiv_outputs(pPLA PLA)
 	F = ALLOC(pcover, cube.part_size[cube.output]);
 	R = ALLOC(pcover, cube.part_size[cube.output]);
 
-	for(i = 0; i < cube.part_size[cube.output]; i++) {
+	for (i = 0; i < cube.part_size[cube.output]; i++) {
 		ipart = cube.first_part[cube.output] + i;
 		R[i] = cof_output(PLA->R, ipart);
 		F[i] = complement(cube1list(R[i]));
 	}
 
-	for(i = 0; i < cube.part_size[cube.output]-1; i++) {
-		for(j = i+1; j < cube.part_size[cube.output]; j++) {
+	for (i = 0; i < cube.part_size[cube.output] -1; i++) {
+		for (j = i + 1; j < cube.part_size[cube.output]; j++) {
 			ipart = cube.first_part[cube.output] + i;
 			jpart = cube.first_part[cube.output] + j;
 
@@ -47,7 +47,7 @@ void find_equiv_outputs(pPLA PLA)
 		printf("# No outputs are equivalent\n");
 	}
 
-	for(i = 0; i < cube.part_size[cube.output]; i++) {
+	for (i = 0; i < cube.part_size[cube.output]; i++) {
 		free_cover(F[i]);
 		free_cover(R[i]);
 	}
@@ -57,8 +57,8 @@ void find_equiv_outputs(pPLA PLA)
 
 int check_equiv(pset_family f1, pset_family f2)
 {
-	register pcube *f1list, *f2list;
-	register pcube p, last;
+	register	pcube	*f1list, *f2list;
+	register	pcube	p, last;
 
 	f1list = cube1list(f1);
 	foreach_set(f2, last, p) {

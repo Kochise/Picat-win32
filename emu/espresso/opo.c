@@ -47,9 +47,9 @@
  *  before.
  */
 
-static int opo_no_make_sparse;
-static int opo_repeated;
-static int opo_exact;
+static	int		opo_no_make_sparse;
+static	int		opo_repeated;
+static	int		opo_exact;
 static void minimize(pPLA PLA);
 
 void phase_assignment(pPLA PLA, int opo_strategy)
@@ -84,10 +84,10 @@ void phase_assignment(pPLA PLA, int opo_strategy)
  */
 void repeated_phase_assignment(pPLA PLA)
 {
-	int i;
+	int	i;
 	pcube phase;
 
-	for(i = 0; i < cube.part_size[cube.output]; i++) {
+	for (i = 0; i < cube.part_size[cube.output]; i++) {
 
 		/* Find best assignment for all undecided outputs */
 		phase = find_phase(PLA, i, PLA->phase);
@@ -150,16 +150,16 @@ pcube find_phase(pPLA PLA, int first_output, pset phase1)
  *  primes.
  */
 
-/*ARGSUSED*/
+/* ARGSUSED */
 pcover opo(pset phase, pset_family T, pset_family D, pset_family R, int first_output)
 {
-	int offset, output, i, last_output, ind;
+	int	offset, output, i, last_output, ind;
 	pset pdest, select, p, p1, last, last1, not_covered, tmp;
 	pset_family temp, T1, T2;
 
 	/* must select all primes for outputs [0 .. first_output-1] */
 	select = set_full(T->count);
-	for(output = 0; output < first_output; output++) {
+	for (output = 0; output < first_output; output++) {
 		ind = cube.first_part[cube.output] + output;
 		foreachi_set(T, i, p) {
 			if (is_in_set(p, ind)) {
@@ -201,7 +201,7 @@ pcover opo(pset phase, pset_family T, pset_family D, pset_family R, int first_ou
 	set_free(tmp);
 
 	/* Now reflect the phase choice in a single cube */
-	for(output = first_output; output <= last_output; output++) {
+	for (output = first_output; output <= last_output; output++) {
 		ind = cube.first_part[cube.output] + output;
 		if (is_in_set(not_covered, ind)) {
 			if (is_in_set(not_covered, ind + offset)) {
@@ -218,7 +218,7 @@ pcover opo(pset phase, pset_family T, pset_family D, pset_family R, int first_ou
 pset_family opo_recur(pset_family T, pset_family D, pset select, int offset, int first, int last)
 {
 	static int level = 0;
-	int middle;
+	int	middle;
 	pset_family sl, sr, temp;
 
 	level++;
@@ -235,7 +235,7 @@ pset_family opo_recur(pset_family T, pset_family D, pset select, int offset, int
 	} else {
 		middle = (first + last) / 2;
 		sl = opo_recur(T, D, select, offset, first, middle);
-		sr = opo_recur(T, D, select, offset, middle+1, last);
+		sr = opo_recur(T, D, select, offset, middle + 1, last);
 		temp = unate_intersect(sl, sr, level == 1);
 		if (trace) {
 			printf("# OPO[%d]: %4d = %4d x %4d, time = %s\n", level - 1,
@@ -251,9 +251,9 @@ pset_family opo_recur(pset_family T, pset_family D, pset select, int offset, int
 
 pset_family opo_leaf(register pset_family T, pset select, int out1, int out2)
 {
-	register pset_family temp;
-	register pset p, pdest;
-	register int i;
+	register	pset_family temp;
+	register	pset p, pdest;
+	register	int i;
 
 	out1 += cube.first_part[cube.output];
 	out2 += cube.first_part[cube.output];
@@ -286,8 +286,8 @@ pset_family opo_leaf(register pset_family T, pset select, int out1, int out2)
 pset_family form_cover_table(pcover F, pcover D, pset select, int f, int fbar)
 		/* indices of f and fbar in the output part */
 {
-	register int i;
-	register pcube p;
+	register	int i;
+	register	pcube p;
 	pset_family f_table, fbar_table;
 
 	/* setup required for fcube_is_covered */
@@ -310,11 +310,11 @@ pset_family form_cover_table(pcover F, pcover D, pset select, int f, int fbar)
 
 pset_family find_covers(pcover F, pcover D, register pset select, int n)
 {
-	register pset p, last, new;
+	register	pset p, last, new;
 	pcover F1;
 	pcube *Flist;
 	pset_family f_table, table;
-	int i;
+	int	i;
 
 	n += cube.first_part[cube.output];
 
@@ -343,7 +343,7 @@ pset_family find_covers(pcover F, pcover D, register pset select, int n)
 	}
 
 	/* complement this to get possible ways to cover the function */
-	for(i = 0; i < Rp_size; i++) {
+	for (i = 0; i < Rp_size; i++) {
 		if (! is_in_set(select, i)) {
 			p = set_new(Rp_size);
 			set_insert(p, i);
@@ -382,10 +382,10 @@ void output_phase_setup(pPLA PLA, int first_output)
 {
 	pcover F, R, D;
 	pcube mask, mask1, last;
-	int first_part, offset;
+	int	first_part, offset;
 	bool save;
-	register pcube p, pr, pf;
-	register int i, last_part;
+	register	pcube p, pr, pf;
+	register	int i, last_part;
 
 	if (cube.output == -1)
 		fatal("output_phase_setup: must have an output");
@@ -404,10 +404,10 @@ void output_phase_setup(pPLA PLA, int first_output)
 
 	/* Create a mask to select that part of the cube which isn't changing */
 	mask = set_save(cube.fullset);
-	for(i = first_part; i < cube.size; i++)
+	for (i = first_part; i < cube.size; i++)
 		set_remove(mask, i);
 	mask1 = set_save(mask);
-	for(i = cube.first_part[cube.output]; i < first_part; i++) {
+	for (i = cube.first_part[cube.output]; i < first_part; i++) {
 		set_remove(mask1, i);
 	}
 
@@ -420,13 +420,13 @@ void output_phase_setup(pPLA PLA, int first_output)
 		pr = GETSET(PLA->R, (PLA->R)->count++);
 		INLINEset_and(pf, mask, p);
 		INLINEset_and(pr, mask1, p);
-		for(i = first_part; i <= last_part; i++)
+		for (i = first_part; i <= last_part; i++)
 			if (is_in_set(p, i))
 				set_insert(pf, i);
 		save = FALSE;
-		for(i = first_part; i <= last_part; i++)
+		for (i = first_part; i <= last_part; i++)
 			if (is_in_set(p, i))
-				save = TRUE, set_insert(pr, i+offset);
+				save = TRUE, set_insert(pr, i + offset);
 		if (! save) PLA->R->count--;
 	}
 
@@ -436,11 +436,11 @@ void output_phase_setup(pPLA PLA, int first_output)
 		INLINEset_and(pf, mask1, p);
 		INLINEset_and(pr, mask, p);
 		save = FALSE;
-		for(i = first_part; i <= last_part; i++)
+		for (i = first_part; i <= last_part; i++)
 			if (is_in_set(p, i))
-				save = TRUE, set_insert(pf, i+offset);
+				save = TRUE, set_insert(pf, i + offset);
 		if (! save) PLA->F->count--;
-		for(i = first_part; i <= last_part; i++)
+		for (i = first_part; i <= last_part; i++)
 			if (is_in_set(p, i))
 				set_insert(pr, i);
 	}
@@ -448,10 +448,10 @@ void output_phase_setup(pPLA PLA, int first_output)
 	foreach_set(D, last, p) {
 		pf = GETSET(PLA->D, (PLA->D)->count++);
 		INLINEset_and(pf, mask, p);
-		for(i = first_part; i <= last_part; i++)
+		for (i = first_part; i <= last_part; i++)
 			if (is_in_set(p, i)) {
 				set_insert(pf, i);
-				set_insert(pf, i+offset);
+				set_insert(pf, i + offset);
 			}
 	}
 
@@ -469,8 +469,8 @@ void output_phase_setup(pPLA PLA, int first_output)
 pPLA set_phase(pPLA PLA)
 {
 	pcover F1, R1;
-	register pcube last, p, outmask;
-	register pcube temp=cube.temp[0], phase=PLA->phase, phase1=cube.temp[1];
+	register	pcube last, p, outmask;
+	register	pcube temp = cube.temp[0], phase = PLA->phase, phase1 = cube.temp[1];
 
 	outmask = cube.var_mask[cube.num_vars - 1];
 	set_diff(phase1, outmask, phase);
@@ -502,7 +502,7 @@ pPLA set_phase(pPLA PLA)
 void opoall(pPLA PLA, int first_output, int last_output, int opo_strategy)
 {
 	pcover F, D, R, best_F, best_D, best_R;
-	int i, j, ind, num;
+	int	i, j, ind, num;
 	pcube bestphase;
 
 	opo_exact = opo_strategy;
@@ -516,7 +516,7 @@ void opoall(pPLA PLA, int first_output, int last_output, int opo_strategy)
 	best_D = sf_save(PLA->D);
 	best_R = sf_save(PLA->R);
 
-	for(i = 0; i < POW2(last_output - first_output + 1); i++) {
+	for (i = 0; i < POW2(last_output - first_output + 1); i++) {
 
 		/* save the initial PLA covers */
 		F = sf_save(PLA->F);
@@ -526,7 +526,7 @@ void opoall(pPLA PLA, int first_output, int last_output, int opo_strategy)
 		/* compute the phase cube for this iteration */
 		PLA->phase = set_save(cube.fullset);
 		num = i;
-		for(j = last_output; j >= first_output; j--) {
+		for (j = last_output; j >= first_output; j--) {
 			if (num % 2 == 0) {
 				ind = cube.first_part[cube.output] + j;
 				set_remove(PLA->phase, ind);

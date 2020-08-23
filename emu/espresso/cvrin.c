@@ -5,13 +5,13 @@
 
 #include "espresso.h"
 
-static bool line_length_error;
-static int lineno;
+static	bool	line_length_error;
+static	int		lineno;
 
 void skip_line(register FILE *fpin, register FILE *fpout, register int echo)
 {
-	register int ch;
-	while ((ch=getc(fpin)) != EOF && ch != '\n')
+	register	int	ch;
+	while ((ch = getc(fpin)) != EOF && ch != '\n')
 		if (echo)
 			putc(ch, fpout);
 	if (echo)
@@ -21,7 +21,7 @@ void skip_line(register FILE *fpin, register FILE *fpout, register int echo)
 
 char *get_word(register FILE *fp, register char *word)
 {
-	register int ch, i = 0;
+	register	int	ch, i = 0;
 	while ((ch = getc(fp)) != EOF && isspace(ch))
 		;
 	word[i++] = ch;
@@ -36,21 +36,27 @@ char *get_word(register FILE *fp, register char *word)
  */
 void read_cube(register FILE *fp, pPLA PLA)
 {
-	register int var, i;
-	pcube cf = cube.temp[0], cr = cube.temp[1], cd = cube.temp[2];
-	bool savef = FALSE, saved = FALSE, saver = FALSE;
-//	char token[256];		/* for kiss read hack */
-	char ch;				/* for kiss read hack */
-//	int varx, first, last, offset;	/* for kiss read hack */
+	register	int		var, i;
+				pcube	cf = cube.temp[0], cr = cube.temp[1], cd = cube.temp[2];
+				bool	savef = FALSE, saved = FALSE, saver = FALSE;
+#if 0
+				char	token[256];		/* for kiss read hack */
+#endif
+				char	ch;				/* for kiss read hack */
+#if 0
+				int		varx, first, last, offset;	/* for kiss read hack */
+#endif
 
-//	printf("read_cube number_binary_vars=%d\n", cube.num_binary_vars);
+#if 0
+	printf("read_cube number_binary_vars = %d\n", cube.num_binary_vars);
+#endif
 	set_clear(cf, cube.size);
 
 	/* Loop and read binary variables */
-	for(var = 0; var < cube.num_binary_vars; var++){
+	for (var = 0; var < cube.num_binary_vars; var++) {
 		ch = getc(fp);
 		printf("%c", ch);
-		switch(ch){
+		switch (ch) {
 			case EOF:
 				goto bad_char;
 			case '\n':
@@ -65,12 +71,12 @@ void read_cube(register FILE *fp, pPLA PLA)
 				var--;
 				break;
 			case '2': case '-':
-				set_insert(cf, var*2+1);
+				set_insert(cf, var * 2 + 1);
 			case '0':
-				set_insert(cf, var*2);
+				set_insert(cf, var * 2);
 				break;
 			case '1':
-				set_insert(cf, var*2+1);
+				set_insert(cf, var * 2 + 1);
 				break;
 			case '?':
 				break;
@@ -84,9 +90,11 @@ void read_cube(register FILE *fp, pPLA PLA)
 	set_copy(cr, cf);
 	set_copy(cd, cf);
 
-//	printf("cube.first_part[var]=%d cube.last_part[var]=%d\n", cube.first_part[var], cube.last_part[var]);
+#if 0
+	printf("cube.first_part[var]=%d cube.last_part[var]=%d\n", cube.first_part[var], cube.last_part[var]);
+#endif
 
-	for(i = cube.first_part[var]; i <= cube.last_part[var]; i++){
+	for (i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
 		ch = getc(fp);
 		switch (ch) {
 			case EOF:
@@ -133,15 +141,17 @@ void read_cube(register FILE *fp, pPLA PLA)
 
 void parse_pla(FILE *fp, pPLA PLA)
 {
-//	int i, var, np, last;
-	int ch;
-	char word[256];
+#if 0
+	int		i, var, np, last;
+#endif
+	int		ch;
+	char	word[256];
 
 	lineno = 1;
 	line_length_error = FALSE;
 
- loop:
-	switch(ch = getc(fp)) {
+loop:
+	switch (ch = getc(fp)) {
 		case EOF:
 			return;
 
@@ -177,7 +187,7 @@ void parse_pla(FILE *fp, pPLA PLA)
 				} else {
 					if (cube.part_size == NULL)
 						fatal(".o cannot appear before .i");
-					if (fscanf(fp, "%d", &(cube.part_size[cube.num_vars-1]))!=1)
+					if (fscanf(fp, "%d", &(cube.part_size[cube.num_vars - 1])) != 1)
 						fatal("error reading .o");
 					cube_setup();
 					PLA_labels(PLA);
@@ -186,7 +196,9 @@ void parse_pla(FILE *fp, pPLA PLA)
 		default:
 			(void) ungetc(ch, fp);
 			if (cube.fullset == NULL) {
-/*				fatal("unknown PLA size, need .i/.o or .mv");*/
+#if 0
+				fatal("unknown PLA size, need .i/.o or .mv");
+#endif
 				if (echo_comments)
 					putchar('#');
 				skip_line(fp, stdout, echo_comments);
@@ -201,6 +213,7 @@ void parse_pla(FILE *fp, pPLA PLA)
 	}
 	goto loop;
 }
+
 /*
 	read_pla -- read a PLA from a file
 
@@ -240,10 +253,14 @@ void parse_pla(FILE *fp, pPLA PLA)
 
 int read_pla(FILE *fp, int needs_dcset, int needs_offset, int pla_type, pPLA *PLA_return)
 {
-	pPLA PLA;
-//	int i, second, third;
-	long time;
-//	cost_t cost;
+	pPLA	PLA;
+#if 0
+	int		i, second, third;
+#endif
+	long	time;
+#if 0
+	cost_t	cost;
+#endif
 
 	/* Allocate and initialize the PLA structure */
 	PLA = *PLA_return = new_PLA();
@@ -264,13 +281,15 @@ int read_pla(FILE *fp, int needs_dcset, int needs_offset, int pla_type, pPLA *PL
 
 int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA)
 {
-	int i;
-//	int second, third;
-	long time;
-	cost_t cost;
+	int		i;
+#if 0
+	int		second, third;
+#endif
+	long	time;
+	cost_t	cost;
 
 	/* This hack merges the next-state field with the outputs */
-	for(i = 0; i < cube.num_vars; i++) {
+	for (i = 0; i < cube.num_vars; i++) {
 		cube.part_size[i] = ABS(cube.part_size[i]);
 	}
 
@@ -279,7 +298,7 @@ int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA)
 	if (pos || PLA->phase != NULL || PLA->symbolic_output != NIL(symbolic_t)) {
 		needs_offset = TRUE;
 	}
-	if (needs_offset && (PLA->pla_type==F_type || PLA->pla_type==FD_type)) {
+	if (needs_offset && (PLA->pla_type == F_type || PLA->pla_type == FD_type)) {
 		free_cover(PLA->R);
 		PLA->R = complement(cube2list(PLA->F, PLA->D));
 	} else if (needs_dcset && PLA->pla_type == FR_type) {
@@ -300,7 +319,7 @@ int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA)
 		PLA->F = PLA->R;
 		PLA->R = onset;
 		PLA->phase = new_cube();
-		set_diff(PLA->phase, cube.fullset, cube.var_mask[cube.num_vars-1]);
+		set_diff(PLA->phase, cube.fullset, cube.var_mask[cube.num_vars - 1]);
 	} else if (PLA->phase != NULL) {
 		(void) set_phase(PLA);
 	}
@@ -317,7 +336,7 @@ int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA)
 		EXEC(map_output_symbolic(PLA), "MAP-OUTPUT ", PLA->F);
 		if (needs_offset) {
 			free_cover(PLA->R);
-			EXECUTE(PLA->R=complement(cube2list(PLA->F, PLA->D)), COMPL_TIME, PLA->R, cost);
+			EXECUTE(PLA->R = complement(cube2list(PLA->F, PLA->D)), COMPL_TIME, PLA->R, cost);
 		}
 	}
 
@@ -326,7 +345,7 @@ int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA)
 
 pPLA new_PLA(void)
 {
-	pPLA PLA;
+	pPLA	PLA;
 
 	PLA = ALLOC(PLA_t, 1);
 	PLA->F = PLA->D = PLA->R = (pcover) NULL;
@@ -342,18 +361,18 @@ pPLA new_PLA(void)
 
 void PLA_labels(pPLA PLA)
 {
-	int i;
+	int	i;
 
 	PLA->label = ALLOC(char *, cube.size);
-	for(i = 0; i < cube.size; i++)
+	for (i = 0; i < cube.size; i++)
 		PLA->label[i] = (char *) NULL;
 }
 
 void free_PLA(pPLA PLA)
 {
-	symbolic_list_t *p2, *p2next;
-	symbolic_t *p1, *p1next;
-	int i;
+	symbolic_list_t	*p2, *p2next;
+	symbolic_t		*p1, *p1next;
+	int				i;
 
 	if (PLA->F != (pcover) NULL)
 		free_cover(PLA->F);
@@ -369,7 +388,7 @@ void free_PLA(pPLA PLA)
 		FREE(PLA->pair);
 	}
 	if (PLA->label != NULL) {
-		for(i = 0; i < cube.size; i++)
+		for (i = 0; i < cube.size; i++)
 			if (PLA->label[i] != NULL)
 				FREE(PLA->label[i]);
 		FREE(PLA->label);
@@ -377,8 +396,8 @@ void free_PLA(pPLA PLA)
 	if (PLA->filename != NULL) {
 		FREE(PLA->filename);
 	}
-	for(p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1next) {
-		for(p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2next) {
+	for (p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1next) {
+		for (p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2next) {
 			p2next = p2->next;
 			FREE(p2);
 		}
@@ -386,8 +405,8 @@ void free_PLA(pPLA PLA)
 		FREE(p1);
 	}
 	PLA->symbolic = NIL(symbolic_t);
-	for(p1 = PLA->symbolic_output; p1 != NIL(symbolic_t); p1 = p1next) {
-		for(p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2next) {
+	for (p1 = PLA->symbolic_output; p1 != NIL(symbolic_t); p1 = p1next) {
+		for (p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2next) {
 			p2next = p2->next;
 			FREE(p2);
 		}
@@ -401,7 +420,7 @@ void free_PLA(pPLA PLA)
 
 int label_index(pPLA PLA, char *word, int *varp, int *ip)
 {
-	int var, i;
+	int	var, i;
 
 	if (PLA->label == NIL(char *) || PLA->label[0] == NIL(char)) {
 		if (sscanf(word, "%d", varp) == 1) {
@@ -409,9 +428,9 @@ int label_index(pPLA PLA, char *word, int *varp, int *ip)
 			return TRUE;
 		}
 	} else {
-		for(var = 0; var < cube.num_vars; var++) {
-			for(i = 0; i < cube.part_size[var]; i++) {
-				if (equal(PLA->label[cube.first_part[var]+i], word)) {
+		for (var = 0; var < cube.num_vars; var++) {
+			for (i = 0; i < cube.part_size[var]; i++) {
+				if (equal(PLA->label[cube.first_part[var] + i], word)) {
 					*varp = var;
 					*ip = i;
 					return TRUE;

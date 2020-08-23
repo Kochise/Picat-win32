@@ -8,10 +8,10 @@
 #define USE_INDEP_SET
 
 static int select_column(sm_matrix *A, int *weight, solution_t *indep);
-static void select_essential(sm_matrix *A, solution_t *select, int *weight, int bound);
-static int verify_cover(sm_matrix *A, sm_row *cover);
+static	void		select_essential(sm_matrix *A, solution_t *select, int *weight, int bound);
+static	int		verify_cover(sm_matrix *A, sm_row *cover);
 
-#define fail(why)	{															\
+#define fail(why) {															\
 				(void) fprintf(stderr, "Fatal error: file %s, line %d\n%s\n",	\
 					__FILE__, __LINE__, why);									\
 				(void) fflush(stdout);											\
@@ -27,7 +27,7 @@ sm_row *sm_minimum_cover(sm_matrix *A, int *weight, int heuristic, int debug_lev
 	sm_row *prow, *sol;
 	sm_col *pcol;
 	sm_matrix *dup_A;
-	int nelem, bound;
+	int	nelem, bound;
 	double sparsity;
 
 	/* Avoid sillyness */
@@ -104,7 +104,7 @@ solution_t *sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int
 	sm_matrix *A1, *A2, *L, *R;
 	sm_element *p;
 	solution_t *select1, *select2, *best, *best1, *best2, *indep;
-	int pick, lb_new, debug;
+	int	pick, lb_new, debug;
 
 	/* Start out with some debugging information */
 	stats->nodes++;
@@ -148,7 +148,7 @@ solution_t *sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int
 		(void) printf(" %3dx%3d sel=%3d bnd=%3d lb=%3d %12s ",
 			A->nrows, A->ncols, select->cost + stats->gimpel,
 			bound + stats->gimpel, lb_new + stats->gimpel,
-			util_print_time(util_cpu_time()-stats->start_time));
+			util_print_time(util_cpu_time() - stats->start_time));
 	}
 
 	/* Check for bounding based on no better solution possible */
@@ -181,7 +181,7 @@ solution_t *sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int
 		select1 = solution_alloc();
 		stats->component++;
 		best1 = sm_mincov(L, select1, weight, 0,
-						bound-select->cost, depth+1, stats);
+						bound - select->cost, depth + 1, stats);
 		stats->component--;
 		solution_free(select1);
 		sm_free(L);
@@ -190,13 +190,13 @@ solution_t *sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int
 		if (best1 == NIL(solution_t)) {
 			best = NIL(solution_t);
 		} else {
-			for(p = best1->row->first_col; p != 0; p = p->next_col) {
+			for (p = best1->row->first_col; p != 0; p = p->next_col) {
 				solution_add(select, weight, p->col_num);
 			}
 			solution_free(best1);
 
 			/* recur for the remaining block */
-			best = sm_mincov(R, select, weight, lb_new, bound, depth+1, stats);
+			best = sm_mincov(R, select, weight, lb_new, bound, depth + 1, stats);
 		}
 		sm_free(R);
 
@@ -208,7 +208,7 @@ solution_t *sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int
 		A1 = sm_dup(A);
 		select1 = solution_dup(select);
 		solution_accept(select1, A1, weight, pick);
-		best1 = sm_mincov(A1, select1, weight, lb_new, bound, depth+1, stats);
+		best1 = sm_mincov(A1, select1, weight, lb_new, bound, depth + 1, stats);
 		solution_free(select1);
 		sm_free(A1);
 
@@ -231,7 +231,7 @@ solution_t *sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int
 		A2 = sm_dup(A);
 		select2 = solution_dup(select);
 		solution_reject(select2, A2, weight, pick);
-		best2 = sm_mincov(A2, select2, weight, lb_new, bound, depth+1, stats);
+		best2 = sm_mincov(A2, select2, weight, lb_new, bound, depth + 1, stats);
 		solution_free(select2);
 		sm_free(A2);
 
@@ -243,18 +243,18 @@ solution_t *sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int
 
 static int select_column(sm_matrix *A, int *weight, solution_t *indep)
 {
-	register sm_col *pcol;
-	register sm_row *prow, *indep_cols;
-	register sm_element *p, *p1;
+	register	sm_col *pcol;
+	register	sm_row *prow, *indep_cols;
+	register	sm_element *p, *p1;
 	double w, best;
-	int best_col;
+	int	best_col;
 
 	indep_cols = sm_row_alloc();
 	if (indep != NIL(solution_t)) {
 		/* Find which columns are in the independent sets */
-		for(p = indep->row->first_col; p != 0; p = p->next_col) {
+		for (p = indep->row->first_col; p != 0; p = p->next_col) {
 			prow = sm_get_row(A, p->col_num);
-			for(p1 = prow->first_col; p1 != 0; p1 = p1->next_col) {
+			for (p1 = prow->first_col; p1 != 0; p1 = p1->next_col) {
 				(void) sm_row_insert(indep_cols, p1->col_num);
 			}
 		}
@@ -275,7 +275,7 @@ static int select_column(sm_matrix *A, int *weight, solution_t *indep)
 
 		/* Compute the total 'value' of all things covered by the column */
 		w = 0.0;
-		for(p = pcol->first_row; p != 0; p = p->next_row) {
+		for (p = pcol->first_row; p != 0; p = p->next_row) {
 			prow = sm_get_row(A, p->row_num);
 			w += 1.0 / ((double) prow->length - 1.0);
 		}
@@ -297,9 +297,9 @@ static int select_column(sm_matrix *A, int *weight, solution_t *indep)
 /* must beat this solution */
 static void select_essential(sm_matrix *A, solution_t *select, int *weight, int bound)
 {
-	register sm_element *p;
-	register sm_row *prow, *essen;
-	int delcols, delrows, essen_count;
+	register	sm_element *p;
+	register	sm_row *prow, *essen;
+	int	delcols, delrows, essen_count;
 
 	do {
 		/*  Check for dominated columns  */

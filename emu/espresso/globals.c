@@ -8,7 +8,7 @@ unsigned int debug;				/* debug parameter */
 bool verbose_debug;				/* -v:  whether to print a lot */
 char *total_name[TIME_COUNT];	/* basic function names */
 long total_time[TIME_COUNT];	/* time spent in basic fcts */
-int total_calls[TIME_COUNT];	/* # calls to each fct */
+int		total_calls[TIME_COUNT];	/* # calls to each fct */
 
 bool echo_comments;				/* turned off by -eat option */
 bool echo_unknown_commands;		/* always true ?? */
@@ -54,7 +54,7 @@ struct pla_types_struct pla_types[] = {
 struct cube_struct cube, temp_cube_save;
 struct cdata_struct cdata, temp_cdata_save;
 
-int bit_count[256] = {
+int		bit_count[256] = {
 	0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
 	1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
 	1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,

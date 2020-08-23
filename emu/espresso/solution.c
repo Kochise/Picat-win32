@@ -34,14 +34,14 @@ void solution_add(solution_t *sol, int *weight, int col)
 
 void solution_accept(solution_t *sol, sm_matrix *A, int *weight, int col)
 {
-	register sm_element *p, *pnext;
+	register	sm_element *p, *pnext;
 	sm_col *pcol;
 
 	solution_add(sol, weight, col);
 
 	/* delete rows covered by this column */
 	pcol = sm_get_col(A, col);
-	for(p = pcol->first_row; p != 0; p = pnext) {
+	for (p = pcol->first_row; p != 0; p = pnext) {
 		pnext = p->next_row;		/* grab it before it disappears */
 		sm_delrow(A, p->row_num);
 	}

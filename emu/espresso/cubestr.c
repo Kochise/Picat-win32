@@ -14,8 +14,8 @@
 */
 void cube_setup(void)
 {
-	register int i, var;
-	register pcube p;
+	register	int		i, var;
+	register	pcube	p;
 
 	if (cube.num_binary_vars < 0 || cube.num_vars < cube.num_binary_vars)
 		fatal("cube size is silly, error in .i/.o or .mv");
@@ -28,7 +28,7 @@ void cube_setup(void)
 	cube.last_part = ALLOC(int, cube.num_vars);
 	cube.first_word = ALLOC(int, cube.num_vars);
 	cube.last_word = ALLOC(int, cube.num_vars);
-	for(var = 0; var < cube.num_vars; var++) {
+	for (var = 0; var < cube.num_vars; var++) {
 		if (var < cube.num_binary_vars)
 			cube.part_size[var] = 2;
 		cube.first_part[var] = cube.size;
@@ -42,9 +42,9 @@ void cube_setup(void)
 	cube.sparse = ALLOC(int, cube.num_vars);
 	cube.binary_mask = new_cube();
 	cube.mv_mask = new_cube();
-	for(var = 0; var < cube.num_vars; var++) {
+	for (var = 0; var < cube.num_vars; var++) {
 		p = cube.var_mask[var] = new_cube();
-		for(i = cube.first_part[var]; i <= cube.last_part[var]; i++)
+		for (i = cube.first_part[var]; i <= cube.last_part[var]; i++)
 			set_insert(p, i);
 		if (var < cube.num_binary_vars) {
 			INLINEset_or(cube.binary_mask, cube.binary_mask, p);
@@ -62,7 +62,7 @@ void cube_setup(void)
 	}
 
 	cube.temp = ALLOC(pset, CUBE_TEMP);
-	for(i = 0; i < CUBE_TEMP; i++)
+	for (i = 0; i < CUBE_TEMP; i++)
 		cube.temp[i] = new_cube();
 	cube.fullset = set_fill(new_cube(), cube.size);
 	cube.emptyset = new_cube();
@@ -82,7 +82,7 @@ void cube_setup(void)
 */
 void setdown_cube(void)
 {
-	register int i, var;
+	register	int	i, var;
 
 	FREE(cube.first_part);
 	FREE(cube.last_part);
@@ -94,11 +94,11 @@ void setdown_cube(void)
 	free_cube(cube.mv_mask);
 	free_cube(cube.fullset);
 	free_cube(cube.emptyset);
-	for(var = 0; var < cube.num_vars; var++)
+	for (var = 0; var < cube.num_vars; var++)
 		free_cube(cube.var_mask[var]);
 	FREE(cube.var_mask);
 
-	for(i = 0; i < CUBE_TEMP; i++)
+	for (i = 0; i < CUBE_TEMP; i++)
 		free_cube(cube.temp[i]);
 	FREE(cube.temp);
 

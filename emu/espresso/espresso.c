@@ -40,9 +40,9 @@
 
 pcover espresso(pset_family F, pset_family D1, pset_family R)
 {
-	pcover E, D, Fsave;
-	pset last, p;
-	cost_t cost, best_cost;
+	pcover	E, D, Fsave;
+	pset	last, p;
+	cost_t	cost, best_cost;
 
 begin:
 	Fsave = sf_save(F);		/* save original function */
@@ -56,7 +56,7 @@ begin:
 	}
 	cover_cost(F, &cost);
 	if (unwrap_onset && (cube.part_size[cube.num_vars - 1] > 1)
-	&& (cost.out != cost.cubes*cube.part_size[cube.num_vars-1])
+	&& (cost.out != cost.cubes * cube.part_size[cube.num_vars - 1])
 	&& (cost.out < 5000))
 		EXEC(F = sf_contain(unravel(F, cube.num_vars - 1)), "SETUP      ", F);
 

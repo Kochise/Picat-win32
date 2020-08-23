@@ -15,7 +15,7 @@
 #include "espresso.h"
 #include "signature.h"
 
-static long start_time;	/* yuk */
+static	long		start_time;	/* yuk */
 
 pcover signature(pset_family F1, pset_family D1, pset_family R1)
 {
@@ -46,7 +46,7 @@ pcover signature(pset_family F1, pset_family D1, pset_family R1)
 
 	S_EXECUTE(F = expand(F, R, FALSE), ESSEN_TIME);
 	S_EXECUTE(F = irredundant(F, D), ESSEN_TIME);
-	S_EXECUTE(ESSENTIAL = essential(&F,&D), ESSEN_TIME);
+	S_EXECUTE(ESSENTIAL = essential(&F, &D), ESSEN_TIME);
 
 	S_EXECUTE(ESC = find_canonical_cover(F, D, R), FCC_TIME);
 	/**************************************************
@@ -83,10 +83,10 @@ pcover generate_primes(pset_family F, pset_family R)
 	pcube c, r, lastc, b, lastb;
 	pcover BB, PRIMES;
 	pcube odd, even, out_part_r;
-	register int i;
-	register int w, last;
-	register unsigned int x;
-	int count;
+	register	int i;
+	register	int w, last;
+	register	unsigned int x;
+	int	count;
 
 	out_part_r = new_cube();
 	odd = new_cube();
@@ -94,11 +94,11 @@ pcover generate_primes(pset_family F, pset_family R)
 
 	count = 0;
 	PRIMES = new_cover(F->count);
-	foreach_set(F, lastc, c){
+	foreach_set(F, lastc, c) {
 		BB = new_cover(R->count);
 		BB->count = R->count;
 		/* BB = get_blocking_matrix(R, c); */
-		foreachi_set(R, i, r){
+		foreachi_set(R, i, r) {
 			b = GETSET(BB, i);
 			if ((last = cube.inword) != -1) {
 				/* Check the partial word of binary variables */
@@ -106,7 +106,7 @@ pcover generate_primes(pset_family F, pset_family R)
 				x = ~(x | x >> 1) & cube.inmask;
 				b[last] = r[last] & (x | x << 1);
 				/* Check the full words of binary variables */
-				for(w = 1; w < last; w++) {
+				for (w = 1; w < last; w++) {
 						x = r[w] & c[w];
 						x = ~(x | x >> 1) & DISJOINT;
 					b[w] = r[w] & (x | x << 1);
@@ -115,19 +115,19 @@ pcover generate_primes(pset_family F, pset_family R)
 			PUTLOOP(b, LOOP(r));
 			INLINEset_and(b, b, cube.binary_mask);
 			INLINEset_and(out_part_r, cube.mv_mask, r);
-			if(!setp_implies(out_part_r, c)){
+			if (!setp_implies(out_part_r, c)) {
 				INLINEset_or(b, b, out_part_r);
 			}
 		}
 		BB = unate_compl(BB);
-		if(BB != NULL){
-			foreach_set(BB, lastb, b){
+		if (BB != NULL) {
+			foreach_set(BB, lastb, b) {
 				set_not(b);
 			}
 			sf_append(PRIMES, BB);
 		}
 		count++;
-		if(count % 100 == 0){
+		if (count % 100 == 0) {
 			PRIMES = sf_contain(PRIMES);
 		}
 	}

@@ -6,7 +6,7 @@
  */
 sm_col * sm_col_alloc(void)
 {
-	register sm_col *pcol;
+	register	sm_col	*pcol;
 
 #ifdef FAST_AND_LOOSE
 	if (sm_col_freelist == NIL(sm_col)) {
@@ -47,9 +47,9 @@ void sm_col_free(register sm_col *pcol)
 	pcol->next_col = sm_col_freelist;
 	sm_col_freelist = pcol;
 #else
-	register sm_element *p, *pnext;
+	register	sm_element	*p, *pnext;
 
-	for(p = pcol->first_row; p != 0; p = pnext) {
+	for (p = pcol->first_row; p != 0; p = pnext) {
 		pnext = p->next_row;
 		sm_element_free(p);
 	}
@@ -62,11 +62,11 @@ void sm_col_free(register sm_col *pcol)
  */
 sm_col * sm_col_dup(register sm_col *pcol)
 {
-	register sm_col *pnew;
-	register sm_element *p;
+	register	sm_col		*pnew;
+	register	sm_element	*p;
 
 	pnew = sm_col_alloc();
-	for(p = pcol->first_row; p != 0; p = p->next_row) {
+	for (p = pcol->first_row; p != 0; p = p->next_row) {
 		(void) sm_col_insert(pnew, p->row_num);
 	}
 	return pnew;
@@ -77,7 +77,7 @@ sm_col * sm_col_dup(register sm_col *pcol)
  */
 sm_element * sm_col_insert(register sm_col *pcol, register int row)
 {
-	register sm_element *test, *element;
+	register	sm_element	*test, *element;
 
 	/* get a new item, save its address */
 	sm_element_alloc(element);
@@ -99,9 +99,9 @@ sm_element * sm_col_insert(register sm_col *pcol, register int row)
  */
 void sm_col_remove(register sm_col *pcol, register int row)
 {
-	register sm_element *p;
+	register	sm_element	*p;
 
-	for(p = pcol->first_row; p != 0 && p->row_num < row; p = p->next_row)
+	for (p = pcol->first_row; p != 0 && p->row_num < row; p = p->next_row)
 		;
 	if (p != 0 && p->row_num == row) {
 		dll_unlink(p, pcol->first_row, pcol->last_row,
@@ -115,9 +115,9 @@ void sm_col_remove(register sm_col *pcol, register int row)
  */
 sm_element * sm_col_find(sm_col *pcol, int row)
 {
-	register sm_element *p;
+	register	sm_element	*p;
 
-	for(p = pcol->first_row; p != 0 && p->row_num < row; p = p->next_row)
+	for (p = pcol->first_row; p != 0 && p->row_num < row; p = p->next_row)
 		;
 	if (p != 0 && p->row_num == row) {
 		return p;
@@ -131,7 +131,7 @@ sm_element * sm_col_find(sm_col *pcol, int row)
  */
 int sm_col_contains(sm_col *p1, sm_col *p2)
 {
-	register sm_element *q1, *q2;
+	register	sm_element	*q1, *q2;
 
 	q1 = p1->first_row;
 	q2 = p2->first_row;
@@ -153,12 +153,12 @@ int sm_col_contains(sm_col *p1, sm_col *p2)
  */
 int sm_col_intersects(sm_col *p1, sm_col *p2)
 {
-	register sm_element *q1, *q2;
+	register	sm_element	*q1, *q2;
 
 	q1 = p1->first_row;
 	q2 = p2->first_row;
 	if (q1 == 0 || q2 == 0) return 0;
-	for(;;) {
+	for (;;) {
 		if (q1->row_num < q2->row_num) {
 			if ((q1 = q1->next_row) == 0) {
 				return 0;
@@ -178,11 +178,11 @@ int sm_col_intersects(sm_col *p1, sm_col *p2)
  */
 int sm_col_compare(sm_col *p1, sm_col *p2)
 {
-	register sm_element *q1, *q2;
+	register	sm_element *q1, *q2;
 
 	q1 = p1->first_row;
 	q2 = p2->first_row;
-	while(q1 != 0 && q2 != 0) {
+	while (q1 != 0 && q2 != 0) {
 		if (q1->row_num != q2->row_num) {
 			return q1->row_num - q2->row_num;
 		}
@@ -204,14 +204,14 @@ int sm_col_compare(sm_col *p1, sm_col *p2)
  */
 sm_col * sm_col_and(sm_col *p1, sm_col *p2)
 {
-	register sm_element *q1, *q2;
-	register sm_col *result;
+	register	sm_element	*q1, *q2;
+	register	sm_col		*result;
 
 	result = sm_col_alloc();
 	q1 = p1->first_row;
 	q2 = p2->first_row;
 	if (q1 == 0 || q2 == 0) return result;
-	for(;;) {
+	for (;;) {
 		if (q1->row_num < q2->row_num) {
 			if ((q1 = q1->next_row) == 0) {
 				return result;
@@ -234,12 +234,12 @@ sm_col * sm_col_and(sm_col *p1, sm_col *p2)
 
 int sm_col_hash(sm_col *pcol, int modulus)
 {
-	register int sum;
-	register sm_element *p;
+	register	int			sum;
+	register	sm_element	*p;
 
 	sum = 0;
-	for(p = pcol->first_row; p != 0; p = p->next_row) {
-		sum = (sum*17 + p->row_num) % modulus;
+	for (p = pcol->first_row; p != 0; p = p->next_row) {
+		sum = (sum * 17 + p->row_num) % modulus;
 	}
 	return sum;
 }
@@ -258,7 +258,7 @@ void sm_col_print(FILE *fp, sm_col *pcol)
 {
 	sm_element *p;
 
-	for(p = pcol->first_row; p != 0; p = p->next_row) {
+	for (p = pcol->first_row; p != 0; p = p->next_row) {
 		(void) fprintf(fp, " %d", p->row_num);
 	}
 }

@@ -24,10 +24,10 @@ pcube get_sigma(pset_family R, register pset c)
 {
 	pcover BB;
 	pcube out_part_r, s;
-	register pcube r, b;
-	register int i;
-	register int w, last;
-	register unsigned int x;
+	register	pcube r, b;
+	register	int i;
+	register	int w, last;
+	register	unsigned int x;
 
 	out_part_r = new_cube();
 	s = new_cube();
@@ -35,7 +35,7 @@ pcube get_sigma(pset_family R, register pset c)
 	BB = new_cover(R->count);
 	BB->count = R->count;
 	/* BB = get_blocking_matrix(R, c); */
-	foreachi_set(R, i, r){
+	foreachi_set(R, i, r) {
 		b = GETSET(BB, i);
 		if ((last = cube.inword) != -1) {
 			/* Check the partial word of binary variables */
@@ -43,7 +43,7 @@ pcube get_sigma(pset_family R, register pset c)
 			x = ~(x | x >> 1) & cube.inmask;
 			b[last] = r[last] & (x | x << 1);
 			/* Check the full words of binary variables */
-			for(w = 1; w < last; w++) {
+			for (w = 1; w < last; w++) {
 					x = r[w] & c[w];
 					x = ~(x | x >> 1) & DISJOINT;
 				b[w] = r[w] & (x | x << 1);
@@ -52,7 +52,7 @@ pcube get_sigma(pset_family R, register pset c)
 		PUTLOOP(b, LOOP(r));
 		INLINEset_and(b, b, cube.binary_mask);
 		INLINEset_and(out_part_r, cube.mv_mask, r);
-		if(!setp_implies(out_part_r, c)){
+		if (!setp_implies(out_part_r, c)) {
 			INLINEset_or(b, b, out_part_r);
 		}
 	}

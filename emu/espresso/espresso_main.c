@@ -18,19 +18,27 @@
 #include <string.h>
 #include <unistd.h>
 
-static int input_type = FD_type;
+static	int		input_type = FD_type;
 
 void getPLA(char *fname, pPLA *PLA, int out_type);
 
-// int main(int argc, char **argv)
+#if 0
+ int main(int argc, char **argv)
+#endif
 int espresso_main(int argc, char **argv)
 {
-//	int i, j;
-	int first, last, strategy, out_type, option;
+#if 0
+	int i, j;
+#endif
+	int	first, last, strategy, out_type, option;
 	pPLA PLA, PLA1;
-//	pcover F, Dold;
+#if 0
+	pcover F, Dold;
+#endif
 	pcover Fold;
-//	pset last1, p;
+#if 0
+	pset last1, p;
+#endif
 	cost_t cost;
 	bool error, exact_cover;
 
@@ -71,7 +79,7 @@ int espresso_main(int argc, char **argv)
 	/*  case KEY_ESPRESSO: */
 	Fold = sf_save(PLA->F);
 	PLA->F = espresso(PLA->F, PLA->D, PLA->R);
-	EXECUTE(error=verify(PLA->F, Fold, PLA->D), VERIFY_TIME, PLA->F, cost);
+	EXECUTE(error = verify(PLA->F, Fold, PLA->D), VERIFY_TIME, PLA->F, cost);
 	if (error) {
 		print_solution = FALSE;
 		PLA->F = Fold;
@@ -101,8 +109,8 @@ int espresso_main(int argc, char **argv)
 
 void getPLA(char *fname, pPLA *PLA, int out_type)
 {
-	FILE *fp;
-	int needs_dcset, needs_offset;
+	FILE	*fp;
+	int	needs_dcset, needs_offset;
 	if ((fp = fopen(fname, "r")) == NULL) {
 		fprintf(stderr, "Unable to open %s\n", fname);
 		exit(1);

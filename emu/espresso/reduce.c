@@ -9,7 +9,7 @@
 
 #include "espresso.h"
 
-static bool toggle = TRUE;
+static	bool		toggle = TRUE;
 
 /*
 	reduce -- replace each cube in F with its reduction
@@ -45,7 +45,7 @@ static bool toggle = TRUE;
 
 pcover reduce(pset_family F, pset_family D)
 {
-	register pcube last, p, cunder, *FD;
+	register	pcube last, p, cunder, *FD;
 
 	/* Order the cubes */
 	if (use_random_order)
@@ -93,8 +93,8 @@ pcube sccc(pset *T)
 						/* T will be disposed of */
 {
 	pcube r;
-	register pcube cl, cr;
-	register int best;
+	register	pcube cl, cr;
+	register	int best;
 	static int sccc_level = 0;
 
 	if (sccc_special_cases(T, &r) == MAYBE) {
@@ -139,8 +139,8 @@ pcube sccc_merge(register pset left, register pset right, register pset cl, regi
 */
 pcube sccc_cube(register pset result, register pset p)
 {
-	register pcube temp=cube.temp[0], mask;
-	int var;
+	register	pcube temp = cube.temp[0], mask;
+	int	var;
 
 	if ((var = cactive(p)) >= 0) {
 		mask = cube.var_mask[var];
@@ -158,7 +158,7 @@ bool sccc_special_cases(pset *T, pset *result)
 								/* will be disposed if answer is determined */
 								/* returned only if answer determined */
 {
-	register pcube *T1, p, temp = cube.temp[1], ceil, cof = T[0];
+	register	pcube *T1, p, temp = cube.temp[1], ceil, cof = T[0];
 	pcube *A, *B;
 
 	/* empty cover => complement is universe => SCCC is universe */
@@ -169,7 +169,7 @@ bool sccc_special_cases(pset *T, pset *result)
 	}
 
 	/* row of 1's => complement is empty => SCCC is empty */
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		if (full_row(p, cof)) {
 			*result = new_cube();
 			free_cubelist(T);
@@ -183,7 +183,7 @@ bool sccc_special_cases(pset *T, pset *result)
 	/* If cover is unate (or single cube), apply simple rules to find SCCCU */
 	if (cdata.vars_unate == cdata.vars_active || T[3] == NULL) {
 		*result = set_save(cube.fullset);
-		for(T1 = T+2; (p = *T1++) != NULL; ) {
+		for (T1 = T + 2; (p = *T1++) != NULL; ) {
 			(void) sccc_cube(*result, set_or(temp, p, cof));
 		}
 		free_cubelist(T);
@@ -192,7 +192,7 @@ bool sccc_special_cases(pset *T, pset *result)
 
 	/* Check for column of 0's (which can be easily factored( */
 	ceil = set_save(cof);
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		INLINEset_or(ceil, ceil, p);
 	}
 	if (! setp_equal(ceil, cube.fullset)) {
@@ -216,7 +216,7 @@ bool sccc_special_cases(pset *T, pset *result)
 	}
 
 	/* Check for components */
-	if (cdata.var_zeros[cdata.best] < CUBELISTSIZE(T)/2) {
+	if (cdata.var_zeros[cdata.best] < CUBELISTSIZE(T) / 2) {
 		if (cubelist_partition(T, &A, &B, debug & REDUCE1) == 0) {
 			return MAYBE;
 		} else {

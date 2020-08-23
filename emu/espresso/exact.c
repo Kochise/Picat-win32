@@ -1,7 +1,7 @@
 #include "espresso.h"
 
 static void dump_irredundant(pset_family E, pset_family Rt, pset_family Rp, sm_matrix *table);
-static pcover do_minimize(pset_family F, pset_family D, pset_family R, int exact_cover, int weighted);
+static	pcover		do_minimize(pset_family F, pset_family D, pset_family R, int exact_cover, int weighted);
 
 /*
  *  minimize_exact -- main entry point for exact minimization
@@ -14,23 +14,23 @@ static pcover do_minimize(pset_family F, pset_family D, pset_family R, int exact
 
 pcover minimize_exact(pset_family F, pset_family D, pset_family R, int exact_cover)
 {
-	return do_minimize(F, D, R, exact_cover,	/*weighted*/ 0);
+	return do_minimize(F, D, R, exact_cover,	/* weighted */ 0);
 }
 
 pcover minimize_exact_literals(pset_family F, pset_family D, pset_family R, int exact_cover)
 {
-	return do_minimize(F, D, R, exact_cover,	/*weighted*/ 1);
+	return do_minimize(F, D, R, exact_cover,	/* weighted */ 1);
 }
 
 static pcover do_minimize(pset_family F, pset_family D, pset_family R, int exact_cover, int weighted)
 {
 	pcover newF, E, Rt, Rp;
 	pset p, last;
-	int heur, level, *weights;
+	int	heur, level, *weights;
 	sm_matrix *table;
 	sm_row *cover;
 	sm_element *pe;
-	int debug_save = debug;
+	int	debug_save = debug;
 
 	if (debug & EXACT) {
 		debug |= (IRRED | MINCOV);
@@ -60,7 +60,7 @@ static pcover do_minimize(pset_family F, pset_family D, pset_family R, int exact
 	} else {
 		weights = NIL(int);
 	}
-	EXEC(cover=sm_minimum_cover(table, weights, heur, level), "MINCOV     ", F);
+	EXEC(cover = sm_minimum_cover(table, weights, heur, level), "MINCOV     ", F);
 	if (weights != 0) {
 		FREE(weights);
 	}
@@ -86,7 +86,7 @@ static pcover do_minimize(pset_family F, pset_family D, pset_family R, int exact
 	free_cover(F);
 
 	/* Attempt to make the results more sparse */
-	debug &= ~ (IRRED | SHARP | MINCOV);
+	debug &= ~(IRRED | SHARP | MINCOV);
 	if (! skip_make_sparse && R != 0) {
 		newF = make_sparse(newF, D, R);
 	}
@@ -97,7 +97,7 @@ static pcover do_minimize(pset_family F, pset_family D, pset_family R, int exact
 
 static void dump_irredundant(pset_family E, pset_family Rt, pset_family Rp, sm_matrix *table)
 {
-	FILE *fp_pi_table, *fp_primes;
+	FILE	*fp_pi_table, *fp_primes;
 	pPLA PLA;
 	pset last, p;
 	char *file;
@@ -105,7 +105,7 @@ static void dump_irredundant(pset_family E, pset_family Rt, pset_family Rp, sm_m
 	if (filename == 0 || strcmp(filename, "(stdin)") == 0) {
 		fp_pi_table = fp_primes = stdout;
 	} else {
-		file = ALLOC(char, strlen(filename)+20);
+		file = ALLOC(char, strlen(filename) + 20);
 		(void) sprintf(file, "%s.primes", filename);
 		if ((fp_primes = fopen(file, "w")) == NULL) {
 			fprintf(stderr, "espresso: Unable to open %s\n", file);

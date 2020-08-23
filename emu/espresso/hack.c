@@ -2,7 +2,7 @@
 
 void map_dcset(pPLA PLA)
 {
-	int var, i;
+	int	var, i;
 	pcover Tplus, Tminus, Tplusbar, Tminusbar;
 	pcover newf, term1, term2, dcset, dcsetbar;
 	pcube cplus, cminus, last, p;
@@ -12,12 +12,12 @@ void map_dcset(pPLA PLA)
 
 	/* try to find a binary variable named "DONT_CARE" */
 	var = -1;
-	for(i = 0; i < cube.num_binary_vars * 2; i++) {
+	for (i = 0; i < cube.num_binary_vars * 2; i++) {
 		if (strncmp(PLA->label[i], "DONT_CARE", 9) == 0 ||
 			strncmp(PLA->label[i], "DONTCARE", 8) == 0 ||
 			strncmp(PLA->label[i], "dont_care", 9) == 0 ||
 			strncmp(PLA->label[i], "dontcare", 8) == 0) {
-			var = i/2;
+			var = i / 2;
 			break;
 		}
 	}
@@ -28,8 +28,8 @@ void map_dcset(pPLA PLA)
 	/* form the cofactor cubes for the don't-care variable */
 	cplus = set_save(cube.fullset);
 	cminus = set_save(cube.fullset);
-	set_remove(cplus, var*2);
-	set_remove(cminus, var*2 + 1);
+	set_remove(cplus, var * 2);
+	set_remove(cminus, var * 2 + 1);
 
 	/* form the don't-care set */
 	EXEC(simp_comp(cofactor(cube1list(PLA->F), cplus), &Tplus, &Tplusbar),
@@ -52,7 +52,7 @@ void map_dcset(pPLA PLA)
 	/* remove any cubes dependent on the DONT_CARE variable */
 	(void) sf_active(PLA->F);
 	foreach_set(PLA->F, last, p) {
-		if (! is_in_set(p, var*2) || ! is_in_set(p, var*2+1)) {
+		if (! is_in_set(p, var * 2) || ! is_in_set(p, var * 2 + 1)) {
 			RESET(p, ACTIVE);
 		}
 	}
@@ -60,17 +60,17 @@ void map_dcset(pPLA PLA)
 
 	/* resize the cube and delete the don't-care variable */
 	setdown_cube();
-	for(i = 2*var+2; i < cube.size; i++) {
-		PLA->label[i-2] = PLA->label[i];
+	for (i = 2 * var + 2; i < cube.size; i++) {
+		PLA->label[i - 2] = PLA->label[i];
 	}
-	for(i = var+1; i < cube.num_vars; i++) {
-		cube.part_size[i-1] = cube.part_size[i];
+	for (i = var + 1; i < cube.num_vars; i++) {
+		cube.part_size[i - 1] = cube.part_size[i];
 	}
 	cube.num_binary_vars--;
 	cube.num_vars--;
 	cube_setup();
-	PLA->F = sf_delc(PLA->F, 2*var, 2*var+1);
-	PLA->D = sf_delc(PLA->D, 2*var, 2*var+1);
+	PLA->F = sf_delc(PLA->F, 2 * var, 2 * var + 1);
+	PLA->D = sf_delc(PLA->D, 2 * var, 2 * var + 1);
 }
 
 void map_output_symbolic(pPLA PLA)
@@ -79,7 +79,7 @@ void map_output_symbolic(pPLA PLA)
 	pset compress;
 	symbolic_t *p1;
 	symbolic_list_t *p2;
-	int i, bit, tot_size, base, old_size;
+	int	i, bit, tot_size, base, old_size;
 
 	/* Remove the DC-set from the ON-set (is this necessary ?) */
 	if (PLA->D->count > 0) {
@@ -89,10 +89,10 @@ void map_output_symbolic(pPLA PLA)
 
 	/* tot_size = width added for all symbolic variables */
 	tot_size = 0;
-	for(p1=PLA->symbolic_output; p1!=NIL(symbolic_t); p1=p1->next) {
-		for(p2=p1->symbolic_list; p2!=NIL(symbolic_list_t); p2=p2->next) {
-			if (p2->pos<0 || p2->pos>=cube.part_size[cube.output]) {
-				fatal("symbolic-output index out of range");
+	for (p1 = PLA->symbolic_output; p1 != NIL(symbolic_t); p1 = p1->next) {
+		for (p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2->next) {
+			if (p2->pos < 0 || p2->pos >= cube.part_size[cube.output]) {
+				fatal("symbolic - output index out of range");
 /*			} else if (p2->variable != cube.output) {
 				fatal("symbolic-output label must be an output");
 */
@@ -102,8 +102,8 @@ void map_output_symbolic(pPLA PLA)
 	}
 
 	/* adjust the indices to skip over new outputs */
-	for(p1=PLA->symbolic_output; p1!=NIL(symbolic_t); p1=p1->next) {
-		for(p2=p1->symbolic_list; p2!=NIL(symbolic_list_t); p2=p2->next) {
+	for (p1 = PLA->symbolic_output; p1 != NIL(symbolic_t); p1 = p1->next) {
+		for (p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2->next) {
 			p2->pos += tot_size;
 		}
 	}
@@ -121,7 +121,7 @@ void map_output_symbolic(pPLA PLA)
 	PLA->R = sf_addcol(PLA->R, base, tot_size);
 
 	/* do the real work */
-	for(p1=PLA->symbolic_output; p1!=NIL(symbolic_t); p1=p1->next) {
+	for (p1 = PLA->symbolic_output; p1 != NIL(symbolic_t); p1 = p1->next) {
 		newF = new_cover(100);
 		newD = new_cover(100);
 		find_inputs(NIL(set_family_t), PLA, p1->symbolic_list, base, 0,
@@ -145,8 +145,8 @@ void map_output_symbolic(pPLA PLA)
 
 	/* delete the old outputs, and resize the cube */
 	compress = set_full(newF->sf_size);
-	for(p1=PLA->symbolic_output; p1!=NIL(symbolic_t); p1=p1->next) {
-		for(p2=p1->symbolic_list; p2!=NIL(symbolic_list_t); p2=p2->next) {
+	for (p1 = PLA->symbolic_output; p1 != NIL(symbolic_t); p1 = p1->next) {
+		for (p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2->next) {
 			bit = cube.first_part[cube.output] + p2->pos;
 			set_remove(compress, bit);
 		}
@@ -161,7 +161,7 @@ void map_output_symbolic(pPLA PLA)
 	/* Quick minimization */
 	PLA->F = sf_contain(PLA->F);
 	PLA->D = sf_contain(PLA->D);
-	for(i = 0; i < cube.num_vars; i++) {
+	for (i = 0; i < cube.num_vars; i++) {
 		PLA->F = d1merge(PLA->F, i);
 		PLA->D = d1merge(PLA->D, i);
 	}
@@ -179,7 +179,7 @@ void map_output_symbolic(pPLA PLA)
 void find_inputs(pset_family A, pPLA PLA, symbolic_list_t *list, int base, int value, pset_family *newF, pset_family *newD)
 {
 	pcover S, S1;
-	register pset last, p;
+	register	pset last, p;
 
 	/*
 	*  A represents th 'input' values for which the outputs assume
@@ -210,7 +210,7 @@ void find_inputs(pset_family A, pPLA PLA, symbolic_list_t *list, int base, int v
 			free_cover(S);
 			S = S1;
 		}
-		find_inputs(S, PLA, list->next, base, value*2, newF, newD);
+		find_inputs(S, PLA, list->next, base, value * 2, newF, newD);
 		free_cover(S);
 
 		/* intersect and recur with the ON-set */
@@ -220,7 +220,7 @@ void find_inputs(pset_family A, pPLA PLA, symbolic_list_t *list, int base, int v
 			free_cover(S);
 			S = S1;
 		}
-		find_inputs(S, PLA, list->next, base, value*2 + 1, newF, newD);
+		find_inputs(S, PLA, list->next, base, value * 2 + 1, newF, newD);
 		free_cover(S);
 	}
 }
@@ -230,12 +230,12 @@ find_dc_inputs(pPLA PLA, symbolic_list_t *list, int base, int maxval, pcover *ne
 {
 	pcover A, S, S1;
 	symbolic_list_t *p2;
-	register pset p, last;
-	register int i;
+	register	pset p, last;
+	register	int i;
 
 	/* painfully find the points for which the symbolic output is dc */
 	A = NIL(set_family_t);
-	for(p2=list; p2!=NIL(symbolic_list_t); p2=p2->next) {
+	for (p2 = list; p2 != NIL(symbolic_list_t); p2 = p2->next) {
 		S = cof_output(PLA->D, cube.first_part[cube.output] + p2->pos);
 		if (A == NIL(set_family_t)) {
 			A = S;
@@ -252,7 +252,7 @@ find_dc_inputs(pPLA PLA, symbolic_list_t *list, int base, int maxval, pcover *ne
 
 	S = cv_intersect(A, PLA->D);
 	foreach_set(S, last, p) {
-		for(i = base; i < base + maxval; i++) {
+		for (i = base; i < base + maxval; i++) {
 			set_insert(p, i);
 		}
 	}
@@ -265,13 +265,13 @@ void map_symbolic(pPLA PLA)
 {
 	symbolic_t *p1;
 	symbolic_list_t *p2;
-	int var, base, num_vars, num_binary_vars, *new_part_size;
-	int new_size, size_added, num_deleted_vars, num_added_vars, newvar;
+	int	var, base, num_vars, num_binary_vars, *new_part_size;
+	int	new_size, size_added, num_deleted_vars, num_added_vars, newvar;
 	pset compress;
 
 	/* Verify legal values are in the symbolic lists */
-	for(p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
-		for(p2=p1->symbolic_list; p2!=NIL(symbolic_list_t); p2=p2->next) {
+	for (p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
+		for (p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2->next) {
 			if (p2->variable  < 0 || p2->variable >= cube.num_binary_vars) {
 				fatal(".symbolic requires binary variables");
 			}
@@ -286,27 +286,27 @@ void map_symbolic(pPLA PLA)
 	*/
 	size_added = 0;
 	num_added_vars = 0;
-	for(p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
+	for (p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
 		size_added += 1 << p1->symbolic_list_length;
 		num_added_vars++;
 	}
 	compress = set_full(PLA->F->sf_size + size_added);
-	for(p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
-		for(p2=p1->symbolic_list; p2!=NIL(symbolic_list_t); p2=p2->next) {
-			set_remove(compress, p2->variable*2);
-			set_remove(compress, p2->variable*2+1);
+	for (p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
+		for (p2 = p1->symbolic_list; p2 != NIL(symbolic_list_t); p2 = p2->next) {
+			set_remove(compress, p2->variable * 2);
+			set_remove(compress, p2->variable * 2 + 1);
 		}
 	}
-	num_deleted_vars = ((PLA->F->sf_size + size_added) - set_ord(compress))/2;
+	num_deleted_vars = ((PLA->F->sf_size + size_added) - set_ord(compress)) / 2;
 
 	/* compute the new cube constants */
 	num_vars = cube.num_vars - num_deleted_vars + num_added_vars;
 	num_binary_vars = cube.num_binary_vars - num_deleted_vars;
-	new_size = cube.size - num_deleted_vars*2 + size_added;
+	new_size = cube.size - num_deleted_vars * 2 + size_added;
 	new_part_size = ALLOC(int, num_vars);
-	new_part_size[num_vars-1] = cube.part_size[cube.num_vars-1];
-	for(var = cube.num_binary_vars; var < cube.num_vars-1; var++) {
-		new_part_size[var-num_deleted_vars] = cube.part_size[var];
+	new_part_size[num_vars - 1] = cube.part_size[cube.num_vars - 1];
+	for (var = cube.num_binary_vars; var < cube.num_vars - 1; var++) {
+		new_part_size[var - num_deleted_vars] = cube.part_size[var];
 	}
 
 	/* re-size the covers, opening room for the new mv variables */
@@ -317,7 +317,7 @@ void map_symbolic(pPLA PLA)
 
 	/* compute the values for the new mv variables */
 	newvar = (cube.num_vars - 1) - num_deleted_vars;
-	for(p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
+	for (p1 = PLA->symbolic; p1 != NIL(symbolic_t); p1 = p1->next) {
 		PLA->F = map_symbolic_cover(PLA->F, p1->symbolic_list, base);
 		PLA->D = map_symbolic_cover(PLA->D, p1->symbolic_list, base);
 		PLA->R = map_symbolic_cover(PLA->R, p1->symbolic_list, base);
@@ -359,16 +359,16 @@ void form_bitvector(pset p, int base, int value, symbolic_list_t *list)
 	if (list == NIL(symbolic_list_t)) {
 		set_insert(p, base + value);
 	} else {
-		switch(GETINPUT(p, list->variable)) {
+		switch (GETINPUT(p, list->variable)) {
 			case ZERO:
-				form_bitvector(p, base, value*2, list->next);
+				form_bitvector(p, base, value * 2, list->next);
 				break;
 			case ONE:
-				form_bitvector(p, base, value*2+1, list->next);
+				form_bitvector(p, base, value * 2 + 1, list->next);
 				break;
 			case TWO:
-				form_bitvector(p, base, value*2, list->next);
-				form_bitvector(p, base, value*2+1, list->next);
+				form_bitvector(p, base, value * 2, list->next);
+				form_bitvector(p, base, value * 2 + 1, list->next);
 				break;
 			default:
 				fatal("bad cube in form_bitvector");
@@ -378,7 +378,7 @@ void form_bitvector(pset p, int base, int value, symbolic_list_t *list)
 
 void symbolic_hack_labels(pPLA PLA, symbolic_t *list, pset compress, int new_size, int old_size, int size_added)
 {
-	int i, base;
+	int	i, base;
 	char **oldlabel;
 	symbolic_t *p1;
 	symbolic_label_t *p3;
@@ -387,13 +387,13 @@ void symbolic_hack_labels(pPLA PLA, symbolic_t *list, pset compress, int new_siz
 	if ((oldlabel = PLA->label) == NIL(char *))
 		return;
 	PLA->label = ALLOC(char *, new_size);
-	for(i = 0; i < new_size; i++) {
+	for (i = 0; i < new_size; i++) {
 		PLA->label[i] = NIL(char);
 	}
 
 	/* copy the binary variable labels and unchanged mv variable labels */
 	base = 0;
-	for(i = 0; i < cube.first_part[cube.output]; i++) {
+	for (i = 0; i < cube.first_part[cube.output]; i++) {
 		if (is_in_set(compress, i)) {
 			PLA->label[base++] = oldlabel[i];
 		} else {
@@ -404,14 +404,14 @@ void symbolic_hack_labels(pPLA PLA, symbolic_t *list, pset compress, int new_siz
 	}
 
 	/* add the user-defined labels for the symbolic outputs */
-	for(p1 = list; p1 != NIL(symbolic_t); p1 = p1->next) {
+	for (p1 = list; p1 != NIL(symbolic_t); p1 = p1->next) {
 		p3 = p1->symbolic_label;
-		for(i = 0; i < (1 << p1->symbolic_list_length); i++) {
+		for (i = 0; i < (1 << p1->symbolic_list_length); i++) {
 			if (p3 == NIL(symbolic_label_t)) {
-				PLA->label[base+i] = ALLOC(char, 10);
-				(void) sprintf(PLA->label[base+i], "X%d", i);
+				PLA->label[base + i] = ALLOC(char, 10);
+				(void) sprintf(PLA->label[base + i], "X%d", i);
 			} else {
-				PLA->label[base+i] = p3->label;
+				PLA->label[base + i] = p3->label;
 				p3 = p3->next;
 			}
 		}
@@ -419,7 +419,7 @@ void symbolic_hack_labels(pPLA PLA, symbolic_t *list, pset compress, int new_siz
 	}
 
 	/* copy the labels for the binary outputs which remain */
-	for(i = cube.first_part[cube.output]; i < old_size; i++) {
+	for (i = cube.first_part[cube.output]; i < old_size; i++) {
 		if (is_in_set(compress, i + size_added)) {
 			PLA->label[base++] = oldlabel[i];
 		} else {

@@ -25,7 +25,7 @@ pcover cb_sharp(pset c, pset_family T)
 		T = sf_addset(new_cover(1), c);
 	} else {
 		start_time = ptime();
-		T = cb_recur_sharp(c, T, 0, T->count-1, 0);
+		T = cb_recur_sharp(c, T, 0, T->count - 1, 0);
 	}
 	return T;
 }
@@ -34,14 +34,14 @@ pcover cb_sharp(pset c, pset_family T)
 pcover cb_recur_sharp(pset c, pset_family T, int first, int last, int level)
 {
 	pcover temp, left, right;
-	int middle;
+	int	middle;
 
 	if (first == last) {
 		temp = sharp(c, GETSET(T, first));
 	} else {
 		middle = (first + last) / 2;
-		left = cb_recur_sharp(c, T, first, middle, level+1);
-		right = cb_recur_sharp(c, T, middle+1, last, level+1);
+		left = cb_recur_sharp(c, T, first, middle, level + 1);
+		right = cb_recur_sharp(c, T, middle + 1, last, level + 1);
 		temp = cv_intersect(left, right);
 		if ((debug & SHARP) && level < 4) {
 			printf("# SHARP[%d]: %4d = %4d x %4d, time = %s\n",
@@ -58,13 +58,13 @@ pcover cb_recur_sharp(pset c, pset_family T, int first, int last, int level)
 /* sharp -- form the sharp product between two cubes */
 pcover sharp(pset a, pset b)
 {
-	register int var;
-	register pcube d=cube.temp[0], temp=cube.temp[1], temp1=cube.temp[2];
+	register	int var;
+	register	pcube d = cube.temp[0], temp = cube.temp[1], temp1 = cube.temp[2];
 	pcover r = new_cover(cube.num_vars);
 
 	if (cdist0(a, b)) {
 		set_diff(d, a, b);
-		for(var = 0; var < cube.num_vars; var++) {
+		for (var = 0; var < cube.num_vars; var++) {
 			if (! setp_empty(set_and(temp, d, cube.var_mask[var]))) {
 			set_diff(temp1, a, cube.var_mask[var]);
 			set_or(GETSET(r, r->count++), temp, temp1);
@@ -79,7 +79,7 @@ pcover sharp(pset a, pset b)
 pcover make_disjoint(pset_family A)
 {
 	pcover R, new;
-	register pset last, p;
+	register	pset last, p;
 
 	R = new_cover(0);
 	foreach_set(A, last, p) {
@@ -92,7 +92,7 @@ pcover make_disjoint(pset_family A)
 /* cv_dsharp -- disjoint-sharp product between two covers */
 pcover cv_dsharp(pset_family A, pset_family B)
 {
-	register pcube last, p;
+	register	pcube last, p;
 	pcover T;
 
 	T = new_cover(0);
@@ -138,8 +138,8 @@ pcover cb_dsharp(pset c, pset_family T)
 /* dsharp -- form the disjoint-sharp product between two cubes */
 pcover dsharp(pset a, pset b)
 {
-	register pcube mask, diff, and, temp, temp1 = cube.temp[0];
-	int var;
+	register	pcube mask, diff, and, temp, temp1 = cube.temp[0];
+	int	var;
 	pcover r;
 
 	r = new_cover(cube.num_vars);
@@ -148,7 +148,7 @@ pcover dsharp(pset a, pset b)
 		diff = set_diff(new_cube(), a, b);
 		and = set_and(new_cube(), a, b);
 		mask = new_cube();
-		for(var = 0; var < cube.num_vars; var++) {
+		for (var = 0; var < cube.num_vars; var++) {
 			/* check if position var of "a and not b" is not empty */
 			if (! setp_disjoint(diff, cube.var_mask[var])) {
 				/* coordinate var equals the difference between a and b */
@@ -180,7 +180,7 @@ pcover dsharp(pset a, pset b)
 
 pcover cv_intersect(pset_family A, pset_family B)
 {
-	register pcube pi, pj, lasti, lastj, pt;
+	register	pcube pi, pj, lasti, lastj, pt;
 	pcover T, Tsave = NULL;
 
 	/* How large should each temporary result cover be ? */

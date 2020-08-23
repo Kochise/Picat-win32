@@ -3,9 +3,9 @@
 /* cost -- compute the cost of a cover */
 void cover_cost(pset_family F, pcost cost)
 {
-	register pcube p, last;
-	pcube *T;
-	int var;
+	register	pcube	p, last;
+				pcube	*T;
+				int		var;
 
 	/* use the routine used by cofactor to decide splitting variables */
 	massive_count(T = cube1list(F));
@@ -15,11 +15,11 @@ void cover_cost(pset_family F, pcost cost)
 	cost->total = cost->in = cost->out = cost->mv = cost->primes = 0;
 
 	/* Count transistors (zeros) for each binary variable (inputs) */
-	for(var = 0; var < cube.num_binary_vars; var++)
+	for (var = 0; var < cube.num_binary_vars; var++)
 		cost->in += cdata.var_zeros[var];
 
 	/* Count transistors for each mv variable based on sparse/dense */
-	for(var = cube.num_binary_vars; var < cube.num_vars - 1; var++)
+	for (var = cube.num_binary_vars; var < cube.num_vars - 1; var++)
 		if (cube.sparse[var])
 			cost->mv += F->count * cube.part_size[var] - cdata.var_zeros[var];
 		else
@@ -42,7 +42,7 @@ void cover_cost(pset_family F, pcost cost)
 /* fmt_cost -- return a string which reports the "cost" of a cover */
 char *fmt_cost(pcost cost)
 {
-	static char s[200];
+	static	char	s[200];
 
 	if (cube.num_binary_vars == cube.num_vars - 1)
 		(void) sprintf(s, "c=%d(%d) in=%d out=%d tot=%d",
@@ -57,7 +57,7 @@ char *fmt_cost(pcost cost)
 
 char *print_cost(pset_family F)
 {
-	cost_t cost;
+	cost_t	cost;
 	cover_cost(F, &cost);
 	return fmt_cost(&cost);
 }

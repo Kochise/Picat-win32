@@ -5,12 +5,12 @@
 /* LINTLIBRARY */
 
 #include "espresso.h"
-static pset_family set_family_garbage = NULL;
+static	pset_family		set_family_garbage = NULL;
 
 static void intcpy(register unsigned int *d, register unsigned int *s, register long int n)
 {
-	register int i;
-	for(i = 0; i < n; i++) {
+	register	int i;
+	for (i = 0; i < n; i++) {
 		*d++ = *s++;
 	}
 }
@@ -18,10 +18,10 @@ static void intcpy(register unsigned int *d, register unsigned int *s, register 
 /* bit_index -- find first bit (from LSB) in a word (MSB=bit n, LSB=bit 0) */
 int bit_index(register unsigned int a)
 {
-	register int i;
+	register	int i;
 	if (a == 0)
 		return -1;
-	for(i = 0; (a & 1) == 0; a >>= 1, i++)
+	for (i = 0; (a & 1) == 0; a >>= 1, i++)
 		;
 	return i;
 }
@@ -29,9 +29,9 @@ int bit_index(register unsigned int a)
 /* set_ord -- count number of elements in a set */
 int set_ord(register pset a)
 {
-	register int i, sum = 0;
-	register unsigned int val;
-	for(i = LOOP(a); i > 0; i--)
+	register	int i, sum = 0;
+	register	unsigned int val;
+	for (i = LOOP(a); i > 0; i--)
 		if ((val = a[i]) != 0)
 			sum += count_ones(val);
 	return sum;
@@ -40,9 +40,9 @@ int set_ord(register pset a)
 /* set_dist -- distance between two sets (# elements in common) */
 int set_dist(register pset a, register pset b)
 {
-	register int i, sum = 0;
-	register unsigned int val;
-	for(i = LOOP(a); i > 0; i--)
+	register	int i, sum = 0;
+	register	unsigned int val;
+	for (i = LOOP(a); i > 0; i--)
 		if ((val = a[i] & b[i]) != 0)
 			sum += count_ones(val);
 	return sum;
@@ -51,7 +51,7 @@ int set_dist(register pset a, register pset b)
 /* set_clear -- make "r" the empty set of "size" elements */
 pset set_clear(register pset r, int size)
 {
-	register int i = LOOPINIT(size);
+	register	int i = LOOPINIT(size);
 	*r = i; do r[i] = 0; while (--i > 0);
 	return r;
 }
@@ -59,19 +59,19 @@ pset set_clear(register pset r, int size)
 /* set_fill -- make "r" the universal set of "size" elements */
 pset set_fill(register pset r, register int size)
 {
-	register int i = LOOPINIT(size);
+	register	int i = LOOPINIT(size);
 	*r = i;
-	r[i] = ~ (unsigned) 0;
+	r[i] = ~(unsigned) 0;
 	r[i] >>= i * BPI - size;
 	while (--i > 0)
-		r[i] = ~ (unsigned) 0;
+		r[i] = ~(unsigned) 0;
 	return r;
 }
 
 /* set_copy -- copy set a into set r */
 pset set_copy(register pset r, register pset a)
 {
-	register int i = LOOPCOPY(a);
+	register	int i = LOOPCOPY(a);
 	do r[i] = a[i]; while (--i >= 0);
 	return r;
 }
@@ -79,7 +79,7 @@ pset set_copy(register pset r, register pset a)
 /* set_and -- compute intersection of sets "a" and "b" */
 pset set_and(register pset r, register pset a, register pset b)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 	PUTLOOP(r, i); do r[i] = a[i] & b[i]; while (--i > 0);
 	return r;
 }
@@ -87,7 +87,7 @@ pset set_and(register pset r, register pset a, register pset b)
 /* set_or -- compute union of sets "a" and "b" */
 pset set_or(register pset r, register pset a, register pset b)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 	PUTLOOP(r, i); do r[i] = a[i] | b[i]; while (--i > 0);
 	return r;
 }
@@ -95,7 +95,7 @@ pset set_or(register pset r, register pset a, register pset b)
 /* set_diff -- compute difference of sets "a" and "b" */
 pset set_diff(register pset r, register pset a, register pset b)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 	PUTLOOP(r, i); do r[i] = a[i] & ~b[i]; while (--i > 0);
 	return r;
 }
@@ -103,9 +103,9 @@ pset set_diff(register pset r, register pset a, register pset b)
 /* set_xor -- compute exclusive-or of sets "a" and "b" */
 pset set_xor(register pset r, register pset a, register pset b)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 #ifdef IBM_WATC
-	PUTLOOP(r, i); do r[i] = (a[i]&~b[i]) | (~a[i]&b[i]); while (--i > 0);
+	PUTLOOP(r, i); do r[i] = (a[i] & ~b[i]) | (~a[i] & b[i]); while (--i > 0);
 #else
 	PUTLOOP(r, i); do r[i] = a[i] ^ b[i]; while (--i > 0);
 #endif
@@ -115,33 +115,33 @@ pset set_xor(register pset r, register pset a, register pset b)
 /* set_merge -- compute "a" & "mask" | "b" & ~ "mask" */
 pset set_merge(register pset r, register pset a, register pset b, register pset mask)
 {
-	register int i = LOOP(a);
-	PUTLOOP(r, i); do r[i] = (a[i]&mask[i]) | (b[i]&~mask[i]); while (--i > 0);
+	register	int i = LOOP(a);
+	PUTLOOP(r, i); do r[i] = (a[i] & mask[i]) | (b[i] & ~mask[i]); while (--i > 0);
 	return r;
 }
 
 /* set_andp -- compute intersection of sets "a" and "b" , TRUE if nonempty */
 bool set_andp(register pset r, register pset a, register pset b)
 {
-	register int i = LOOP(a);
-	register unsigned int x = 0;
-	PUTLOOP(r, i); do {r[i] = a[i] & b[i]; x |= r[i];} while (--i > 0);
+	register	int i = LOOP(a);
+	register	unsigned int x = 0;
+	PUTLOOP(r, i); do { r[i] = a[i] & b[i]; x |= r[i]; } while (--i > 0);
 	return x != 0;
 }
 
 /* set_orp -- compute union of sets "a" and "b" , TRUE if nonempty */
 bool set_orp(register pset r, register pset a, register pset b)
 {
-	register int i = LOOP(a);
-	register unsigned int x = 0;
-	PUTLOOP(r, i); do {r[i] = a[i] | b[i]; x |= r[i];} while (--i > 0);
+	register	int i = LOOP(a);
+	register	unsigned int x = 0;
+	PUTLOOP(r, i); do { r[i] = a[i] | b[i]; x |= r[i]; } while (--i > 0);
 	return x != 0;
 }
 
 /* setp_empty -- check if the set "a" is empty */
 bool setp_empty(register pset a)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 	do if (a[i]) return FALSE; while (--i > 0);
 	return TRUE;
 }
@@ -149,9 +149,9 @@ bool setp_empty(register pset a)
 /* setp_full -- check if the set "a" is the full set of "size" elements */
 bool setp_full(register pset a, register int size)
 {
-	register int i = LOOP(a);
-	register unsigned int test;
-	test = ~ (unsigned) 0;
+	register	int i = LOOP(a);
+	register	unsigned int test;
+	test = ~(unsigned) 0;
 	test >>= i * BPI - size;
 	if (a[i] != test)
 		return FALSE;
@@ -164,7 +164,7 @@ bool setp_full(register pset a, register int size)
 /* setp_equal -- check if the set "a" equals set "b" */
 bool setp_equal(register pset a, register pset b)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 	do if (a[i] != b[i]) return FALSE; while (--i > 0);
 	return TRUE;
 }
@@ -172,7 +172,7 @@ bool setp_equal(register pset a, register pset b)
 /* setp_disjoint -- check if intersection of "a" and "b" is empty */
 bool setp_disjoint(register pset a, register pset b)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 	do if (a[i] & b[i]) return FALSE; while (--i > 0);
 	return TRUE;
 }
@@ -180,7 +180,7 @@ bool setp_disjoint(register pset a, register pset b)
 /* setp_implies -- check if "a" implies "b" ("b" contains "a") */
 bool setp_implies(register pset a, register pset b)
 {
-	register int i = LOOP(a);
+	register	int i = LOOP(a);
 	do if (a[i] & ~b[i]) return FALSE; while (--i > 0);
 	return TRUE;
 }
@@ -188,7 +188,7 @@ bool setp_implies(register pset a, register pset b)
 /* sf_or -- form the "or" of all sets in a set family */
 pset sf_or(pset_family A)
 {
-	register pset or, last, p;
+	register	pset or, last, p;
 
 	or = set_new(A->sf_size);
 	foreach_set(A, last, p)
@@ -199,7 +199,7 @@ pset sf_or(pset_family A)
 /* sf_and -- form the "and" of all sets in a set family */
 pset sf_and(pset_family A)
 {
-	register pset and, last, p;
+	register	pset and, last, p;
 
 	and = set_fill(set_new(A->sf_size), A->sf_size);
 	foreach_set(A, last, p)
@@ -210,7 +210,7 @@ pset sf_and(pset_family A)
 /* sf_active -- make all members of the set family active */
 pset_family sf_active(pset_family A)
 {
-	register pset p, last;
+	register	pset p, last;
 	foreach_set(A, last, p) {
 		SET(p, ACTIVE);
 	}
@@ -221,7 +221,7 @@ pset_family sf_active(pset_family A)
 /* sf_inactive -- remove all inactive cubes in a set family */
 pset_family sf_inactive(pset_family A)
 {
-	register pset p, last, pdest;
+	register	pset p, last, pdest;
 
 	pdest = A->data;
 	foreach_set(A, last, p) {
@@ -242,8 +242,10 @@ pset_family sf_copy(pset_family R, pset_family A)
 {
 	R->sf_size = A->sf_size;
 	R->wsize = A->wsize;
-	/*R->capacity = A->count;*/
-	/*R->data = REALLOC(unsigned int, R->data, (long) R->capacity * R->wsize);*/
+#if 0
+	R->capacity = A->count;
+	R->data = REALLOC(unsigned int, R->data, (long) R->capacity * R->wsize);
+#endif
 	R->count = A->count;
 	R->active_count = A->active_count;
 	intcpy(R->data, A->data, (long) A->wsize * A->count);
@@ -318,8 +320,8 @@ void sf_free(pset_family A)
 /* sf_cleanup -- free all of the set families from the garbage list */
 void sf_cleanup(void)
 {
-	register pset_family p, pnext;
-	for(p = set_family_garbage; p != (pset_family) NULL; p = pnext) {
+	register	pset_family p, pnext;
+	for (p = set_family_garbage; p != (pset_family) NULL; p = pnext) {
 		pnext = p->next;
 		FREE(p);
 	}
@@ -329,10 +331,10 @@ void sf_cleanup(void)
 /* sf_addset -- add a set to the end of a set family */
 pset_family sf_addset(pset_family A, pset s)
 {
-	register pset p;
+	register	pset p;
 
 	if (A->count >= A->capacity) {
-		A->capacity = A->capacity + A->capacity/2 + 1;
+		A->capacity = A->capacity + A->capacity / 2 + 1;
 		A->data = REALLOC(unsigned int, A->data, (long) A->capacity * A->wsize);
 	}
 	p = GETSET(A, A->count++);
@@ -350,8 +352,8 @@ void sf_delset(pset_family A, int i)
 void sf_print(pset_family A)
 {
 	char *ps1(register pset a);
-	register pset p;
-	register int i;
+	register	pset p;
+	register	int i;
 	foreachi_set(A, i, p)
 		printf("A[%d] = %s\n", i, ps1(p));
 }
@@ -360,8 +362,8 @@ void sf_print(pset_family A)
 void sf_bm_print(pset_family A)
 {
 	char *pbv1(pset s, int n);
-	register pset p;
-	register int i;
+	register	pset p;
+	register	int i;
 	foreachi_set(A, i, p)
 		printf("[%4d] %s\n", i, pbv1(p, A->sf_size));
 }
@@ -369,7 +371,7 @@ void sf_bm_print(pset_family A)
 /* sf_write -- output a set family in an unintelligable manner */
 void sf_write(FILE *fp, pset_family A)
 {
-	register pset p, last;
+	register	pset p, last;
 	fprintf(fp, "%d %d\n", A->count, A->sf_size);
 	foreach_set(A, last, p)
 		set_write(fp, p);
@@ -379,8 +381,8 @@ void sf_write(FILE *fp, pset_family A)
 /* sf_read -- read a set family written by sf_write */
 pset_family sf_read(FILE *fp)
 {
-	int i, j;
-	register pset p, last;
+	int	i, j;
+	register	pset p, last;
 	pset_family A;
 
 	(void) fscanf(fp, "%d %d\n", &i, &j);
@@ -388,8 +390,8 @@ pset_family sf_read(FILE *fp)
 	A->count = i;
 	foreach_set(A, last, p) {
 		(void) fscanf(fp, "%x", p);
-		for(j = 1; j <= LOOP(p); j++)
-			(void) fscanf(fp, "%x", p+j);
+		for (j = 1; j <= LOOP(p); j++)
+			(void) fscanf(fp, "%x", p + j);
 	}
 	return A;
 }
@@ -397,11 +399,11 @@ pset_family sf_read(FILE *fp)
 /* set_write -- output a set in an unintelligable manner */
 void set_write(register FILE *fp, register pset a)
 {
-	register int n = LOOP(a), j;
+	register	int n = LOOP(a), j;
 
-	for(j = 0; j <= n; j++) {
+	for (j = 0; j <= n; j++) {
 		fprintf(fp, "%x ", a[j]);
-		if ((j+1) % 8 == 0 && j != n)
+		if ((j + 1) % 8 == 0 && j != n)
 			fprintf(fp, "\n\t");
 	}
 	fprintf(fp, "\n");
@@ -410,17 +412,17 @@ void set_write(register FILE *fp, register pset a)
 /* sf_bm_read -- read a set family written by sf_bm_print (almost) */
 pset_family sf_bm_read(FILE *fp)
 {
-	int i, j, rows, cols;
-	register pset pdest;
+	int	i, j, rows, cols;
+	register	pset pdest;
 	pset_family A;
 
 	(void) fscanf(fp, "%d %d\n", &rows, &cols);
 	A = sf_new(rows, cols);
-	for(i = 0; i < rows; i++) {
+	for (i = 0; i < rows; i++) {
 		pdest = GETSET(A, A->count++);
 		(void) set_clear(pdest, A->sf_size);
-		for(j = 0; j < cols; j++) {
-			switch(getc(fp)) {
+		for (j = 0; j < cols; j++) {
+			switch (getc(fp)) {
 				case '0':
 					break;
 					case '1':
@@ -439,15 +441,15 @@ pset_family sf_bm_read(FILE *fp)
 
 /* ps1 -- convert a set into a printable string */
 #define largest_string	120
-static char s1[largest_string];
+static	char		s1[largest_string];
 char *ps1(register pset a)
 {
-	register int i, num, l, len = 0, n = NELEM(a);
+	register	int i, num, l, len = 0, n = NELEM(a);
 	char temp[20];
 	bool first = TRUE;
 
 	s1[len++] = '[';
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		if (is_in_set(a, i)) {
 			if (! first)
 				s1[len++] = ',';
@@ -456,7 +458,7 @@ char *ps1(register pset a)
 			l = 0; do temp[l++] = num % 10 + '0'; while ((num /= 10) > 0);
 			/* Copy them back in correct order */
 			do s1[len++] = temp[--l]; while (l > 0);
-			if (len > largest_string-15) {
+			if (len > largest_string - 15) {
 				s1[len++] = '.'; s1[len++] = '.'; s1[len++] = '.';
 				break;
 			}
@@ -470,8 +472,8 @@ char *ps1(register pset a)
 /* pbv1 -- print bit-vector */
 char *pbv1(pset s, int n)
 {
-	register int i;
-	for(i = 0; i < n; i++)
+	register	int i;
+	for (i = 0; i < n; i++)
 		s1[i] = is_in_set(s, i) ? '1' : '0';
 	s1[n] = '\0';
 	return s1;
@@ -481,11 +483,11 @@ char *pbv1(pset s, int n)
 void
 set_adjcnt(register pset a, register int *count, register int weight)
 {
-	register int i, base;
-	register unsigned int val;
+	register	int i, base;
+	register	unsigned int val;
 
-	for(i = LOOP(a); i > 0; ) {
-		for(val = a[i], base = --i << LOGBPI; val != 0; base++, val >>= 1) {
+	for (i = LOOP(a); i > 0; ) {
+		for (val = a[i], base = --i << LOGBPI; val != 0; base++, val >>= 1) {
 			if (val & 1) {
 				count[base] += weight;
 			}
@@ -496,18 +498,18 @@ set_adjcnt(register pset a, register int *count, register int weight)
 /* sf_count -- perform a column sum over a set family */
 int *sf_count(pset_family A)
 {
-	register pset p, last;
-	register int i, base, *count;
-	register unsigned int val;
+	register	pset p, last;
+	register	int i, base, *count;
+	register	unsigned int val;
 
 	count = ALLOC(int, A->sf_size);
-	for(i = A->sf_size - 1; i >= 0; i--) {
+	for (i = A->sf_size - 1; i >= 0; i--) {
 		count[i] = 0;
 	}
 
 	foreach_set(A, last, p) {
-		for(i = LOOP(p); i > 0; ) {
-			for(val = p[i], base = --i << LOGBPI; val != 0; base++, val >>= 1) {
+		for (i = LOOP(p); i > 0; ) {
+			for (val = p[i], base = --i << LOGBPI; val != 0; base++, val >>= 1) {
 				if (val & 1) {
 					count[base]++;
 				}
@@ -524,22 +526,22 @@ int *sf_count(pset_family A)
  */
 int *sf_count_restricted(pset_family A, register pset r)
 {
-	register pset p;
-	register int i, base, *count;
-	register unsigned int val;
-	int weight;
+	register	pset p;
+	register	int i, base, *count;
+	register	unsigned int val;
+	int	weight;
 	pset last;
 
 	count = ALLOC(int, A->sf_size);
-	for(i = A->sf_size - 1; i >= 0; i--) {
+	for (i = A->sf_size - 1; i >= 0; i--) {
 		count[i] = 0;
 	}
 
 	/* Loop for each set */
 	foreach_set(A, last, p) {
 		weight = 1024 / (set_ord(p) - 1);
-		for(i = LOOP(p); i > 0; ) {
-			for(val=p[i]&r[i], base= --i<<LOGBPI; val!=0; base++, val >>= 1) {
+		for (i = LOOP(p); i > 0; ) {
+			for (val = p[i] & r[i], base= --i << LOGBPI; val != 0; base++, val >>= 1) {
 				if (val & 1) {
 					count[base] += weight;
 				}
@@ -554,7 +556,7 @@ int *sf_count_restricted(pset_family A, register pset r)
  */
 pset_family sf_delc(pset_family A, int first, int last)
 {
-	return sf_delcol(A, first, last-first + 1);
+	return sf_delcol(A, first, last - first + 1);
 }
 
 /*
@@ -563,7 +565,7 @@ pset_family sf_delc(pset_family A, int first, int last)
  */
 pset_family sf_addcol(pset_family A, int firstcol, int n)
 {
-	int maxsize;
+	int	maxsize;
 
 	/* Check if adding columns at the end ... */
 	if (firstcol == A->sf_size) {
@@ -589,18 +591,18 @@ pset_family sf_addcol(pset_family A, int firstcol, int n)
  */
 pset_family sf_delcol(pset_family A, register int firstcol, register int n)
 {
-	register pset p, last, pdest;
-	register int i;
+	register	pset p, last, pdest;
+	register	int i;
 	pset_family B;
 
 	B = sf_new(A->count, A->sf_size - n);
 	foreach_set(A, last, p) {
 		pdest = GETSET(B, B->count++);
 		INLINEset_clear(pdest, B->sf_size);
-		for(i = 0; i < firstcol; i++)
+		for (i = 0; i < firstcol; i++)
 			if (is_in_set(p, i))
 				set_insert(pdest, i);
-		for(i = n > 0 ? firstcol + n : firstcol; i < A->sf_size; i++)
+		for (i = n > 0 ? firstcol + n : firstcol; i < A->sf_size; i++)
 			if (is_in_set(p, i))
 				set_insert(pdest, i - n);
 	}
@@ -613,8 +615,8 @@ pset_family sf_delcol(pset_family A, register int firstcol, register int n)
  */
 pset_family sf_copy_col(pset_family dst, int dstcol, pset_family src, int srccol)
 {
-	register pset last, p, pdest;
-	register int word_test, word_set;
+	register	pset last, p, pdest;
+	register	int word_test, word_set;
 	unsigned int bit_set, bit_test;
 
 	/* CHEAT! form these constants outside the loop */
@@ -643,20 +645,20 @@ pset_family sf_compress(pset_family A, register pset c)
 /* will be freed */
 
 {
-	register pset p;
-	register int i, bcol;
+	register	pset p;
+	register	int i, bcol;
 	pset_family B;
 
 	/* create a clean set family for the result */
 	B = sf_new(A->count, set_ord(c));
-	for(i = 0; i < A->count; i++) {
+	for (i = 0; i < A->count; i++) {
 		p = GETSET(B, B->count++);
 		INLINEset_clear(p, B->sf_size);
 	}
 
 	/* copy each column of A which has a 1 in c */
 	bcol = 0;
-	for(i = 0; i < A->sf_size; i++) {
+	for (i = 0; i < A->sf_size; i++) {
 		if (is_in_set(c, i)) {
 			(void) sf_copy_col(B, bcol++, A, i);
 		}
@@ -673,8 +675,8 @@ pset_family sf_compress(pset_family A, register pset c)
 pset_family sf_transpose(pset_family A)
 {
 	pset_family B;
-	register pset p;
-	register int i, j;
+	register	pset p;
+	register	int i, j;
 
 	B = sf_new(A->sf_size, A->count);
 	B->count = A->sf_size;
@@ -682,7 +684,7 @@ pset_family sf_transpose(pset_family A)
 		INLINEset_clear(p, B->sf_size);
 	}
 	foreachi_set(A, i, p) {
-		for(j = 0; j < A->sf_size; j++) {
+		for (j = 0; j < A->sf_size; j++) {
 			if (is_in_set(p, j)) {
 				set_insert(GETSET(B, j), i);
 			}
@@ -701,8 +703,8 @@ pset_family sf_transpose(pset_family A)
 pset_family sf_permute(pset_family A, register int *permute, register int npermute)
 {
 	pset_family B;
-	register pset p, last, pdest;
-	register int j;
+	register	pset p, last, pdest;
+	register	int j;
 
 	B = sf_new(A->count, npermute);
 	B->count = A->count;
@@ -711,7 +713,7 @@ pset_family sf_permute(pset_family A, register int *permute, register int npermu
 
 	pdest = B->data;
 	foreach_set(A, last, p) {
-		for(j = 0; j < npermute; j++)
+		for (j = 0; j < npermute; j++)
 			if (is_in_set(p, permute[j]))
 				set_insert(pdest, j);
 		pdest += B->wsize;

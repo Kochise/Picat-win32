@@ -112,13 +112,13 @@ typedef int int16;
 
 /* Some machines fail to define some functions in stdio.h */
 #ifndef __STDC__
-extern FILE *popen(), *tmpfile();
-extern int pclose();
+extern	FILE *popen(), *tmpfile();
+extern	int		pclose();
 #ifndef clearerr		/* is a macro on many machines, but not all */
-extern VOID_HACK clearerr();
+extern	VOID_HACK		clearerr();
 #endif	/* clearerr */
 #ifndef rewind
-extern VOID_HACK rewind();
+extern	VOID_HACK		rewind();
 #endif	/* rewind */
 #endif	/* __STDC__ */
 
@@ -128,20 +128,20 @@ extern VOID_HACK rewind();
 #include <stdlib.h>
 #else
 #ifdef hpux
-extern int abort();
-extern void free(), exit(), perror();
+extern	int		abort();
+extern	void		free(), exit(), perror();
 #else
-extern VOID_HACK abort(), free(), exit(), perror();
+extern	VOID_HACK		abort(), free(), exit(), perror();
 #endif	/* hpux */
-extern char *getenv(), *malloc(), *realloc(), *calloc();
+extern	char *getenv(), *malloc(), *realloc(), *calloc();
 #ifdef aiws
-extern int sprintf();
+extern	int		sprintf();
 #else
-extern char *sprintf();
+extern	char *sprintf();
 #endif
-extern int system();
-extern double atof();
-extern int sscanf();
+extern	int		system();
+extern	double		atof();
+extern	int		sscanf();
 #endif	/* __STDC__ */
 
 
@@ -150,11 +150,11 @@ extern int sscanf();
 #include <string.h>
 #else
 /* ANSI C string.h -- 1/11/88 Draft Standard */
-extern char *strcpy(), *strncpy(), *strcat(), *strncat(), *strerror();
-extern char *strpbrk(), *strtok(), *strchr(), *strrchr(), *strstr();
-extern int strcoll(), strxfrm(), strncmp(), strlen(), strspn(), strcspn();
-extern char *memmove(), *memccpy(), *memchr(), *memcpy(), *memset();
-extern int memcmp(), strcmp();
+extern	char *strcpy(), *strncpy(), *strcat(), *strncat(), *strerror();
+extern	char *strpbrk(), *strtok(), *strchr(), *strrchr(), *strstr();
+extern	int		strcoll(), strxfrm(), strncmp(), strlen(), strspn(), strcspn();
+extern	char *memmove(), *memccpy(), *memchr(), *memcpy(), *memset();
+extern	int		memcmp(), strcmp();
 #endif	/* __STDC__ */
 
 /* assertion macro */

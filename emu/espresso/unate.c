@@ -5,16 +5,16 @@
 #include "espresso.h"
 
 static pset_family abs_covered(pset_family A, register int pick);
-static pset_family abs_covered_many(pset_family A, register pset pick_set);
-static int abs_select_restricted(pset_family A, pset esp_restrict);
+static	pset_family		abs_covered_many(pset_family A, register pset pick_set);
+static	int		abs_select_restricted(pset_family A, pset esp_restrict);
 
 pcover map_cover_to_unate(pset *T)
 {
-	register unsigned int word_test, word_set, bit_test, bit_set;
-	register pcube p, pA;
+	register	unsigned int word_test, word_set, bit_test, bit_set;
+	register	pcube p, pA;
 	pset_family A;
 	pcube *T1;
-	int ncol, i;
+	int	ncol, i;
 
 	A = sf_new(CUBELISTSIZE(T), cdata.vars_unate);
 	A->count = CUBELISTSIZE(T);
@@ -23,7 +23,7 @@ pcover map_cover_to_unate(pset *T)
 	}
 	ncol = 0;
 
-	for(i = 0; i < cube.size; i++) {
+	for (i = 0; i < cube.size; i++) {
 		if (cdata.part_zeros[i] > 0) {
 			assert(ncol <= cdata.vars_unate);
 
@@ -34,7 +34,7 @@ pcover map_cover_to_unate(pset *T)
 			bit_set = 1 << WHICH_BIT(ncol);
 
 			pA = A->data;
-			for(T1 = T+2; (p = *T1++) != 0; ) {
+			for (T1 = T + 2; (p = *T1++) != 0; ) {
 				if ((p[word_test] & bit_test) == 0) {
 					pA[word_set] |= bit_set;
 				}
@@ -50,9 +50,9 @@ pcover map_cover_to_unate(pset *T)
 
 pcover map_unate_to_cover(pset_family A)
 {
-	register int i, ncol, lp;
-	register pcube p, pB;
-	int var, nunate, *unate;
+	register	int i, ncol, lp;
+	register	pcube p, pB;
+	int	var, nunate, *unate;
 	pcube last;
 	pset_family B;
 
@@ -62,7 +62,7 @@ pcover map_unate_to_cover(pset_family A)
 	/* Find the unate variables */
 	unate = ALLOC(int, cube.num_vars);
 	nunate = 0;
-	for(var = 0; var < cube.num_vars; var++) {
+	for (var = 0; var < cube.num_vars; var++) {
 		if (cdata.is_unate[var]) {
 			unate[nunate++] = var;
 		}
@@ -79,10 +79,10 @@ pcover map_unate_to_cover(pset_family A)
 		 * then this variable of B should be a single 1 in the unate
 		 * part.
 		 */
-		for(ncol = 0; ncol < nunate; ncol++) {
+		for (ncol = 0; ncol < nunate; ncol++) {
 			if (is_in_set(p, ncol)) {
 				lp = cube.last_part[unate[ncol]];
-				for(i = cube.first_part[unate[ncol]]; i <= lp; i++) {
+				for (i = cube.first_part[unate[ncol]]; i <= lp; i++) {
 					if (cdata.part_zeros[i] == 0) {
 					set_remove(pB, i);
 					}
@@ -101,10 +101,12 @@ pcover map_unate_to_cover(pset_family A)
  */
 pset_family unate_compl(pset_family A)
 {
-	register pset p, last;
+	register	pset p, last;
 
 	/* Make sure A is single-cube containment minimal */
-/*	A = sf_rev_contain(A);*/
+#if 0
+	A = sf_rev_contain(A);
+#endif
 
 	foreach_set(A, last, p) {
 		PUTSIZE(p, set_ord(p));
@@ -126,9 +128,9 @@ pset_family unate_complement(pset_family A)
 						/* disposes of A */
 {
 	pset_family Abar;
-	register pset p, p1, esp_restrict;
-	register int i;
-	int max_i, min_set_ord, j;
+	register	pset p, p1, esp_restrict;
+	register	int i;
+	int	max_i, min_set_ord, j;
 
 	/* Check for no sets in the matrix -- complement is the universe */
 	if (A->count == 0) {
@@ -140,7 +142,7 @@ pset_family unate_complement(pset_family A)
 	} else if (A->count == 1) {
 		p = A->data;
 		Abar = sf_new(A->sf_size, A->sf_size);
-		for(i = 0; i < A->sf_size; i++) {
+		for (i = 0; i < A->sf_size; i++) {
 			if (is_in_set(p, i)) {
 				p1 = set_clear(GETSET(Abar, Abar->count++), A->sf_size);
 				set_insert(p1, i);
@@ -207,15 +209,15 @@ pset_family unate_complement(pset_family A)
 
 pset_family exact_minimum_cover(pset_family T)
 {
-	register pset p, last, p1;
-	register int i, n;
-	int lev, lvl;
+	register	pset p, last, p1;
+	register	int i, n;
+	int	lev, lvl;
 	pset nlast;
 	pset_family temp;
 	long start = ptime();
 	struct {
 		pset_family sf;
-		int level;
+		int	level;
 	} stack[32];					/* 32 suffices for 2 ** 32 cubes ! */
 
 	if (T->count <= 0)
@@ -245,19 +247,19 @@ pset_family exact_minimum_cover(pset_family T)
 		stack[n++].level = lev;
 
 		/* Pop the stack and perform (leveled) intersections */
-		while (n > 1 && (stack[n-1].level==stack[n-2].level || p == nlast)) {
-			temp = unate_intersect(stack[n-1].sf, stack[n-2].sf, FALSE);
-			lvl = MIN(stack[n-1].level, stack[n-2].level) - 1;
+		while (n > 1 && (stack[n - 1].level == stack[n - 2].level || p == nlast)) {
+			temp = unate_intersect(stack[n - 1].sf, stack[n - 2].sf, FALSE);
+			lvl = MIN(stack[n - 1].level, stack[n - 2].level) -1;
 			if (debug & MINCOV && lvl < 10) {
 				printf("# EXACT_MINCOV[%d]: %4d = %4d x %4d, time = %s\n",
-					lvl, temp->count, stack[n-1].sf->count,
-					stack[n-2].sf->count, print_time(ptime() - start));
+					lvl, temp->count, stack[n - 1].sf->count,
+					stack[n - 2].sf->count, print_time(ptime() - start));
 				(void) fflush(stdout);
 			}
-			sf_free(stack[n-2].sf);
-			sf_free(stack[n-1].sf);
-			stack[n-2].sf = temp;
-			stack[n-2].level = lvl;
+			sf_free(stack[n - 2].sf);
+			sf_free(stack[n - 1].sf);
+			stack[n - 2].sf = temp;
+			stack[n - 2].level = lvl;
 			n--;
 		}
 	}
@@ -285,10 +287,10 @@ pset_family exact_minimum_cover(pset_family T)
 
 pset_family unate_intersect(pset_family A, pset_family B, int largest_only)
 {
-	register pset pi, pj, lasti, lastj, pt;
+	register	pset pi, pj, lasti, lastj, pt;
 	pset_family T, Tsave;
 	bool save;
-	int maxord, ord;
+	int	maxord, ord;
 
 	/* How large should each temporary result cover be ? */
 	T = sf_new(MAGIC, A->sf_size);
@@ -345,8 +347,8 @@ pset_family unate_intersect(pset_family A, pset_family B, int largest_only)
  */
 static pset_family abs_covered(pset_family A, register int pick)
 {
-	register pset last, p, pdest;
-	register pset_family Aprime;
+	register	pset last, p, pdest;
+	register	pset_family Aprime;
 
 	Aprime = sf_new(A->count, A->sf_size);
 	pdest = Aprime->data;
@@ -365,8 +367,8 @@ static pset_family abs_covered(pset_family A, register int pick)
  */
 static pset_family abs_covered_many(pset_family A, register pset pick_set)
 {
-	register pset last, p, pdest;
-	register pset_family Aprime;
+	register	pset last, p, pdest;
+	register	pset_family Aprime;
 
 	Aprime = sf_new(A->count, A->sf_size);
 	pdest = Aprime->data;
@@ -386,7 +388,7 @@ static pset_family abs_covered_many(pset_family A, register pset pick_set)
  */
 static int abs_select_restricted(pset_family A, pset esp_restrict)
 {
-	register int i, best_var, best_count, *count;
+	register	int i, best_var, best_count, *count;
 
 	/* Sum the elements in these columns */
 	count = sf_count_restricted(A, esp_restrict);
@@ -394,7 +396,7 @@ static int abs_select_restricted(pset_family A, pset esp_restrict)
 	/* Find which variable has maximum weight */
 	best_var = -1;
 	best_count = 0;
-	for(i = 0; i < A->sf_size; i++) {
+	for (i = 0; i < A->sf_size; i++) {
 		if (count[i] > best_count) {
 			best_var = i;
 			best_count = count[i];

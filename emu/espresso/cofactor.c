@@ -44,18 +44,18 @@ pcube *cofactor(pset *T, register pset c)
 	Tc++;
 
 	/* Loop for each cube in the list, determine suitability, and save */
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		if (p != c) {
 
 #ifdef NO_INLINE
 			if (! cdist0(p, c)) goto false;
 #else
-			{register int w, last;register unsigned int x;if((last=cube.inword)!=-1)
-			{x=p[last]&c[last];if(~(x|x>>1)&cube.inmask)goto false;for(w=1;w<last;w++)
-			{x=p[w]&c[w];if(~(x|x>>1)&DISJOINT)goto false;}}}{register int w, var, last;
-			register pcube mask;for(var=cube.num_binary_vars;var<cube.num_vars;var++){
-			mask=cube.var_mask[var];last=cube.last_word[var];for(w=cube.first_word[var
-			];w<=last;w++)if(p[w]&c[w]&mask[w])goto nextvar;goto false;nextvar:;}}
+			{ register int w, last; register unsigned int x; if((last = cube.inword) != -1)
+			{ x = p[last] & c[last]; if(~(x | x >> 1) & cube.inmask)goto false; for(w = 1; w < last; w++)
+			{ x = p[w] & c[w]; if(~(x | x >> 1) & DISJOINT)goto false; }} }{ register int w, var, last;
+			register	pcube	mask; for(var = cube.num_binary_vars; var < cube.num_vars; var++) {
+			mask = cube.var_mask[var]; last = cube.last_word[var]; for(w = cube.first_word[var
+			]; w <= last; w++)if(p[w] & c[w] & mask[w])goto nextvar; goto false; nextvar:; }}
 #endif
 
 			*Tc++ = p;
@@ -76,10 +76,10 @@ pcube *cofactor(pset *T, register pset c)
 */
 pcube *scofactor(pset *T, pset c, int var)
 {
-	pcube *Tc, *Tc_save;
-	register pcube p, mask = cube.temp[1], *T1;
-	register int first = cube.first_word[var], last = cube.last_word[var];
-	int listlen;
+				pcube	*Tc, *Tc_save;
+	register	pcube	p, mask = cube.temp[1], *T1;
+	register	int		first = cube.first_word[var], last = cube.last_word[var];
+				int		listlen;
 
 	listlen = CUBELISTSIZE(T) + 5;
 
@@ -94,9 +94,9 @@ pcube *scofactor(pset *T, pset c, int var)
 	(void) set_and(mask, cube.var_mask[var], c);
 
 	/* Loop for each cube in the list, determine suitability, and save */
-	for(T1 = T+2; (p = *T1++) != NULL; )
+	for (T1 = T + 2; (p = *T1++) != NULL; )
 		if (p != c) {
-			register int i = first;
+			register	int	i = first;
 			do
 				if (p[i] & mask[i]) {
 					*Tc++ = p;
@@ -112,24 +112,24 @@ pcube *scofactor(pset *T, pset c, int var)
 
 void massive_count(pset *T)
 {
-	int *count = cdata.part_zeros;
-	pcube *T1;
+	int		*count = cdata.part_zeros;
+	pcube	*T1;
 
 	/* Clear the column counts (count of # zeros in each column) */
 	 {  register int i;
-		for(i = cube.size - 1; i >= 0; i--)
+		for (i = cube.size - 1; i >= 0; i--)
 			count[i] = 0;
 	 }
 
 	/* Count the number of zeros in each column */
 	{
-		register int i, *cnt;
-		register unsigned int val;
-		register pcube p, cof = T[0], full = cube.fullset;
-		for(T1 = T+2; (p = *T1++) != NULL; )
-			for(i = LOOP(p); i > 0; i--)
-				if ((val = full[i] & ~ (p[i] | cof[i]))) {
-					cnt = count + ((i-1) << LOGBPI);
+		register	int				i, *cnt;
+		register	unsigned int	val;
+		register	pcube			p, cof = T[0], full = cube.fullset;
+		for (T1 = T + 2; (p = *T1++) != NULL; )
+			for (i = LOOP(p); i > 0; i--)
+				if (0 != (val = full[i] & ~(p[i] | cof[i]))) {
+					cnt = count + ((i - 1) << LOGBPI);
 #if BPI == 32
 					if (val & 0xFF000000) {
 					if (val & 0x80000000) cnt[31]++;
@@ -188,21 +188,21 @@ void massive_count(pset *T)
 	*    mostbalanced -- minimum over the maximum # zeros / part / variable
 	*/
 	{
-		register int var, i, lastbit, active, maxactive;
-		int best = -1, mostactive = 0, mostzero = 0, mostbalanced = 32000;
+		register	int	var, i, lastbit, active, maxactive;
+					int	best = -1, mostactive = 0, mostzero = 0, mostbalanced = 32000;
 		cdata.vars_unate = cdata.vars_active = 0;
 
-		for(var = 0; var < cube.num_vars; var++) {
+		for (var = 0; var < cube.num_vars; var++) {
 			if (var < cube.num_binary_vars) {	/* special hack for binary vars */
-				i = count[var*2];
-				lastbit = count[var*2 + 1];
+				i = count[var * 2];
+				lastbit = count[var * 2 + 1];
 				active = (i > 0) + (lastbit > 0);
 				cdata.var_zeros[var] = i + lastbit;
 				maxactive = MAX(i, lastbit);
 			} else {
 				maxactive = active = cdata.var_zeros[var] = 0;
 				lastbit = cube.last_part[var];
-				for(i = cube.first_part[var]; i <= lastbit; i++) {
+				for (i = cube.first_part[var]; i <= lastbit; i++) {
 					cdata.var_zeros[var] += count[i];
 					active += (count[i] > 0);
 					if (active > maxactive) maxactive = active;
@@ -245,20 +245,20 @@ void massive_count(pset *T)
 
 int binate_split_select(pset *T, register pset cleft, register pset cright, int debug_flag)
 {
-	int best = cdata.best;
-	register int i, lastbit = cube.last_part[best], halfbit = 0;
-	register pcube cof=T[0];
+				int		best = cdata.best;
+	register	int		i, lastbit = cube.last_part[best], halfbit = 0;
+	register	pcube	cof = T[0];
 
 	/* Create the cubes to cofactor against */
 	set_diff(cleft, cube.fullset, cube.var_mask[best]);
 	set_diff(cright, cube.fullset, cube.var_mask[best]);
-	for(i = cube.first_part[best]; i <= lastbit; i++)
+	for (i = cube.first_part[best]; i <= lastbit; i++)
 		if (! is_in_set(cof, i))
 			halfbit++;
-	for(i = cube.first_part[best], halfbit = halfbit/2; halfbit > 0; i++)
+	for (i = cube.first_part[best], halfbit = halfbit / 2; halfbit > 0; i++)
 		if (! is_in_set(cof, i))
 			halfbit--, set_insert(cleft, i);
-	for(; i <= lastbit; i++)
+	for (; i <= lastbit; i++)
 		if (! is_in_set(cof, i))
 			set_insert(cright, i);
 
@@ -272,7 +272,7 @@ int binate_split_select(pset *T, register pset cleft, register pset cright, int 
 
 pcube *cube1list(pset_family A)
 {
-	register pcube last, p, *plist, *list;
+	register	pcube	last, p, *plist, *list;
 
 	list = plist = ALLOC(pcube, A->count + 3);
 	*plist++ = new_cube();
@@ -287,7 +287,7 @@ pcube *cube1list(pset_family A)
 
 pcube *cube2list(pset_family A, pset_family B)
 {
-	register pcube last, p, *plist, *list;
+	register	pcube	last, p, *plist, *list;
 
 	list = plist = ALLOC(pcube, A->count + B->count + 3);
 	*plist++ = new_cube();
@@ -305,7 +305,7 @@ pcube *cube2list(pset_family A, pset_family B)
 
 pcube *cube3list(pset_family A, pset_family B, pset_family C)
 {
-	register pcube last, p, *plist, *list;
+	register	pcube	last, p, *plist, *list;
 
 	plist = ALLOC(pcube, A->count + B->count + C->count + 3);
 	list = plist;
@@ -327,13 +327,13 @@ pcube *cube3list(pset_family A, pset_family B, pset_family C)
 
 pcover cubeunlist(pset *A1)
 {
-	register int i;
-	register pcube p, pdest, cof = A1[0];
-	register pcover A;
+	register	int		i;
+	register	pcube	p, pdest, cof = A1[0];
+	register	pcover	A;
 
 	A = new_cover(CUBELISTSIZE(A1));
-	for(i = 2; (p = A1[i]) != NULL; i++) {
-		pdest = GETSET(A, i-2);
+	for (i = 2; (p = A1[i]) != NULL; i++) {
+		pdest = GETSET(A, i - 2);
 		INLINEset_or(pdest, p, cof);
 	}
 	A->count = CUBELISTSIZE(A1);
@@ -342,18 +342,20 @@ pcover cubeunlist(pset *A1)
 
 void simplify_cubelist(pset *T)
 {
-	register pcube *Tdest;
-	register int i, ncubes;
+	register	pcube	*Tdest;
+	register	int		i, ncubes;
 
 	set_copy(cube.temp[0], T[0]);		/* retrieve cofactor */
 
 	ncubes = CUBELISTSIZE(T);
-	qsort((char *) (T+2), ncubes, sizeof(pset), (qsort_compare_func) d1_order);
+	qsort((char *) (T + 2), ncubes, sizeof(pset), (qsort_compare_func) d1_order);
 
-	Tdest = T+2;
-	/*   *Tdest++ = T[2];   */
-	for(i = 3; i < ncubes; i++) {
-		if (d1_order(&T[i-1], &T[i]) != 0) {
+	Tdest = T + 2;
+#if 0
+	*Tdest++ = T[2];
+#endif
+	for (i = 3; i < ncubes; i++) {
+		if (d1_order(&T[i - 1], &T[i]) != 0) {
 			*Tdest++ = T[i];
 		}
 	}

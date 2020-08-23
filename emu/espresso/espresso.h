@@ -51,24 +51,24 @@ typedef unsigned int *pset;
 
 /* Define the set family type -- an array of sets */
 typedef struct set_family {
-	int wsize;					/* Size of each set in 'ints' */
-	int sf_size;				/* User declared set size */
-	int capacity;				/* Number of sets allocated */
-	int count;					/* The number of sets in the family */
-	int active_count;			/* Number of "active" sets */
-	pset data;					/* Pointer to the set data */
-	struct set_family *next;	/* For garbage collection */
+	int					wsize;			/* Size of each set in 'ints' */
+	int					sf_size;		/* User declared set size */
+	int					capacity;		/* Number of sets allocated */
+	int					count;			/* The number of sets in the family */
+	int					active_count;	/* Number of "active" sets */
+	pset				data;			/* Pointer to the set data */
+	struct	set_family	*next;			/* For garbage collection */
 } set_family_t, *pset_family;
 
 /* Macros to set and test single elements */
 #define WHICH_WORD(element)	(((element) >> LOGBPI) + 1)
-#define WHICH_BIT(element)	((element)	& (BPI-1))
+#define WHICH_BIT(element)	((element)	& (BPI - 1))
 
 /* # of ints needed to allocate a set with "size" elements */
 #if BPI == 32
-#define SET_SIZE(size)		((size)	<= BPI ? 2 : (WHICH_WORD((size)-1) + 1))
+#define SET_SIZE(size)		((size)	<= BPI ? 2 : (WHICH_WORD((size) - 1) + 1))
 #else
-#define SET_SIZE(size)		((size)	<= BPI ? 3 : (WHICH_WORD((size)-1) + 2))
+#define SET_SIZE(size)		((size)	<= BPI ? 3 : (WHICH_WORD((size) - 1) + 2))
 #endif
 
 /*
@@ -86,18 +86,18 @@ typedef struct set_family {
 #define PUTSIZE(set, size)	(set[0] &= 0xffff, set[0] |= ((size) << 16))
 #else
 #define LOOPCOPY(set)		(LOOP(set) + 1)
-#define SIZE(set)			(set[LOOP(set)+1])
-#define PUTSIZE(set, size)	((set[LOOP(set)+1]) = (size))
+#define SIZE(set)			(set[LOOP(set) + 1])
+#define PUTSIZE(set, size)	((set[LOOP(set) + 1]) = (size))
 #endif
 
 #define NELEM(set)			(BPI * LOOP(set))
-#define LOOPINIT(size)		((size <= BPI) ? 1 : WHICH_WORD((size)-1))
+#define LOOPINIT(size)		((size <= BPI) ? 1 : WHICH_WORD((size) - 1))
 
 /*
  *      FLAGS store general information about the set
  */
 #define SET(set, flag)		(set[0] |= (flag))
-#define RESET(set, flag)	(set[0] &= ~ (flag))
+#define RESET(set, flag)	(set[0] &= ~(flag))
 #define TESTP(set, flag)	(set[0] & (flag))
 
 /* Flag definitions are ... */
@@ -110,15 +110,15 @@ typedef struct set_family {
 
 /* Most efficient way to look at all members of a set family */
 #define foreach_set(R, last, p)													\
-			for(p=R->data, last=p+R->count*R->wsize;p<last;p+=R->wsize)
+			for (p = R->data, last = p + R->count * R->wsize; p < last; p += R->wsize)
 #define foreach_remaining_set(R, last, pfirst, p)								\
-			for(p=pfirst+R->wsize, last=R->data+R->count*R->wsize;p<last;p+=R->wsize)
+			for (p = pfirst + R->wsize, last = R->data + R->count * R->wsize; p < last; p += R->wsize)
 #define foreach_active_set(R, last, p)											\
 			foreach_set(R, last, p) if (TESTP(p, ACTIVE))
 
 /* Another way that also keeps the index of the current set member in i */
 #define foreachi_set(R,	i, p)													\
-			for(p=R->data, i=0;i<R->count;p+=R->wsize, i++)
+			for (p = R->data, i = 0; i < R->count; p += R->wsize, i++)
 #define foreachi_active_set(R,	i, p)											\
 			foreachi_set(R, i, p) if (TESTP(p, ACTIVE))
 
@@ -130,8 +130,8 @@ typedef struct set_family {
  *      }
  */
 #define foreach_set_element(p, i, val, base)									\
-			for(i = LOOP(p); i > 0; )											\
-				for(val = p[i], base = --i << LOGBPI; val != 0; base++, val >>= 1)	\
+			for (i = LOOP(p); i > 0; )											\
+				for (val = p[i], base = --i << LOGBPI; val != 0; base++, val >>= 1)	\
 					if (val & 1)
 
 /* Return a pointer to a given member of a set family */
@@ -145,7 +145,7 @@ typedef struct set_family {
 
 /* Check for set membership, remove set element and insert set element */
 #define is_in_set(set,	e)	(set[WHICH_WORD(e)] & (1 << WHICH_BIT(e)))
-#define set_remove(set,	e)	(set[WHICH_WORD(e)] &= ~ (1 << WHICH_BIT(e)))
+#define set_remove(set,	e)	(set[WHICH_WORD(e)] &= ~(1 << WHICH_BIT(e)))
 #define set_insert(set,	e)	(set[WHICH_WORD(e)] |= 1 << WHICH_BIT(e))
 
 /* Inline code substitution for those places that REALLY need it on a VAX */
@@ -170,47 +170,47 @@ typedef struct set_family {
 #else
 
 #define INLINEset_copy(r, a)									\
-			{register int i_=LOOPCOPY(a); do r[i_]=a[i_]; while (--i_>=0);}
+			{ register int i_ = LOOPCOPY(a); do r[i_] = a[i_]; while (--i_ >= 0); }
 #define INLINEset_clear(r, size)									\
-			{register int i_=LOOPINIT(size); *r=i_; do r[i_] = 0; while (--i_ > 0);}
+			{ register int i_ = LOOPINIT(size); *r = i_; do r[i_] = 0; while (--i_ > 0); }
 #define INLINEset_fill(r, size)									\
-			{register int i_=LOOPINIT(size); *r=i_;																				\
-			r[i_]=((unsigned int)(~0))>>(i_*BPI-size); while(--i_>0) r[i_]=~0;}
+			{ register int i_ = LOOPINIT(size); *r = i_;																				\
+			r[i_] = ((unsigned int)(~0))>>(i_ * BPI - size); while(--i_ > 0) r[i_] = ~0; }
 #define INLINEset_and(r, a, b)									\
-			{register int i_=LOOP(a); PUTLOOP(r, i_);									\
-			do r[i_] = a[i_] & b[i_]; while (--i_>0);}
+			{ register int i_ = LOOP(a); PUTLOOP(r, i_);									\
+			do r[i_] = a[i_] & b[i_]; while (--i_ > 0); }
 #define INLINEset_or(r, a, b)									\
-			{register int i_=LOOP(a); PUTLOOP(r, i_);									\
-			do r[i_] = a[i_] | b[i_]; while (--i_>0);}
+			{ register int i_ = LOOP(a); PUTLOOP(r, i_);									\
+			do r[i_] = a[i_] | b[i_]; while (--i_ > 0); }
 #define INLINEset_diff(r, a, b)									\
-			{register int i_=LOOP(a); PUTLOOP(r, i_);									\
-			do r[i_] = a[i_] & ~ b[i_]; while (--i_>0);}
+			{ register int i_ = LOOP(a); PUTLOOP(r, i_);									\
+			do r[i_] = a[i_] & ~ b[i_]; while (--i_ > 0); }
 #define INLINEset_ndiff(r, a, b, fullset)									\
-			{register int i_=LOOP(a); PUTLOOP(r, i_);									\
-			do r[i_] = fullset[i_] & (a[i_] | ~ b[i_]); while (--i_>0);}
+			{ register int i_ = LOOP(a); PUTLOOP(r, i_);									\
+			do r[i_] = fullset[i_] & (a[i_] | ~ b[i_]); while (--i_ > 0); }
 #ifdef IBM_WATC
 #define INLINEset_xor(r, a, b)		(void) set_xor(r, a, b)
 #define INLINEset_xnor(r, a, b, f)	(void) set_xnor(r, a, b, f)
 #else
 #define INLINEset_xor(r, a, b)									\
-			{register int i_=LOOP(a); PUTLOOP(r, i_);									\
-			do r[i_] = a[i_] ^ b[i_]; while (--i_>0);}
+			{ register int i_ = LOOP(a); PUTLOOP(r, i_);									\
+			do r[i_] = a[i_] ^ b[i_]; while (--i_ > 0); }
 #define INLINEset_xnor(r, a, b, fullset)									\
-			{register int i_=LOOP(a); PUTLOOP(r, i_);									\
-			do r[i_] = fullset[i_] & ~ (a[i_] ^ b[i_]); while (--i_>0);}
+			{ register int i_ = LOOP(a); PUTLOOP(r, i_);									\
+			do r[i_] = fullset[i_] & ~(a[i_] ^ b[i_]); while (--i_ > 0); }
 #endif
 #define INLINEset_merge(r, a, b, mask)											\
-			{register int i_=LOOP(a); PUTLOOP(r, i_);									\
-			do r[i_] = (a[i_]&mask[i_]) | (b[i_]&~mask[i_]); while (--i_>0);}
+			{ register int i_ = LOOP(a); PUTLOOP(r, i_);									\
+			do r[i_] = (a[i_] & mask[i_]) | (b[i_] & ~mask[i_]); while (--i_ > 0); }
 #define INLINEsetp_implies(a,	b, when_false)									\
-			{register int i_=LOOP(a); do if (a[i_]&~b[i_]) break; while (--i_>0);	\
-			if (i_ != 0) when_false;}
+			{ register int i_ = LOOP(a); do if (a[i_] & ~b[i_]) break; while (--i_ > 0);	\
+			if (i_ != 0) when_false; }
 #define INLINEsetp_disjoint(a,	b, when_false)									\
-			{register int i_=LOOP(a); do if (a[i_]&b[i_]) break; while (--i_>0);	\
-			if (i_ != 0) when_false;}
+			{ register int i_ = LOOP(a); do if (a[i_] & b[i_]) break; while (--i_ > 0);	\
+			if (i_ != 0) when_false; }
 #define INLINEsetp_equal(a,	b, when_false)										\
-			{register int i_=LOOP(a); do if (a[i_]!=b[i_]) break; while (--i_>0);	\
-			if (i_ != 0) when_false;}
+			{ register int i_ = LOOP(a); do if (a[i_] != b[i_]) break; while (--i_ > 0);	\
+			if (i_ != 0) when_false; }
 
 #endif
 
@@ -223,7 +223,7 @@ typedef struct set_family {
 #endif
 
 /* Table for efficient bit counting */
-extern int bit_count[256];
+extern	int		bit_count[256];
 /*----- END OF set.h ----- */
 
 /* Define a boolean type */
@@ -245,18 +245,18 @@ extern int bit_count[256];
 
 /* cost_t describes the cost of a cover */
 typedef struct cost_struct {
-	int cubes;			/* number of cubes in the cover */
+	int	cubes;			/* number of cubes in the cover */
 	int in;				/* transistor count, binary-valued variables */
-	int out;			/* transistor count, output part */
+	int	out;			/* transistor count, output part */
 	int mv;				/* transistor count, multiple-valued vars */
-	int total;			/* total number of transistors */
-	int primes;			/* number of prime cubes */
+	int	total;			/* total number of transistors */
+	int	primes;			/* number of prime cubes */
 } cost_t, *pcost;
 
 
 /* pair_t describes bit-paired variables */
 typedef struct pair_struct {
-	int cnt;
+	int	cnt;
 	int *var1;
 	int *var2;
 } pair_t, *ppair;
@@ -264,8 +264,8 @@ typedef struct pair_struct {
 
 /* symbolic_list_t describes a single ".symbolic" line */
 typedef struct symbolic_list_struct {
-	int variable;
-	int pos;
+	int	variable;
+	int	pos;
 	struct symbolic_list_struct *next;
 } symbolic_list_t;
 
@@ -280,9 +280,9 @@ typedef struct symbolic_label_struct {
 /* symbolic_t describes a linked list of ".symbolic" lines */
 typedef struct symbolic_struct {
 	symbolic_list_t *symbolic_list;		/* linked list of items */
-	int symbolic_list_length;			/* length of symbolic_list list */
+	int	symbolic_list_length;			/* length of symbolic_list list */
 	symbolic_label_t *symbolic_label;	/* linked list of new names */
-	int symbolic_label_length;			/* length of symbolic_label list */
+	int	symbolic_label_length;			/* length of symbolic_label list */
 	struct symbolic_struct *next;
 } symbolic_t;
 
@@ -291,7 +291,7 @@ typedef struct symbolic_struct {
 typedef struct {
 	pcover F, D, R;					/* on-set, off-set and dc-set */
 	char *filename;					/* filename */
-	int pla_type;					/* logical PLA format */
+	int	pla_type;					/* logical PLA format */
 	pcube phase;					/* phase to split into on-set and off-set */
 	ppair pair;						/* how to pair variables */
 	char **label;					/* labels for the columns */
@@ -374,19 +374,19 @@ typedef struct {
 #define NUMOUTPUTS		cube.part_size[cube.num_vars	- 1]
 
 #define POSITIVE_PHASE(pos)														\
-						(is_in_set(PLA->phase, cube.first_part[cube.output]+pos) != 0)
+						(is_in_set(PLA->phase, cube.first_part[cube.output] + pos) != 0)
 
 #define INLABEL(var)	PLA->label[cube.first_part[var]	+ 1]
 #define OUTLABEL(pos)	PLA->label[cube.first_part[cube.output]	+ pos]
 
 #define GETINPUT(c,	pos)														\
-			((c[WHICH_WORD(2*pos)] >> WHICH_BIT(2*pos)) & 3)
+			((c[WHICH_WORD(2 * pos)] >> WHICH_BIT(2 * pos)) & 3)
 #define GETOUTPUT(c, pos)														\
 			(is_in_set(c, cube.first_part[cube.output] + pos) != 0)
 
 #define PUTINPUT(c,	pos, value)													\
-			c[WHICH_WORD(2*pos)] = (c[WHICH_WORD(2*pos)] & ~(3 << WHICH_BIT(2*pos)))	\
-			| (value << WHICH_BIT(2*pos))
+			c[WHICH_WORD(2 * pos)] = (c[WHICH_WORD(2 * pos)] & ~(3 << WHICH_BIT(2 * pos)))	\
+			| (value << WHICH_BIT(2 * pos))
 #define PUTOUTPUT(c,	pos, value)												\
 			c[WHICH_WORD(pos)] = (c[WHICH_WORD(pos)] & (1 << WHICH_BIT(pos)))	\
 			| (value << WHICH_BIT(pos))
@@ -397,49 +397,49 @@ typedef struct {
 #define ZERO	1
 
 #define EXEC(fct,	name, S)													\
-			{long t=ptime();fct;if(trace)print_trace(S, name, ptime()-t);}
+			{ long t = ptime(); fct; if(trace)print_trace(S, name, ptime() - t); }
 #define EXEC_S(fct,	name, S)													\
-			{long t=ptime();fct;if(summary)print_trace(S, name, ptime()-t);}
+			{ long t = ptime(); fct; if(summary)print_trace(S, name, ptime() - t); }
 #define EXECUTE(fct, i, S, cost)													\
-			{long t=ptime();fct;totals(t, i, S,&(cost));}
+			{ long t = ptime(); fct; totals(t, i, S, &(cost)); }
 /* lightweight EXECUTE */
 #define S_EXECUTE(fct, i)														\
-			{long t=ptime();fct;s_totals(t, i);}
+			{ long t = ptime(); fct; s_totals(t, i); }
 
 /*
  *    Global Variable Declarations
  */
 
-extern unsigned int debug;				/* debug parameter */
-extern bool verbose_debug;				/* -v:  whether to print a lot */
-extern char *total_name[TIME_COUNT];	/* basic function names */
-extern long total_time[TIME_COUNT];		/* time spent in basic fcts */
-extern int total_calls[TIME_COUNT];		/* # calls to each fct */
+extern	unsigned		int debug;				/* debug parameter */
+extern	bool		verbose_debug;				/* -v:  whether to print a lot */
+extern	char *total_name[TIME_COUNT];	/* basic function names */
+extern	long		total_time[TIME_COUNT];		/* time spent in basic fcts */
+extern	int		total_calls[TIME_COUNT];		/* # calls to each fct */
 
-extern bool echo_comments;				/* turned off by -eat option */
-extern bool echo_unknown_commands;		/* always true ?? */
-extern bool force_irredundant;			/* -nirr command line option */
-extern bool skip_make_sparse;
-extern bool kiss;						/* -kiss command line option */
-extern bool pos;						/* -pos command line option */
-extern bool print_solution;				/* -x command line option */
-extern bool recompute_onset;			/* -onset command line option */
-extern bool remove_essential;			/* -ness command line option */
-extern bool single_expand;				/* -fast command line option */
-extern bool summary;					/* -s command line option */
-extern bool trace;						/* -t command line option */
-extern bool unwrap_onset;				/* -nunwrap command line option */
-extern bool use_random_order;			/* -random command line option */
-extern bool use_super_gasp;				/* -strong command line option */
-extern char *filename;					/* filename PLA was read from */
-extern bool debug_exact_minimization;	/* dumps info for -do exact */
+extern	bool		echo_comments;				/* turned off by -eat option */
+extern	bool		echo_unknown_commands;		/* always true ?? */
+extern	bool		force_irredundant;			/* -nirr command line option */
+extern	bool		skip_make_sparse;
+extern	bool		kiss;						/* -kiss command line option */
+extern	bool		pos;						/* -pos command line option */
+extern	bool		print_solution;				/* -x command line option */
+extern	bool		recompute_onset;			/* -onset command line option */
+extern	bool		remove_essential;			/* -ness command line option */
+extern	bool		single_expand;				/* -fast command line option */
+extern	bool		summary;					/* -s command line option */
+extern	bool		trace;						/* -t command line option */
+extern	bool		unwrap_onset;				/* -nunwrap command line option */
+extern	bool		use_random_order;			/* -random command line option */
+extern	bool		use_super_gasp;				/* -strong command line option */
+extern	char *filename;					/* filename PLA was read from */
+extern	bool		debug_exact_minimization;	/* dumps info for -do exact */
 
 /*
  *  pla_types are the input and output types for reading/writing a PLA
  */
 struct pla_types_struct {
 	char *key;
-	int value;
+	int	value;
 };
 
 /*
@@ -451,9 +451,9 @@ struct pla_types_struct {
 #define CUBE_TEMP		10
 
 struct cube_struct {
-	int size;						/* set size of a cube */
-	int num_vars;					/* number of variables in a cube */
-	int num_binary_vars;			/* number of binary variables */
+	int	size;						/* set size of a cube */
+	int	num_vars;					/* number of variables in a cube */
+	int	num_binary_vars;			/* number of binary variables */
 	int *first_part;				/* first element of each variable */
 	int *last_part;					/* first element of each variable */
 	int *part_size;					/* number of elements in each variable */
@@ -466,7 +466,7 @@ struct cube_struct {
 	pset fullset;					/* a full cube */
 	pset emptyset;					/* an empty cube */
 	unsigned int inmask;			/* mask to get odd word of binary part */
-	int inword;						/* which word number for above */
+	int	inword;						/* which word number for above */
 	int *sparse;					/* should this variable be sparse? */
 	int num_mv_vars;				/* number of multiple-valued variables */
 	int output;						/* which variable is "output" (-1 if none) */
@@ -477,14 +477,14 @@ struct cdata_struct {
 	int *var_zeros;					/* count of zeros for each variable */
 	int *parts_active;				/* number of "active" parts for each var */
 	bool *is_unate;					/* indicates given var is unate */
-	int vars_active;				/* number of "active" variables */
-	int vars_unate;					/* number of unate variables */
-	int best;						/* best "binate" variable */
+	int	vars_active;				/* number of "active" variables */
+	int	vars_unate;					/* number of unate variables */
+	int	best;						/* best "binate" variable */
 };
 
-extern struct pla_types_struct pla_types[];
-extern struct cube_struct cube, temp_cube_save;
-extern struct cdata_struct cdata, temp_cdata_save;
+extern	struct		pla_types_struct pla_types[];
+extern	struct		cube_struct cube, temp_cube_save;
+extern	struct		cdata_struct cdata, temp_cdata_save;
 
 #if BPI == 32
 #define DISJOINT	0x55555555
@@ -528,7 +528,7 @@ extern struct cdata_struct cdata, temp_cdata_save;
 /* cubestr.c */ extern void save_cube_struct (void);
 /* cubestr.c */ extern void setdown_cube (void);
 /* cvrin.c */ extern void PLA_labels (pPLA PLA);
-/* cvrin.c */ extern char * get_word (register FILE *fp, register char *word);
+/* cvrin.c */ extern char *get_word (register FILE *fp, register char *word);
 /* cvrin.c */ extern int label_index (pPLA PLA, char *word, int *varp, int *ip);
 /* cvrin.c */ extern int read_pla (FILE *fp, int needs_dcset, int needs_offset, int pla_type, pPLA *PLA_return);
 /* cvrin.c */ extern int after_setup_pla(int needs_dcset, int needs_offset, pPLA PLA);
@@ -558,17 +558,17 @@ extern struct cdata_struct cdata, temp_cdata_save;
 /* cvrm.c */ extern pset_family unravel_range (pset_family B, int start, int end);
 /* cvrm.c */ extern void so_both_espresso (pPLA PLA, int strategy);
 /* cvrm.c */ extern void so_espresso (pPLA PLA, int strategy);
-/* cvrmisc.c */ extern char * fmt_cost (pcost cost);
-/* cvrmisc.c */ extern char * print_cost (pset_family F);
+/* cvrmisc.c */ extern char *fmt_cost (pcost cost);
+/* cvrmisc.c */ extern char *print_cost (pset_family F);
 /* cvrmisc.c */ extern void copy_cost (pcost s, pcost d);
 /* cvrmisc.c */ extern void cover_cost (pset_family F, pcost cost);
 /* cvrmisc.c */ extern void fatal (char *s);
 /* cvrmisc.c */ extern void print_trace (pset_family T, char *name, long time);
 /* cvrmisc.c */ extern void size_stamp (pset_family T, char *name);
 /* cvrmisc.c */ extern void totals (long time, int i, pset_family T, pcost cost);
-/* cvrout.c */ extern char * fmt_cube (register pset c, register char *out_map, register char *s);
-/* cvrout.c */ extern char * pc1 (pset c);
-/* cvrout.c */ extern char * pc2 (pset c);
+/* cvrout.c */ extern char *fmt_cube (register pset c, register char *out_map, register char *s);
+/* cvrout.c */ extern char *pc1 (pset c);
+/* cvrout.c */ extern char *pc2 (pset c);
 /* cvrout.c */ extern void makeup_labels (pPLA PLA);
 /* cvrout.c */ extern void kiss_output (FILE *fp, pPLA PLA);
 /* cvrout.c */ extern void kiss_print_cube (FILE *fp, pPLA PLA, pset p, char *out_string);
@@ -642,7 +642,7 @@ extern struct cdata_struct cdata, temp_cdata_save;
 /* pair.c */ extern void find_best_cost (ppair pair);
 /* pair.c */ extern int greedy_best_cost (int **cost_array_local, ppair *pair_p);
 /* pair.c */ extern void minimize_pair (ppair pair);
-/* pair.c */ extern void pair_free (register ppair pair);
+/* pair.c */ extern void pair_free(register ppair pair);
 /* pair.c */ extern void pair_all (pPLA PLA, int pair_strategy);
 /* pair.c */ extern pset_family delvar (pset_family A, int paired[]);
 /* pair.c */ extern pset_family pairvar (pset_family A, ppair pair);
@@ -667,10 +667,10 @@ extern struct cdata_struct cdata, temp_cdata_save;
 /* set.c */ extern int setp_equal (register pset a, register pset b);
 /* set.c */ extern int setp_full (register pset a, register int size);
 /* set.c */ extern int setp_implies (register pset a, register pset b);
-/* set.c */ extern char * pbv1 (pset s, int n);
-/* set.c */ extern char * ps1 (register pset a);
-/* set.c */ extern int * sf_count (pset_family A);
-/* set.c */ extern int * sf_count_restricted (pset_family A, register pset r);
+/* set.c */ extern char *pbv1 (pset s, int n);
+/* set.c */ extern char *ps1 (register pset a);
+/* set.c */ extern int *sf_count (pset_family A);
+/* set.c */ extern int *sf_count_restricted (pset_family A, register pset r);
 /* set.c */ extern int bit_index (register unsigned int a);
 /* set.c */ extern int set_dist (register pset a, register pset b);
 /* set.c */ extern int set_ord (register pset a);
@@ -706,7 +706,7 @@ extern struct cdata_struct cdata, temp_cdata_save;
 /* set.c */ extern void sf_bm_print (pset_family A);
 /* set.c */ extern void sf_cleanup (void);
 /* set.c */ extern void sf_delset (pset_family A, int i);
-/* set.c */ extern void sf_free (pset_family A);
+/* set.c */ extern void sf_free(pset_family A);
 /* set.c */ extern void sf_print (pset_family A);
 /* set.c */ extern void sf_write (FILE *fp, pset_family A);
 /* setc.c */ extern int ccommon (register pset a, register pset b, register pset cof);
@@ -733,8 +733,8 @@ extern struct cdata_struct cdata, temp_cdata_save;
 /* sharp.c */ extern pset_family make_disjoint (pset_family A);
 /* sharp.c */ extern pset_family sharp (pset a, pset b);
 /* signature.c */ extern pset_family signature (pset_family F1, pset_family D1, pset_family R1);
-/* sminterf.c */pset do_sm_minimum_cover(pset_family A);
-/* sparse.c */ extern pset_family make_sparse (pset_family F, pset_family D, pset_family R);
+/* sminterf.c */ pset do_sm_minimum_cover(pset_family A);
+/* sparse.c */ extern pset_family make_sparse(pset_family F, pset_family D, pset_family R);
 /* sparse.c */ extern pset_family mv_reduce (pset_family F, pset_family D);
 /* ucbqsort.c AB */	/* extern qsort(); */
 /* unate.c */ extern pset_family map_cover_to_unate (pset *T);

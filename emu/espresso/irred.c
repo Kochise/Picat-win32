@@ -1,10 +1,10 @@
 #include "espresso.h"
 
 static void fcube_is_covered(pset *T, pset c, sm_matrix *table);
-static void ftautology(pset *T, sm_matrix *table);
-static bool ftaut_special_cases(pset *T, sm_matrix *table);
+static	void		ftautology(pset *T, sm_matrix *table);
+static	bool		ftaut_special_cases(pset *T, sm_matrix *table);
 
-static int Rp_current;
+static	int		Rp_current;
 
 /*
  *   irredundant -- Return a minimal subset of F
@@ -63,8 +63,8 @@ void mark_irredundant(pset_family F, pset_family D)
  */
 void irred_split_cover(pset_family F, pset_family D, pset_family *E, pset_family *Rt, pset_family *Rp)
 {
-	register pcube p, last;
-	register int index;
+	register	pcube p, last;
+	register	int index;
 	pcover R;
 	pcube *FD, *ED;
 
@@ -112,9 +112,9 @@ void irred_split_cover(pset_family F, pset_family D, pset_family *E, pset_family
  */
 sm_matrix *irred_derive_table(pset_family D, pset_family E, pset_family Rp)
 {
-	register pcube last, p, *list;
+	register	pcube last, p, *list;
 	sm_matrix *table;
-	int size_last_dominance, i;
+	int	size_last_dominance, i;
 
 	/* Mark each cube in DE as not part of the redundant set */
 	foreach_set(D, last, p) {
@@ -160,9 +160,11 @@ bool cube_is_covered(pset *T, pset c)
 bool tautology(pset *T)
 				/* T will be disposed of */
 {
-	register pcube cl, cr;
-	register int best, result;
-//	static int taut_level = 0;
+	register	pcube cl, cr;
+	register	int best, result;
+#if 0
+	static int taut_level = 0;
+#endif
 
 	if ((result = taut_special_cases(T)) == MAYBE) {
 		cl = new_cube();
@@ -184,12 +186,12 @@ bool tautology(pset *T)
 bool taut_special_cases(pset *T)
 						/* will be disposed if answer is determined */
 {
-	register pcube *T1, *Tsave, p, ceil=cube.temp[0], temp=cube.temp[1];
+	register	pcube *T1, *Tsave, p, ceil = cube.temp[0], temp = cube.temp[1];
 	pcube *A, *B;
-	int var;
+	int	var;
 
 	/* Check for a row of all 1's which implies tautology */
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		if (full_row(p, T[0])) {
 			free_cubelist(T);
 			return TRUE;
@@ -199,7 +201,7 @@ bool taut_special_cases(pset *T)
 	/* Check for a column of all 0's which implies no tautology */
 start:
 	INLINEset_copy(ceil, T[0]);
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		INLINEset_or(ceil, ceil, p);
 	}
 	if (! setp_equal(ceil, cube.fullset)) {
@@ -224,14 +226,14 @@ start:
 	} else if (cdata.vars_unate != 0) {
 		/* Form a cube "ceil" with full variables in the unate variables */
 		(void) set_copy(ceil, cube.emptyset);
-		for(var = 0; var < cube.num_vars; var++) {
+		for (var = 0; var < cube.num_vars; var++) {
 			if (cdata.is_unate[var]) {
 				INLINEset_or(ceil, ceil, cube.var_mask[var]);
 			}
 		}
 
 		/* Save only those cubes that are "full" in all unate variables */
-		for(Tsave = T1 = T+2; (p = *T1++) != 0; ) {
+		for (Tsave = T1 = T + 2; (p = *T1++) != 0; ) {
 			if (setp_implies(ceil, set_or(temp, p, T[0]))) {
 				*Tsave++ = p;
 			}
@@ -270,9 +272,11 @@ static void fcube_is_covered(pset *T, pset c, sm_matrix *table)
 static void ftautology(pset *T, sm_matrix *table)
 					/* T will be disposed of */
 {
-	register pcube cl, cr;
-	register int best;
-//	static int ftaut_level = 0;
+	register	pcube cl, cr;
+	register	int best;
+#if 0
+	static int ftaut_level = 0;
+#endif
 
 	if (ftaut_special_cases(T, table) == MAYBE) {
 		cl = new_cube();
@@ -291,11 +295,11 @@ static void ftautology(pset *T, sm_matrix *table)
 static bool ftaut_special_cases(pset *T, sm_matrix *table)
 						/* will be disposed if answer is determined */
 {
-	register pcube *T1, *Tsave, p, temp = cube.temp[0], ceil = cube.temp[1];
-	int var, rownum;
+	register	pcube *T1, *Tsave, p, temp = cube.temp[0], ceil = cube.temp[1];
+	int	var, rownum;
 
 	/* Check for a row of all 1's in the essential cubes */
-	for(T1 = T+2; (p = *T1++) != 0; ) {
+	for (T1 = T + 2; (p = *T1++) != 0; ) {
 		if (! TESTP(p, REDUND)) {
 			if (full_row(p, T[0])) {
 				/* subspace is covered by essentials -- no new rows for table */
@@ -312,9 +316,9 @@ start:
 	/* If function is unate, find the rows of all 1's */
 	if (cdata.vars_unate == cdata.vars_active) {
 		/* find which nonessentials cover this subspace */
-		rownum = table->last_row ? table->last_row->row_num+1 : 0;
+		rownum = table->last_row ? table->last_row->row_num + 1 : 0;
 		(void) sm_insert(table, rownum, Rp_current);
-		for(T1 = T+2; (p = *T1++) != 0; ) {
+		for (T1 = T + 2; (p = *T1++) != 0; ) {
 			if (TESTP(p, REDUND)) {
 				/* See if a redundant cube covers this leaf */
 				if (full_row(p, T[0])) {
@@ -329,14 +333,14 @@ start:
 	} else if (cdata.vars_unate != 0) {
 		/* Form a cube "ceil" with full variables in the unate variables */
 		(void) set_copy(ceil, cube.emptyset);
-		for(var = 0; var < cube.num_vars; var++) {
+		for (var = 0; var < cube.num_vars; var++) {
 			if (cdata.is_unate[var]) {
 			INLINEset_or(ceil, ceil, cube.var_mask[var]);
 			}
 		}
 
 		/* Save only those cubes that are "full" in all unate variables */
-		for(Tsave = T1 = T+2; (p = *T1++) != 0; ) {
+		for (Tsave = T1 = T + 2; (p = *T1++) != 0; ) {
 			if (setp_implies(ceil, set_or(temp, p, T[0]))) {
 				*Tsave++ = p;
 			}

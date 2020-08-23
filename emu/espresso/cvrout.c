@@ -7,12 +7,14 @@
 
 void fprint_pla(FILE *fp, pPLA PLA, int output_type)
 {
-	int num;
-	register pcube last, p;
+				int		num;
+	register	pcube	last, p;
 
 	printf("output_type = %d\n", output_type);
 
-	//  fpr_header(fp, PLA, output_type);
+#if 0
+	fpr_header(fp, PLA, output_type);
+#endif
 
 	num = 0;
 	if (output_type & F_type) num += (PLA->F)->count;
@@ -27,8 +29,8 @@ void fprint_pla(FILE *fp, pPLA PLA, int output_type)
 
 void fpr_header(FILE *fp, pPLA PLA, int output_type)
 {
-	register int i, var;
-	int first, last;
+	register	int	i, var;
+				int	first, last;
 
 	/* .type keyword gives logical type */
 	/* Check for binary or multiple-valued labels */
@@ -38,7 +40,7 @@ void fpr_header(FILE *fp, pPLA PLA, int output_type)
 			fprintf(fp, ".o %d\n", cube.part_size[cube.output]);
 	} else {
 		fprintf(fp, ".mv %d %d", cube.num_vars, cube.num_binary_vars);
-		for(var = cube.num_binary_vars; var < cube.num_vars; var++)
+		for (var = cube.num_binary_vars; var < cube.num_vars; var++)
 			fprintf(fp, " %d", cube.part_size[var]);
 		fprintf(fp, "\n");
 	}
@@ -47,7 +49,7 @@ void fpr_header(FILE *fp, pPLA PLA, int output_type)
 	if (PLA->label != NIL(char *) && PLA->label[1] != NIL(char)
 			&& cube.num_binary_vars > 0) {
 		fprintf(fp, ".ilb");
-		for(var = 0; var < cube.num_binary_vars; var++)
+		for (var = 0; var < cube.num_binary_vars; var++)
 			fprintf(fp, " %s", INLABEL(var));
 		putc('\n', fp);
 	}
@@ -57,18 +59,18 @@ void fpr_header(FILE *fp, pPLA PLA, int output_type)
 			PLA->label[cube.first_part[cube.output]] != NIL(char)
 			&& cube.output != -1) {
 		fprintf(fp, ".ob");
-		for(i = 0; i < cube.part_size[cube.output]; i++)
+		for (i = 0; i < cube.part_size[cube.output]; i++)
 			fprintf(fp, " %s", OUTLABEL(i));
 		putc('\n', fp);
 	}
 
 	/* multiple-valued labels */
-	for(var = cube.num_binary_vars; var < cube.num_vars-1; var++) {
+	for (var = cube.num_binary_vars; var < cube.num_vars - 1; var++) {
 		first = cube.first_part[var];
 		last = cube.last_part[var];
 		if (PLA->label != NULL && PLA->label[first] != NULL) {
 			fprintf(fp, ".label var=%d", var);
-			for(i = first; i <= last; i++) {
+			for (i = first; i <= last; i++) {
 				fprintf(fp, " %s", PLA->label[i]);
 			}
 			putc('\n', fp);
@@ -79,7 +81,7 @@ void fpr_header(FILE *fp, pPLA PLA, int output_type)
 		first = cube.first_part[cube.output];
 		last = cube.last_part[cube.output];
 		fprintf(fp, "#.phase ");
-		for(i = first; i <= last; i++)
+		for (i = first; i <= last; i++)
 			putc(is_in_set(PLA->phase, i) ? '1' : '0', fp);
 		fprintf(fp, "\n");
 	}
@@ -87,21 +89,21 @@ void fpr_header(FILE *fp, pPLA PLA, int output_type)
 
 char *fmt_cube(register pset c, register char *out_map, register char *s)
 {
-	register int i, var, last, len = 0;
+	register	int	i, var, last, len = 0;
 
-	for(var = 0; var < cube.num_binary_vars; var++) {
+	for (var = 0; var < cube.num_binary_vars; var++) {
 		s[len++] = "?01-" [GETINPUT(c, var)];
 	}
-	for(var = cube.num_binary_vars; var < cube.num_vars - 1; var++) {
+	for (var = cube.num_binary_vars; var < cube.num_vars - 1; var++) {
 		s[len++] = ' ';
-		for(i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
+		for (i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
 			s[len++] = "01" [is_in_set(c, i) != 0];
 		}
 	}
 	if (cube.output != -1) {
 		last = cube.last_part[cube.output];
 		s[len++] = ' ';
-		for(i = cube.first_part[cube.output]; i <= last; i++) {
+		for (i = cube.first_part[cube.output]; i <= last; i++) {
 			s[len++] = out_map [is_in_set(c, i) != 0];
 		}
 	}
@@ -111,45 +113,49 @@ char *fmt_cube(register pset c, register char *out_map, register char *s)
 
 void print_cube(register FILE *fp, register pset c, register char *out_map)
 {
-//	register int i;
-	register int var, ch;
-//	int last;
+#if 0
+	register	int	i;
+#endif
+	register	int	var, ch;
+#if 0
+				int	last;
+#endif
 
-	for(var = 0; var < cube.num_binary_vars; var++) {
+	for (var = 0; var < cube.num_binary_vars; var++) {
 		ch = "?01-" [GETINPUT(c, var)];
 		putc(ch, fp);
 	}
-/*
-	for(var = cube.num_binary_vars; var < cube.num_vars - 1; var++) {
+#if 0
+	for (var = cube.num_binary_vars; var < cube.num_vars - 1; var++) {
 		putc(' ', fp);
-		for(i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
+		for (i = cube.first_part[var]; i <= cube.last_part[var]; i++) {
 			ch = "01" [is_in_set(c, i) != 0];
 			putc(ch, fp);
 		}
 	}
-*/
-/*
+#endif
+#if 0
 	if (cube.output != -1) {
 		last = cube.last_part[cube.output];
 		putc(' ', fp);
-		for(i = cube.first_part[cube.output]; i <= last; i++) {
+		for (i = cube.first_part[cube.output]; i <= last; i++) {
 			ch = out_map [is_in_set(c, i) != 0];
 			putc(ch, fp);
 		}
 	}
-*/
+#endif
 	putc('\n', fp);
 }
 
 char *pc1(pset c)
-{static char s1[256];return fmt_cube(c, "01", s1);}
+{ static	char	s1[256]; return fmt_cube(c, "01", s1); }
 
 char *pc2(pset c)
-{static char s2[256];return fmt_cube(c, "01", s2);}
+{ static	char	s2[256]; return fmt_cube(c, "01", s2); }
 
 void cprint(pset_family T)
 {
-	register pcube p, last;
+	register	pcube	p, last;
 
 	foreach_set(T, last, p)
 		printf("%s\n", pc1(p));
@@ -157,13 +163,13 @@ void cprint(pset_family T)
 
 void makeup_labels(pPLA PLA)
 {
-	int var, i, ind;
+	int	var, i, ind;
 
 	if (PLA->label == (char **) NULL)
 		PLA_labels(PLA);
 
-	for(var = 0; var < cube.num_vars; var++)
-		for(i = 0; i < cube.part_size[var]; i++) {
+	for (var = 0; var < cube.num_vars; var++)
+		for (i = 0; i < cube.part_size[var]; i++) {
 			ind = cube.first_part[var] + i;
 			if (PLA->label[ind] == (char *) NULL) {
 				PLA->label[ind] = ALLOC(char, 15);

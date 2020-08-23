@@ -1,15 +1,15 @@
 #include "espresso.h"
 
 static bool primes_consensus_special_cases(pset *T, pset_family *Tnew);
-static pcover primes_consensus_merge(pset_family Tl, pset_family Tr, pset cl, pset cr);
-static pcover and_with_cofactor(pset_family A, register pset cof);
+static	pcover		primes_consensus_merge(pset_family Tl, pset_family Tr, pset cl, pset cr);
+static	pcover		and_with_cofactor(pset_family A, register pset cof);
 
 /* primes_consensus -- generate primes using consensus */
 pcover primes_consensus(pset *T)
 						/* T will be disposed of */
 {
-	register pcube cl, cr;
-	register int best;
+	register	pcube cl, cr;
+	register	int best;
 	pcover Tnew, Tl, Tr;
 
 	if (primes_consensus_special_cases(T, &Tnew) == MAYBE) {
@@ -33,7 +33,7 @@ static bool primes_consensus_special_cases(pset *T, pset_family *Tnew)
 						/* will be disposed if answer is determined */
 							/* returned only if answer determined */
 {
-	register pcube *T1, p, ceil, cof=T[0];
+	register	pcube *T1, p, ceil, cof = T[0];
 	pcube last;
 	pcover A;
 
@@ -52,7 +52,7 @@ static bool primes_consensus_special_cases(pset *T, pset_family *Tnew)
 	}
 
 	/* Check for a row of all 1's (implies function is a tautology) */
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		if (full_row(p, cof)) {
 			*Tnew = sf_addset(new_cover(1), cube.fullset);
 			free_cubelist(T);
@@ -62,7 +62,7 @@ static bool primes_consensus_special_cases(pset *T, pset_family *Tnew)
 
 	/* Check for a column of all 0's which can be factored out */
 	ceil = set_save(cof);
-	for(T1 = T+2; (p = *T1++) != NULL; ) {
+	for (T1 = T + 2; (p = *T1++) != NULL; ) {
 		INLINEset_or(ceil, ceil, p);
 	}
 	if (! setp_equal(ceil, cube.fullset)) {
@@ -105,7 +105,7 @@ static bool primes_consensus_special_cases(pset *T, pset_family *Tnew)
 
 static pcover primes_consensus_merge(pset_family Tl, pset_family Tr, pset cl, pset cr)
 {
-	register pcube pl, pr, lastl, lastr, pt;
+	register	pcube pl, pr, lastl, lastr, pt;
 	pcover T, Tsave;
 
 	Tl = and_with_cofactor(Tl, cl);
@@ -138,7 +138,7 @@ static pcover primes_consensus_merge(pset_family Tl, pset_family Tr, pset cl, ps
 
 static pcover and_with_cofactor(pset_family A, register pset cof)
 {
-	register pset last, p;
+	register	pset last, p;
 
 	foreach_set(A, last, p) {
 		INLINEset_and(p, p, cof);
