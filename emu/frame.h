@@ -1,53 +1,53 @@
 /********************************************************************
  *	File	: frame.h
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
 #define AR_AR_ADDR(ar)				ar
-#define AR_CPS_ADDR(ar)				(ar-1)
-#define AR_TOP_ADDR(ar)				(ar-2)
-#define AR_BTM_ADDR(ar)				(ar-3)
-#define AR_B_ADDR(ar)				(ar-4)
-#define AR_CPF_ADDR(ar)				(ar-5)
-#define AR_H_ADDR(ar)				(ar-6)
-#define AR_T_ADDR(ar)				(ar-7)
-#define AR_SF_ADDR(ar)				(ar-8)
+#define AR_CPS_ADDR(ar)				(ar - 1)
+#define AR_TOP_ADDR(ar)				(ar - 2)
+#define AR_BTM_ADDR(ar)				(ar - 3)
+#define AR_B_ADDR(ar)				(ar - 4)
+#define AR_CPF_ADDR(ar)				(ar - 5)
+#define AR_H_ADDR(ar)				(ar - 6)
+#define AR_T_ADDR(ar)				(ar - 7)
+#define AR_SF_ADDR(ar)				(ar - 8)
 
-#define AR_REEP_ADDR(ar)			(ar-4)
-#define AR_PREV_ADDR(ar)			(ar-5)
-#define AR_STATUS_ADDR(ar)			(ar-6)
-#define AR_OUT_ADDR(ar)				(ar-7)
+#define AR_REEP_ADDR(ar)			(ar - 4)
+#define AR_PREV_ADDR(ar)			(ar - 5)
+#define AR_STATUS_ADDR(ar)			(ar - 6)
+#define AR_OUT_ADDR(ar)				(ar - 7)
 
 #define AR_AR(ar)					*ar
-#define AR_CPS(ar)					*(ar-1)
-#define AR_TOP(ar)					*(ar-2)
-#define AR_BTM(ar)					*(ar-3)
-#define AR_B(ar)					*(ar-4)
-#define AR_CPF(ar)					*(ar-5)
-#define AR_H(ar)					*(ar-6)
-#define AR_T(ar)					*(ar-7)
-#define AR_SF(ar)					*(ar-8)
+#define AR_CPS(ar)					*(ar - 1)
+#define AR_TOP(ar)					*(ar - 2)
+#define AR_BTM(ar)					*(ar - 3)
+#define AR_B(ar)					*(ar - 4)
+#define AR_CPF(ar)					*(ar - 5)
+#define AR_H(ar)					*(ar - 6)
+#define AR_T(ar)					*(ar - 7)
+#define AR_SF(ar)					*(ar - 8)
 
-#define AR_REEP(ar)					*(ar-4)
-#define AR_PREV(ar)					*(ar-5)
-#define AR_STATUS(ar)				*(ar-6)
-#define AR_OUT(ar)					*(ar-7)
+#define AR_REEP(ar)					*(ar - 4)
+#define AR_PREV(ar)					*(ar - 5)
+#define AR_STATUS(ar)				*(ar - 6)
+#define AR_OUT(ar)					*(ar - 7)
 
 #define AR_STATUS_STAMP(F)			UNTAGGED3(AR_STATUS(F))
 
 #define AR_PRIORITY(ar)				0
 
 
-#define AR_SUBGOAL_TABLE(ar)		*(ar-9)
-#define GET_AR_SUBGOAL_TABLE(ar)	(*(ar-9) & VAL_MASK1)
-#define SET_AR_SUBGOAL_TABLE(ar, st)	*(ar-9) = st
-#define AR_CURR_ANSWER(ar)			*(ar-10)
+#define AR_SUBGOAL_TABLE(ar)		*(ar - 9)
+#define GET_AR_SUBGOAL_TABLE(ar)	(*(ar - 9) & VAL_MASK1)
+#define SET_AR_SUBGOAL_TABLE(ar, st)	*(ar - 9) = st
+#define AR_CURR_ANSWER(ar)			*(ar - 10)
 
-#define AR_TABLE_NEW_BITS(ar)		*(ar-11)
+#define AR_TABLE_NEW_BITS(ar)		*(ar - 11)
 
 /************************************************/
 #define FLAT_FRAME_TAG				0x0L
@@ -68,16 +68,16 @@
 /* A catcher frame is a nondet frame that needs special treatment by the cut.
 	It's a tabled frame, or a frame for catch/3 or call_cleanup/2
 */
-#define IS_CATCHER_OR_TABLE_FRAME(f)	((AR_BTM(f) & TABLE_FRAME_TAG)==TABLE_FRAME_TAG)
-#define IS_CATCHER_FRAME(f)				((AR_BTM(f) & TAG_MASK)==CATCHER_FRAME_TAG)
-#define IS_NONDET_FRAME(f)				((AR_BTM(f) & NONDET_FRAME_TAG)==NONDET_FRAME_TAG)
-#define IS_SUSP_FRAME(f)				((AR_BTM(f) & TAG_MASK)==SUSP_FRAME_TAG)
-#define IS_TABLE_FRAME(f)				((AR_BTM(f) & TAG_MASK)==TABLE_FRAME_TAG)
-#define IS_FLAT_B_FRAME(f)				((AR_BTM(f) & TAG_MASK)==FLAT_B_FRAME_TAG)
-#define IS_FLAT_FRAME(f)				((AR_BTM(f) & TAG_MASK)==FLAT_FRAME_TAG)
+#define IS_CATCHER_OR_TABLE_FRAME(f)	((AR_BTM(f) & TABLE_FRAME_TAG) == TABLE_FRAME_TAG)
+#define IS_CATCHER_FRAME(f)				((AR_BTM(f) & TAG_MASK) == CATCHER_FRAME_TAG)
+#define IS_NONDET_FRAME(f)				((AR_BTM(f) & NONDET_FRAME_TAG) == NONDET_FRAME_TAG)
+#define IS_SUSP_FRAME(f)				((AR_BTM(f) & TAG_MASK) == SUSP_FRAME_TAG)
+#define IS_TABLE_FRAME(f)				((AR_BTM(f) & TAG_MASK) == TABLE_FRAME_TAG)
+#define IS_FLAT_B_FRAME(f)				((AR_BTM(f) & TAG_MASK) == FLAT_B_FRAME_TAG)
+#define IS_FLAT_FRAME(f)				((AR_BTM(f) & TAG_MASK) == FLAT_FRAME_TAG)
 
-#define NO_RESERVED_SLOTS(f, no){												\
-				switch((AR_BTM(f) & TAG_MASK)){									\
+#define NO_RESERVED_SLOTS(f, no) {												\
+				switch ((AR_BTM(f) & TAG_MASK)) {								\
 					case FLAT_FRAME_TAG: no = 4; break;							\
 					case FLAT_B_FRAME_TAG: no = 5; break;						\
 					case SUSP_FRAME_TAG: no = SUSP_FRAME_SIZE; break;			\
@@ -136,14 +136,14 @@ subgoalTableEntry ->
 /************************************************/
 #define GT_NEXT_ADDR(tab)			(BPLONG_PTR)tab
 #define GT_NEXT(tab)				FOLLOW((BPLONG_PTR)tab)
-#define GT_ANSWER_TABLE(tab)		FOLLOW((BPLONG_PTR)(tab)+1)
+#define GT_ANSWER_TABLE(tab)		FOLLOW((BPLONG_PTR)(tab) + 1)
 #define GT_ANSWER_TABLE_FIRST0(tab)	ANSWERTABLE_FIRST(GT_ANSWER_TABLE(tab))
-#define GT_STATE(tab)				FOLLOW((BPLONG_PTR)(tab)+2)
-#define GT_TOP_AR(tab)				FOLLOW((BPLONG_PTR)(tab)+3)
-#define GT_SCC_ROOT(tab)			FOLLOW((BPLONG_PTR)(tab)+4)
-#define GT_SCC_ELMS(tab)			FOLLOW((BPLONG_PTR)(tab)+5)
-#define GT_SYM(tab)					FOLLOW((BPLONG_PTR)(tab)+6)
-#define GT_ARG_ADDR(tab)			((BPLONG_PTR)(tab)+7)
+#define GT_STATE(tab)				FOLLOW((BPLONG_PTR)(tab) + 2)
+#define GT_TOP_AR(tab)				FOLLOW((BPLONG_PTR)(tab) + 3)
+#define GT_SCC_ROOT(tab)			FOLLOW((BPLONG_PTR)(tab) + 4)
+#define GT_SCC_ELMS(tab)			FOLLOW((BPLONG_PTR)(tab) + 5)
+#define GT_SYM(tab)					FOLLOW((BPLONG_PTR)(tab) + 6)
+#define GT_ARG_ADDR(tab)			((BPLONG_PTR)(tab) + 7)
 #define GT_RECORD_SIZE				7
 
 #define AR_IS_SCC_ROOT(ar, subgoal_entry)		(GT_TOP_AR((BPLONG_PTR)GT_SCC_ROOT(subgoal_entry)) == (BPLONG)ar)
@@ -158,7 +158,7 @@ subgoalTableEntry ->
 #define SET_SUBGOAL_LOOPING(subgoal_entry)										\
 			if (GT_STATE(subgoal_entry) & SUBGOAL_LOOPING_BIT);					\
 			else																\
-				{GT_STATE(subgoal_entry) = GT_STATE(subgoal_entry) | SUBGOAL_LOOPING_BIT;}
+				{ GT_STATE(subgoal_entry) = GT_STATE(subgoal_entry) | SUBGOAL_LOOPING_BIT; }
 
 #define SUBGOAL_IS_LOOPING(subgoal_entry)		(GT_STATE(subgoal_entry) & SUBGOAL_LOOPING_BIT)
 
@@ -172,11 +172,11 @@ subgoalTableEntry ->
 #define SUBGOAL_NEW_REGION_IS_SET(subgoal_entry)	(GT_STATE(subgoal_entry) & SUBGOAL_NEW_REGION_SET_BIT)
 
 /* a subgoal is in its own scc */
-#define AllocateSubgoalTableEntry(ptr, arity, sym){								\
-				AllocateFromTableArea(ptr, arity+GT_RECORD_SIZE);				\
+#define AllocateSubgoalTableEntry(ptr, arity, sym) {							\
+				AllocateFromTableArea(ptr, arity + GT_RECORD_SIZE);				\
 			}
 
-#define InitializeSubgoalTableEntry(ptr, sym){									\
+#define InitializeSubgoalTableEntry(ptr, sym) {									\
 				GT_ANSWER_TABLE(ptr) = (BPLONG)NULL;							\
 				GT_STATE(ptr) = 0;												\
 				GT_TOP_AR(ptr) = (BPLONG)NULL;									\
@@ -185,7 +185,7 @@ subgoalTableEntry ->
 				GT_SCC_ROOT(ptr) = (BPLONG)ptr;									\
 			}
 
-#define TABLE_FREE_CELL(ptr)				{FOLLOW(ptr+1) = (BPLONG)table_free_cells_ptr;table_free_cells_ptr=ptr;}
+#define TABLE_FREE_CELL(ptr) { FOLLOW(ptr + 1) = (BPLONG)table_free_cells_ptr; table_free_cells_ptr = ptr; }
 
 
 /************************************************
@@ -200,12 +200,12 @@ BUCKET_PTR  ->  bucket[0]
 					bucket[SIZE-1]
 ************************************************/
 #define ANSWERTABLE_BUCKET_SIZE(tab)		FOLLOW((BPLONG_PTR)(tab))
-#define ANSWERTABLE_FIRST(tab)				FOLLOW((BPLONG_PTR)(tab)+1)
-#define ANSWERTABLE_FIRST_ADDR(tab)			((BPLONG_PTR)(tab)+1)
-#define ANSWERTABLE_LAST_ADDR(tab)			((BPLONG_PTR)(tab)+2)
-#define ANSWERTABLE_LAST(tab)				FOLLOW((BPLONG_PTR)(tab)+2)
-#define ANSWERTABLE_COUNT(tab)				FOLLOW((BPLONG_PTR)(tab)+3)
-#define ANSWERTABLE_BUCKET_PTR(tab)			FOLLOW((BPLONG_PTR)(tab)+4)
+#define ANSWERTABLE_FIRST(tab)				FOLLOW((BPLONG_PTR)(tab) + 1)
+#define ANSWERTABLE_FIRST_ADDR(tab)			((BPLONG_PTR)(tab) + 1)
+#define ANSWERTABLE_LAST_ADDR(tab)			((BPLONG_PTR)(tab) + 2)
+#define ANSWERTABLE_LAST(tab)				FOLLOW((BPLONG_PTR)(tab) + 2)
+#define ANSWERTABLE_COUNT(tab)				FOLLOW((BPLONG_PTR)(tab) + 3)
+#define ANSWERTABLE_BUCKET_PTR(tab)			FOLLOW((BPLONG_PTR)(tab) + 4)
 
 #define ANSWERTABLE_RECORD_SIZE				5
 
@@ -218,10 +218,10 @@ BUCKET_PTR  ->  bucket[0]
 ************************************************/
 #define ANSWER_NEXT_IN_TABLE(answer)		FOLLOW((BPLONG_PTR)(answer))
 #define ANSWER_NEXT_IN_TABLE_ADDR(answer)	(answer)
-#define ANSWER_NEXT_IN_CHAIN(answer)		FOLLOW((BPLONG_PTR)(answer)+1)
-#define ANSWER_NEXT_IN_CHAIN_ADDR(answer)	(answer+1)
-#define ANSWER_ARG_ADDR(answer)				((BPLONG_PTR)(answer)+2)
+#define ANSWER_NEXT_IN_CHAIN(answer)		FOLLOW((BPLONG_PTR)(answer) + 1)
+#define ANSWER_NEXT_IN_CHAIN_ADDR(answer)	(answer + 1)
+#define ANSWER_ARG_ADDR(answer)				((BPLONG_PTR)(answer) + 2)
 
-#define TABLE_MODE_BITS(ep)					FOLLOW(ep+6)
-#define TABLE_MODE_OPT_ARG(ep)				FOLLOW(ep+7)
-#define TABLE_MODE_CARDG(ep)				FOLLOW(ep+8)
+#define TABLE_MODE_BITS(ep)					FOLLOW(ep + 6)
+#define TABLE_MODE_OPT_ARG(ep)				FOLLOW(ep + 7)
+#define TABLE_MODE_CARDG(ep)				FOLLOW(ep + 8)

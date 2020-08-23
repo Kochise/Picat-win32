@@ -2,39 +2,40 @@
  *	File	: gcHeap.c
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
  *	Purpose	: heap garbage collector
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-/*
-	#define DEBUG_GC
-	#define CONSOLE
-*/
+#if 0
+#define DEBUG_GC
+#define CONSOLE
+#endif
+
 #include "bprolog.h"
 #include "frame.h"
 #include "event.h"
 #include "gc.h"
 
-#define ADDR_AFTER_GC(addr)	(hbreg+((BPULONG)addr-(BPULONG)copy_area_low)/sizeof(BPLONG))
-#define GC_IS_MOVED(ptr)	((BPULONG)FOLLOW(ptr)>=(BPULONG)copy_area_low && (BPULONG)FOLLOW(ptr)<(BPULONG)copy_h)
+#define ADDR_AFTER_GC(addr)	(hbreg + ((BPULONG)addr - (BPULONG)copy_area_low) / sizeof(BPLONG))
+#define GC_IS_MOVED(ptr)	((BPULONG)FOLLOW(ptr) >= (BPULONG)copy_area_low && (BPULONG)FOLLOW(ptr)<(BPULONG)copy_h)
 
-extern BPLONG_PTR copy_area_low;
-extern BPLONG_PTR copy_area_high;
+extern	BPLONG_PTR	copy_area_low;
+extern	BPLONG_PTR	copy_area_high;
 
-BPLONG_PTR copy_h;
+		BPLONG_PTR	copy_h;
 
 /**************************************************************
 	Move alive heap cells (between hbreg and heap_top) accessible from
 	stack frames and the trail to the temp area. Postpone moving
 	free variables until all structures and lists are  copied.
 *************************************************************/
-int gcHeap(void){
-	BPLONG size;
+int gcHeap(void) {
+	BPLONG	size;
 
-	size = ((BPULONG)heap_top-(BPULONG)hbreg)/sizeof(BPLONG)+2;
-	if (allocateCopyArea(size)==BP_ERROR) return BP_ERROR;
+	size = ((BPULONG)heap_top - (BPULONG)hbreg) / sizeof(BPLONG) + 2;
+	if (allocateCopyArea(size) == BP_ERROR) return BP_ERROR;
 
 	gcInitDynamicArray();
 	copy_h = copy_area_low;
@@ -42,11 +43,15 @@ int gcHeap(void){
 	gcRescueBFrame(breg);
 	gcRescueArFrames(arreg);
 	gcRescueSfFrames(sfreg);
-	/*  gcRescueTriggeredCs(); */
+#if 0
+	gcRescueTriggeredCs();
+#endif
 	gcRescueTrail();
 	gcRescueFreeVars();
 
-	/*  gcDisposeDynamicArray(); */
+#if 0
+	gcDisposeDynamicArray();
+#endif
 
 	copyHeapBack();
 	return BP_TRUE;
@@ -54,12 +59,15 @@ int gcHeap(void){
 
 /* An item may be doubly trailed even if it is TRAIL_VAR. */
 
-int eliminateDuplicatedTrailInTopSegment(void){
-	BPLONG trail_top_region_size;
-	trail_top_region_size = ((BPULONG)AR_T(breg)-(BPULONG)trail_top)/sizeof(BPLONG);
+int eliminateDuplicatedTrailInTopSegment(void) {
+	BPLONG	trail_top_region_size;
 
-/*	printf("trail_top_region_size=%d\n", trail_top_region_size); */
-	if (trail_top_region_size<200){
+	trail_top_region_size = ((BPULONG)AR_T(breg) - (BPULONG)trail_top) / sizeof(BPLONG);
+
+#if 0
+	printf("trail_top_region_size=%d\n", trail_top_region_size);
+#endif
+	if (trail_top_region_size < 200) {
 		eliminateDuplicatedTrailInTopSegmentSquare();
 		return BP_TRUE;
 	} else {
@@ -71,19 +79,19 @@ int eliminateDuplicatedTrailInTopSegment(void){
 	Eliminate duplicated trail items in the top segment before GC
 	O(n^2) may be too slow
 */
-void eliminateDuplicatedTrailInTopSegmentSquare(void){
-	BPLONG op;
-	BPLONG_PTR trail_top0, untaggedAddr, curr_t;
+void eliminateDuplicatedTrailInTopSegmentSquare(void) {
+	BPLONG		op;
+	BPLONG_PTR	trail_top0, untaggedAddr, curr_t;
 
 	trail_top0 = trail_top;	/* original trail top */
 	curr_t = trail_top = (BPLONG_PTR)AR_T(breg);
 
-	while (curr_t>trail_top0){
-		op = FOLLOW(curr_t-1);
+	while (curr_t > trail_top0) {
+		op = FOLLOW(curr_t - 1);
 		untaggedAddr = (BPLONG_PTR)UNTAGGED3(op);
-		if (TAG(op)==TRAIL_VAR && untaggedAddr < (BPLONG_PTR)AR_TOP(sfreg)){
+		if (TAG(op) == TRAIL_VAR && untaggedAddr < (BPLONG_PTR)AR_TOP(sfreg)) {
 			/* can't be trailed twice */
-		} else if (alreadyTrailed(untaggedAddr,(BPLONG_PTR)AR_T(breg), curr_t+1)){
+		} else if (alreadyTrailed(untaggedAddr, (BPLONG_PTR)AR_T(breg), curr_t + 1)) {
 			curr_t -= 2;
 			continue;
 		}
@@ -95,37 +103,41 @@ void eliminateDuplicatedTrailInTopSegmentSquare(void){
 
 /* linear-time algorithm
  */
-int eliminateDuplicatedTrailInTopSegmentLinear(void){
-	BPLONG op, mask_size;
-	BPLONG_PTR trail_top0, untaggedAddr, curr_t;
-	BPLONG_PTR last_checked_addr = 0;
+int eliminateDuplicatedTrailInTopSegmentLinear(void) {
+	BPLONG		op, mask_size;
+	BPLONG_PTR	trail_top0, untaggedAddr, curr_t;
+	BPLONG_PTR	last_checked_addr = 0;
 
 	trail_top0 = trail_top;	/* original trail top */
 	curr_t = trail_top = (BPLONG_PTR)AR_T(breg);
-	mask_size = ((BPULONG)AR_H(breg)-(BPULONG)stack_low_addr)/NBITS_IN_LONG+2;	/* masking bits */
-/*	printf("mask_size=%d\n", mask_size); */
+	mask_size = ((BPULONG)AR_H(breg) - (BPULONG)stack_low_addr) / NBITS_IN_LONG + 2;	/* masking bits */
+#if 0
+	printf("mask_size=%d\n", mask_size);
+#endif
 
-	if (allocateMaskArea(mask_size)==BP_ERROR) return BP_ERROR;	/* mask bits*/
+	if (allocateMaskArea(mask_size) == BP_ERROR) return BP_ERROR;	/* mask bits */
 
-	while (curr_t>trail_top0){
-		op = FOLLOW(curr_t-1);
+	while (curr_t > trail_top0) {
+		op = FOLLOW(curr_t - 1);
 		untaggedAddr = (BPLONG_PTR)UNTAGGED3(op);
-		if (IS_HEAP_REFERENCE(untaggedAddr)){
-			if (gcIsMarked(untaggedAddr, stack_low_addr)==1){
+		if (IS_HEAP_REFERENCE(untaggedAddr)) {
+			if (gcIsMarked(untaggedAddr, stack_low_addr) == 1) {
 				curr_t -= 2;
 				continue;
 			} else {
 				GCSetMaskBit(untaggedAddr, stack_low_addr);
 			}
-		} else if (TAG(op)==TRAIL_VAL_ATOMIC || (TAG(op)==TRAIL_VAR && untaggedAddr < (BPLONG_PTR)AR_TOP(sfreg))){
+		} else if (TAG(op) == TRAIL_VAL_ATOMIC || (TAG(op) == TRAIL_VAR && untaggedAddr < (BPLONG_PTR)AR_TOP(sfreg))) {
 			/* doesn't hurt to retain it */
-		} else if (last_checked_addr==untaggedAddr){
+		} else if (last_checked_addr == untaggedAddr) {
 			curr_t -= 2;
 			continue;
 		} else {
-/*			printf("addr=%x stack_low_addr=%x heap_top=%x local_top=%x\n", op, stack_low_addr, heap_top, local_top); */
+#if 0
+			printf("addr=%x stack_low_addr=%x heap_top=%x local_top=%x\n", op, stack_low_addr, heap_top, local_top);
+#endif
 			last_checked_addr = untaggedAddr;
-			if (alreadyTrailed(untaggedAddr,(BPLONG_PTR)AR_T(breg), curr_t+1)){
+			if (alreadyTrailed(untaggedAddr, (BPLONG_PTR)AR_T(breg), curr_t + 1)) {
 				curr_t -= 2;
 				continue;
 			}
@@ -143,30 +155,30 @@ int eliminateDuplicatedTrailInTopSegmentLinear(void){
 	For each trail segment of a choice point, if the trailed address is not older
 	than the choice point, then remove it
 */
-void packEntireTrail(void){
-	BPLONG_PTR f, f1, tmp_trail_top, curr_t, untaggedAddr;
-	BPLONG op;
+void packEntireTrail(void) {
+	BPLONG_PTR	f, f1, tmp_trail_top, curr_t, untaggedAddr;
+	BPLONG		op;
 
 	gcQueueInit;	/* store all the choice point frames */
 	f = breg; f1 = (BPLONG_PTR)AR_B(f);
 	do {
-		GCQueueAdd(f,(BPLONG)trail_top);
+		GCQueueAdd(f, (BPLONG)trail_top);
 		trail_top = (BPLONG_PTR)AR_T(f);
 		f = f1; f1 = (BPLONG_PTR)AR_B(f);
-	} while (f!=f1);
+	} while (f != f1);
 
 	trail_top = trail_up_addr;
 
-	while (gcQueueCount>0){
-		BPLONG cont;
+	while (gcQueueCount > 0) {
+		BPLONG	cont;
 		GCQueueGetFromRear(f, cont);
 		tmp_trail_top = (BPLONG_PTR)cont;	/* items between f->T and tmp_trail_top form a segment for f */
 		curr_t = (BPLONG_PTR)AR_T(f);
 		AR_T(f) = (BPLONG)trail_top;	/* new f->T after packing */
-		while (curr_t>tmp_trail_top){
-			op = FOLLOW(curr_t-1);
+		while (curr_t > tmp_trail_top) {
+			op = FOLLOW(curr_t - 1);
 			untaggedAddr = (BPLONG_PTR)UNTAGGED3(op);
-			if (untaggedAddr<f && untaggedAddr>=(BPLONG_PTR)AR_H(f)){
+			if (untaggedAddr < f && untaggedAddr >= (BPLONG_PTR)AR_H(f)) {
 				/* an item that should have been removed after cut */
 			} else {	/* preserve it */
 				*trail_top-- = FOLLOW(curr_t);
@@ -180,27 +192,28 @@ void packEntireTrail(void){
 /* check whether addr is already trailed */
 int alreadyTrailed(BPLONG_PTR addr, BPLONG_PTR from_ptr, BPLONG_PTR to_ptr)
 {
-	while (from_ptr>to_ptr){
-		if ((BPLONG_PTR)UNTAGGED3(FOLLOW(to_ptr))==addr) return 1;
+	while (from_ptr > to_ptr) {
+		if ((BPLONG_PTR)UNTAGGED3(FOLLOW(to_ptr)) == addr) return 1;
 		to_ptr += 2;
 	}
 	return 0;
 }
 
-void copyHeapBack(void){
+void copyHeapBack(void) {
+	BPLONG	size = ((BPULONG)copy_h - (BPULONG)copy_area_low) / sizeof(BPLONG);
 
-	BPLONG size = ((BPULONG)copy_h-(BPULONG)copy_area_low)/sizeof(BPLONG);
 	my_memcpy_btm_up(hbreg, copy_area_low, size);
-	heap_top = hbreg+size;
+	heap_top = hbreg + size;
 }
 
-void gcRescueFreeVars(void){
-	BPLONG_PTR ptr;
-	BPLONG term;
-	BPLONG_PTR addr;
-	int count = gcDynamicArrayCount;
+void gcRescueFreeVars(void) {
+	BPLONG_PTR	ptr;
+	BPLONG		term;
+	BPLONG_PTR	addr;
+	int			count = gcDynamicArrayCount;
+
 	ptr = gcDynamicArray;
-	while (count>0){
+	while (count > 0) {
 		term = FOLLOW(ptr++);
 		addr = (BPLONG_PTR)FOLLOW(ptr++);
 		gcRescueFreeVar(addr, term);
@@ -210,12 +223,13 @@ void gcRescueFreeVars(void){
 
 void gcRescueBFrame(BPLONG_PTR ar)
 {
-	BPLONG no;
-	BPLONG_PTR ptr, top;
+	BPLONG		no;
+	BPLONG_PTR	ptr, top;
+
 	NO_RESERVED_SLOTS(ar, no);
-	ptr = ar-no;
+	ptr = ar - no;
 	top = (BPLONG_PTR)AR_TOP(ar);
-	while (ptr>top){
+	while (ptr > top) {
 		gcRescueTerm(ptr, FOLLOW(ptr));
 		ptr--;
 	}
@@ -223,16 +237,16 @@ void gcRescueBFrame(BPLONG_PTR ar)
 
 void gcRescueArFrames(BPLONG_PTR ar)
 {
-	BPLONG no;
+	BPLONG	no;
 
 	/* because the chain is not chrononogical, some frames that are younger than B can only be
 		reached through frames that are old the B */
-	while ((BPLONG)ar != AR_AR(ar)){
-		if (ar<breg){
-			if (!IS_SUSP_FRAME(ar)){
+	while ((BPLONG)ar != AR_AR(ar)) {
+		if (ar < breg) {
+			if (!IS_SUSP_FRAME(ar)) {
 				NO_RESERVED_SLOTS(ar, no);
 				gcRescueFrame(ar, no);
-			} else if (FRAME_IS_DEAD(ar) || FRAME_IS_START(ar) || FRAME_IS_CLONE(ar)){
+			} else if (FRAME_IS_DEAD(ar) || FRAME_IS_START(ar) || FRAME_IS_CLONE(ar)) {
 				gcRescueFrame(ar, SUSP_FRAME_SIZE);
 				gcRescueTerm(AR_OUT_ADDR(ar), AR_OUT(ar));
 			}
@@ -243,8 +257,8 @@ void gcRescueArFrames(BPLONG_PTR ar)
 
 void gcRescueSfFrames(BPLONG_PTR sf)
 {
-	while (sf<breg){
-		if (!FRAME_IS_DEAD(sf)){
+	while (sf < breg) {
+		if (!FRAME_IS_DEAD(sf)) {
 			gcRescueFrame(sf, SUSP_FRAME_SIZE);
 			gcRescueTerm(AR_OUT_ADDR(sf), AR_OUT(sf));
 		}
@@ -254,41 +268,47 @@ void gcRescueSfFrames(BPLONG_PTR sf)
 
 void gcRescueFrame(BPLONG_PTR f, BPLONG noReservedSlots)
 {
-	BPLONG_PTR sp, top;
+	BPLONG_PTR	sp, top;
 
 	/* move out arguments */
 	sp = (BPLONG_PTR)UNTAGGED_ADDR(AR_BTM(f));
-	while (sp>f){
+	while (sp > f) {
 		gcRescueTerm(sp, FOLLOW(sp));
 		sp--;
 	}
 
 	/* move out local variables */
-	sp = f-noReservedSlots;
+	sp = f - noReservedSlots;
 	top = (BPLONG_PTR)AR_TOP(f);
-	while (sp>top){
+	while (sp > top) {
 		gcRescueTerm(sp, FOLLOW(sp));
 		sp--;
 	}
 }
 
-void gcRescueTrail(void){
-	BPLONG_PTR curr_t, addr, last_t;
+void gcRescueTrail(void) {
+	BPLONG_PTR	curr_t, addr, last_t;
 
-	curr_t = trail_top+1;
+	curr_t = trail_top + 1;
 	last_t = (BPLONG_PTR)AR_T(breg);
-	while (curr_t < last_t){
+	while (curr_t < last_t) {
 		addr = (BPLONG_PTR)FOLLOW(curr_t);
-		if (TAG(addr)==TRAIL_VAR){
-/*			printf("v(%x (%x))\n", addr, FOLLOW(addr)); */
+		if (TAG(addr) == TRAIL_VAR) {
+#if 0
+			printf("v(%x (%x))\n", addr, FOLLOW(addr));
+#endif
 			gcRescueTerm(addr, FOLLOW(addr));
-		} else if (TAG(addr)==TRAIL_VAL_NONATOMIC){
+		} else if (TAG(addr) == TRAIL_VAL_NONATOMIC) {
 			addr = (BPLONG_PTR)UNTAGGED3((BPLONG)addr);
-/*			printf("n(%x (%x))\n", addr, FOLLOW(addr)); */
+#if 0
+			printf("n(%x (%x))\n", addr, FOLLOW(addr));
+#endif
 			gcRescueTerm(addr, FOLLOW(addr));
-		} else if (TAG(addr)==TRAIL_BIT_VECTOR){
+		} else if (TAG(addr) == TRAIL_BIT_VECTOR) {
 			addr = (BPLONG_PTR)UNTAGGED3((BPLONG)addr);
-/*			printf("b(%x (%x))\n", addr, FOLLOW(addr)); */
+#if 0
+			printf("b(%x (%x))\n", addr, FOLLOW(addr));
+#endif
 			FOLLOW(addr) = gcRescueBitVector((BPLONG_PTR)FOLLOW(addr));
 		}
 		curr_t += 2;
@@ -297,11 +317,11 @@ void gcRescueTrail(void){
 
 void gcRescueFreeVar(BPLONG_PTR addr, BPLONG term)
 {
-	if (GC_IS_MOVED(term)){
+	if (GC_IS_MOVED(term)) {
 		FOLLOW(addr) = (BPLONG)ADDR_AFTER_GC(FOLLOW(term));
 		return;
 	} else {
-		BPLONG tmp = (BPLONG)ADDR_AFTER_GC(copy_h);
+		BPLONG	tmp = (BPLONG)ADDR_AFTER_GC(copy_h);
 		FOLLOW(copy_h) = tmp;
 		FOLLOW(addr) = tmp;
 		FOLLOW(term) = (BPLONG)copy_h; copy_h++;
@@ -309,26 +329,26 @@ void gcRescueFreeVar(BPLONG_PTR addr, BPLONG term)
 	}
 }
 
-void gcRescueTriggeredCs(void){
-	BPLONG i;
+void gcRescueTriggeredCs(void) {
+	BPLONG	i;
 
-	for (i=1;i<=trigger_no;i++){
-		gcRescueTerm((BPLONG_PTR)&triggeredCs[i],(BPLONG)triggeredCs[i]);
+	for (i = 1; i <= trigger_no; i++) {
+		gcRescueTerm((BPLONG_PTR)&triggeredCs[i], (BPLONG)triggeredCs[i]);
 	}
 }
 
 BPLONG gcRescueBitVector(BPLONG_PTR bv_ptr)
 {
-	BPLONG_PTR ptr;
-	BPLONG from, to;
-	BPLONG i;
-	BPLONG_PTR des_ptr = copy_h;
+	BPLONG_PTR	ptr;
+	BPLONG		from, to;
+	BPLONG		i;
+	BPLONG_PTR	des_ptr = copy_h;
 
 	from = BV_low_val(bv_ptr); FOLLOW(copy_h++) = from;
 	to = BV_up_val(bv_ptr); FOLLOW(copy_h++) = to;
 	ptr = BV_base_ptr(bv_ptr);
 
-	for (i=from;i<=to;i+=NBITS_IN_LONG){
+	for (i = from; i <= to; i += NBITS_IN_LONG) {
 		FOLLOW(copy_h) = FOLLOW(ptr);
 		copy_h++; ptr++;
 	}
@@ -337,10 +357,10 @@ BPLONG gcRescueBitVector(BPLONG_PTR bv_ptr)
 
 void gcRescueTerm(BPLONG_PTR addr, BPLONG term)
 {
-	BPLONG_PTR ptr, des_ptr;
-	BPLONG arity, i;
+	BPLONG_PTR	ptr, des_ptr;
+	BPLONG		arity, i;
 
-	if (TAG(term)==ATM){	/* int or atom */
+	if (TAG(term) == ATM) {	/* int or atom */
 		FOLLOW(addr) = term;
 		return;
 	}
@@ -348,25 +368,27 @@ void gcRescueTerm(BPLONG_PTR addr, BPLONG term)
 	GCQueueAdd(addr, term);
 
 loop:
-	while (gcQueueCount>0){
+	while (gcQueueCount > 0) {
 		GCQueueGet(addr, term);
-/*		printf("rescueTerm %x %x\n", addr, term); */
+#if 0
+		printf("rescueTerm %x %x\n", addr, term);
+#endif
 	start:
-		while (ISREF(term)){
-			if (INSIDE_HEAP_TOP_SEGMENT((BPLONG_PTR)term)){
-				if (GC_IS_MOVED(term)){
+		while (ISREF(term)) {
+			if (INSIDE_HEAP_TOP_SEGMENT((BPLONG_PTR)term)) {
+				if (GC_IS_MOVED(term)) {
 					FOLLOW(addr) = (BPLONG)ADDR_AFTER_GC(FOLLOW(term));
 					goto loop;
-				} else if (!ISFREE(term)){
+				} else if (!ISFREE(term)) {
 					term = FOLLOW(term);
 					goto start;
-/*
+#if 0
 					FOLLOW(addr) = (BPLONG)ADDR_AFTER_GC(copy_h);
 					addr = copy_h; tmp = FOLLOW(term);
 					FOLLOW(term) = (BPLONG)copy_h; copy_h++;
 					term = tmp;
 					goto start;
-*/
+#endif
 				} else {	/* free noninternal var, postpone copying it */
 					gcAddDynamicArray(term);
 					gcAddDynamicArray((BPLONG)addr);
@@ -377,34 +399,34 @@ loop:
 				goto loop;
 			}
 		}
-		if (TAG(term)==ATM){
+		if (TAG(term) == ATM) {
 			FOLLOW(addr) = term;	/* need to reset it because dereference */
 			goto loop;
-		} else if (ISLIST(term)){
+		} else if (ISLIST(term)) {
 			ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
-			if (INSIDE_HEAP_TOP_SEGMENT(ptr)){
-				if (GC_IS_MOVED(ptr)){
+			if (INSIDE_HEAP_TOP_SEGMENT(ptr)) {
+				if (GC_IS_MOVED(ptr)) {
 					FOLLOW(addr) = ADDTAG(ADDR_AFTER_GC(FOLLOW(ptr)), LST);
 					goto loop;
 				} else {
-					BPLONG tmp;
-					BPLONG_PTR des_ptr;
+					BPLONG		tmp;
+					BPLONG_PTR	des_ptr;
 					des_ptr = copy_h;
 					copy_h += 2;
 					tmp = FOLLOW(ptr);
-					if (TAG(tmp)==ATM){
+					if (TAG(tmp) == ATM) {
 						FOLLOW(des_ptr) = tmp;
 					} else {
 						GCQueueAdd(des_ptr, tmp);
 					}
 					FOLLOW(ptr) = (BPLONG)des_ptr;
-					tmp = FOLLOW(ptr+1);
-					if (TAG(tmp)==ATM){
-						FOLLOW(des_ptr+1) = tmp;
+					tmp = FOLLOW(ptr + 1);
+					if (TAG(tmp) == ATM) {
+						FOLLOW(des_ptr + 1) = tmp;
 					} else {
-						GCQueueAdd(des_ptr+1, tmp);
+						GCQueueAdd(des_ptr + 1, tmp);
 					}
-					FOLLOW(ptr+1) = (BPLONG)(des_ptr+1);
+					FOLLOW(ptr + 1) = (BPLONG)(des_ptr + 1);
 					FOLLOW(addr) = ADDTAG(ADDR_AFTER_GC(des_ptr), LST);
 					goto loop;
 				}
@@ -412,32 +434,34 @@ loop:
 				FOLLOW(addr) = term;
 				goto loop;
 			}
-		} else if (ISSTRUCT(term)){
+		} else if (ISSTRUCT(term)) {
 			ptr = (BPLONG_PTR)UNTAGGED_ADDR(term);
-			if (INSIDE_HEAP_TOP_SEGMENT(ptr)){
-				if (GC_IS_MOVED(ptr)){
+			if (INSIDE_HEAP_TOP_SEGMENT(ptr)) {
+				if (GC_IS_MOVED(ptr)) {
 					FOLLOW(addr) = ADDTAG(ADDR_AFTER_GC(FOLLOW(ptr)), STR);
 					goto loop;
 				} else {
-/*
+#if 0
 					printf("move struct %x sym_ptr=%x\n", term, FOLLOW(ptr));
-					if (FOLLOW(ptr)>parea_up_addr || FOLLOW(ptr)<parea_low_addr){
+					if (FOLLOW(ptr)>parea_up_addr || FOLLOW(ptr)<parea_low_addr) {
 						quit("STRANGE\n");
 					}
-*/
+#endif
 					arity = GET_ARITY((SYM_REC_PTR)(FOLLOW(ptr)));
-					des_ptr = copy_h; copy_h += (arity+1);
+					des_ptr = copy_h; copy_h += (arity + 1);
 					FOLLOW(des_ptr) = FOLLOW(ptr);  FOLLOW(ptr) = (BPLONG)des_ptr;
-/*					printf("sym_ptr=%x after\n", FOLLOW(ptr)); */
-					for (i=1;i<=arity;i++){
-						BPLONG tmp;
-						tmp = FOLLOW(ptr+i);
-						if (TAG(tmp)==ATM){
-							FOLLOW(des_ptr+i) = tmp;
+#if 0
+					printf("sym_ptr=%x after\n", FOLLOW(ptr));
+#endif
+					for (i = 1; i <= arity; i++) {
+						BPLONG		tmp;
+						tmp = FOLLOW(ptr + i);
+						if (TAG(tmp) == ATM) {
+							FOLLOW(des_ptr + i) = tmp;
 						} else {
-							GCQueueAdd(des_ptr+i, FOLLOW(ptr+i));
+							GCQueueAdd(des_ptr + i, FOLLOW(ptr + i));
 						}
-						FOLLOW(ptr+i) = (BPLONG)(des_ptr+i);
+						FOLLOW(ptr + i) = (BPLONG)(des_ptr + i);
 					}
 					FOLLOW(addr) = ADDTAG(ADDR_AFTER_GC(des_ptr), STR);
 					goto loop;
@@ -448,8 +472,8 @@ loop:
 			}
 		} else {	/* susp var */
 			ptr = (BPLONG_PTR)UNTAGGED_TOPON_ADDR(term);
-			if (INSIDE_HEAP_TOP_SEGMENT(ptr)){
-				if (GC_IS_MOVED(ptr)){
+			if (INSIDE_HEAP_TOP_SEGMENT(ptr)) {
+				if (GC_IS_MOVED(ptr)) {
 					FOLLOW(addr) = (BPLONG)ADDR_AFTER_GC(FOLLOW(ptr));
 					goto loop;
 				}
@@ -465,7 +489,7 @@ loop:
 				GCQueueAdd(A_DV_minmax_cs(des_ptr), DV_minmax_cs(ptr));
 				GCQueueAdd(A_DV_dom_cs(des_ptr), DV_dom_cs(ptr));
 				GCQueueAdd(A_DV_outer_dom_cs(des_ptr), DV_outer_dom_cs(ptr));
-				if (IS_BV_DOMAIN(ptr)){
+				if (IS_BV_DOMAIN(ptr)) {
 					DV_bit_vector_ptr(des_ptr) = gcRescueBitVector((BPLONG_PTR)DV_bit_vector_ptr(ptr));
 				}
 				FOLLOW(addr) = (BPLONG)ADDR_AFTER_GC(des_ptr);

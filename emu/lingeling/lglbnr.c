@@ -8,19 +8,19 @@
 #include <string.h>
 #include <assert.h>
 
-void lglbnr (const char * name, const char * prefix, FILE * file) {
-	const char * p = LGL_CFLAGS, * q, * n;
-	int len = 78 - strlen (prefix);
-	fprintf (file, "%s%s Version %s %s\n", prefix, name, LGL_VERSION, LGL_ID);
-	fprintf (file,
+void lglbnr(const char *name, const char *prefix, FILE *file) {
+	const char *p = LGL_CFLAGS, *q, *n;
+	int len = 78 - strlen(prefix);
+	fprintf(file, "%s%s Version %s %s\n", prefix, name, LGL_VERSION, LGL_ID);
+	fprintf(file,
 			"%sCopyright (C) 2010-2011 Armin Biere JKU Linz Austria."
 			"  All rights reserved.\n", prefix);
-	fprintf (file, "%sreleased %s\n", prefix, LGL_RELEASED);
-	fprintf (file, "%scompiled %s\n", prefix, LGL_COMPILED);
-	fprintf (file, "%s%s\n", prefix, LGL_CC);
-	assert (*p);
+	fprintf(file, "%sreleased %s\n", prefix, LGL_RELEASED);
+	fprintf(file, "%scompiled %s\n", prefix, LGL_COMPILED);
+	fprintf(file, "%s%s\n", prefix, LGL_CC);
+	assert(*p);
 	for (;;) {
-		fputs (prefix, file);
+		fputs(prefix, file);
 		for (q = p; *q && *q != ' '; q++)
 		;
 		if (*q && q - p < len) {
@@ -38,6 +38,6 @@ void lglbnr (const char * name, const char * prefix, FILE * file) {
 		assert(*p == ' ');
 		p++;
 	}
-	fprintf (file, "%s%s\n", prefix, LGL_OS);
-	fflush (file);
+	fprintf(file, "%s%s\n", prefix, LGL_OS);
+	fflush(file);
 }

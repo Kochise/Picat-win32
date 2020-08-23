@@ -1,7 +1,7 @@
 /********************************************************************
  *	File	: loader.c
  *	Author	: Updated by Neng-Fa ZHOU 1994-2019
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -21,7 +21,7 @@
 #define MAXSYMS	BUCKET_CHAIN
 
 #ifdef M64BITS
-void inline IGUR(int i) {}	/* Ignore GCC Unused Result */
+void	inline IGUR(int i) { }	/* Ignore GCC Unused Result */
 void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 #define READ_DATA_ONLY(x, y)	IGUR( fread(x, sizeof(*x), y, fp))
 
@@ -36,7 +36,7 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 
 /* macro for creating hash chains */
 #ifdef GCC
-#define GEN_COND_JUMP(opcode, arg2, arg3, ep)										\
+#define GEN_COND_JUMP(opcode, arg2, arg3, ep)									\
 			*(void **)ep++ = (void **)jmp_table[opcode];						\
 			*ep++ = (BPLONG)arg2;												\
 			*ep++ = (BPLONG)arg3;
@@ -47,7 +47,7 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 			*ep++ = (BPLONG)lab_neq;											\
 			*ep++ = (BPLONG)lab_eq;
 
-#define GEN_COND_JUMP2(opcode, arg2, ep)											\
+#define GEN_COND_JUMP2(opcode, arg2, ep)										\
 			*(void **)ep++ = (void **)jmp_table[opcode];						\
 			*ep++ = (BPLONG)arg2;
 
@@ -57,7 +57,7 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 
 #else
 
-#define GEN_COND_JUMP(opcode, arg2, arg3, ep)										\
+#define GEN_COND_JUMP(opcode, arg2, arg3, ep)									\
 			*ep++ = opcode;														\
 			*ep++ = (BPLONG)arg2;												\
 			*ep++ = (BPLONG)arg3;
@@ -68,7 +68,7 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 			*ep++ = (BPLONG)lab_neq;											\
 			*ep++ = (BPLONG)lab_eq;
 
-#define GEN_COND_JUMP2(opcode, arg2, ep)											\
+#define GEN_COND_JUMP2(opcode, arg2, ep)										\
 			*ep++ = opcode;														\
 			*ep++ = (BPLONG)arg2;
 
@@ -84,8 +84,8 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 			}
 
 #define CHECK_PCODE(ptr, size)													\
-			if ((CHAR_PTR)ptr + 1000 + size >= (CHAR_PTR)parea_water_mark){		\
-				myquit(PAREA_OVERFLOW,"ld");									\
+			if ((CHAR_PTR)ptr + 1000 + size >= (CHAR_PTR)parea_water_mark) {	\
+				myquit(PAREA_OVERFLOW, "ld");									\
 			}
 
 /****************************************************************************/
@@ -94,7 +94,7 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 /* those bytes to represent a number.  This code works for any machine, and */
 /* makes the byte-code machine independent.                                 */
 /****************************************************************************/
-#define BB4(bptr)	(BPLONG)((((((*(BYTE_PTR)bptr << 8) | *((BYTE_PTR)bptr+1)) << 8) | *((BYTE_PTR)bptr+2)) << 8) | *((BYTE_PTR)bptr+3))
+#define BB4(bptr)	(BPLONG)((((((*(BYTE_PTR)bptr << 8) | *((BYTE_PTR)bptr + 1)) << 8) | *((BYTE_PTR)bptr + 2)) << 8) | *((BYTE_PTR)bptr + 3))
 
 #define LoadLiteral	{															\
 				READ_DATA_ONLY(buf_for_read, 1);								\
@@ -108,10 +108,10 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 #define LoadConstant {															\
 				READ_DATA_ONLY(buf_for_read, 1);								\
 				temp32 = (int)BB4(buf_for_read);								\
-				if (ISATOM(temp32)){											\
-					*inst_addr = ADDTAG(reloc_table[temp32>>2], ATM);			\
+				if (ISATOM(temp32)) {											\
+					*inst_addr = ADDTAG(reloc_table[temp32 >> 2], ATM);			\
 				} else {														\
-					*inst_addr = MAKEINT(((temp32<<1)>>3));						\
+					*inst_addr = MAKEINT(((temp32 << 1)>>3));					\
 				}																\
 				inst_addr++;													\
 				count++;														\
@@ -122,10 +122,10 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 #define LoadConstant {															\
 				READ_DATA_ONLY(buf_for_read, 1);								\
 				temp = BB4(buf_for_read);										\
-				if (ISINT(temp)){												\
+				if (ISINT(temp)) {												\
 					*inst_addr = temp;											\
 				} else {														\
-					*inst_addr = ADDTAG(reloc_table[temp>>2], ATM);				\
+					*inst_addr = ADDTAG(reloc_table[temp >> 2], ATM);			\
 				}																\
 				inst_addr++;													\
 				count++;														\
@@ -151,10 +151,10 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 #define LoadZ {																	\
 				READ_DATA_ONLY(buf_for_read, 1);								\
 				temp32 = BB4(buf_for_read);										\
-				if (ISATOM(temp32)){											\
-					*inst_addr = ADDTAG(reloc_table[temp32>>2], ATM);			\
-				} else if (TAG(temp32)==ATM){									\
-					*inst_addr = MAKEINT((temp32<<1)>>3);						\
+				if (ISATOM(temp32)) {											\
+					*inst_addr = ADDTAG(reloc_table[temp32 >> 2], ATM);			\
+				} else if (TAG(temp32) == ATM) {								\
+					*inst_addr = MAKEINT((temp32 << 1)>>3);						\
 				} else {														\
 					*inst_addr = temp32;										\
 				}																\
@@ -166,8 +166,8 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 #define LoadZ {																	\
 				READ_DATA_ONLY(buf_for_read, 1);								\
 				temp = BB4(buf_for_read);										\
-				if (ISATOM(temp)){												\
-					*inst_addr = ADDTAG(reloc_table[temp>>2], ATM);				\
+				if (ISATOM(temp)) {												\
+					*inst_addr = ADDTAG(reloc_table[temp >> 2], ATM);			\
 				} else {														\
 					*inst_addr = temp;											\
 				}																\
@@ -176,96 +176,96 @@ void IGUR(int i);	/* see https://stackoverflow.com/a/16245669/490291 */
 #endif
 
 #define LoadZs(n) {																\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadZ;														\
 					n--;														\
 				}																\
 			}
 
 #define LoadYs(n) {																\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadLiteral;												\
 					n--;														\
 				}																\
 			}
 
 #define LoadConstants(n) {														\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadZ;														\
 					n--;														\
 				}																\
 			}
 
-extern void **jmp_table;
+extern	void		**jmp_table;
 
-static BPLONG_PTR inst_addr;
-static BPLONG_PTR hptr;
-static SYM_REC_PTR reloc_table[MAXSYMS];
-static BPLONG_PTR last_text;
+static	BPLONG_PTR	inst_addr;
+static	BPLONG_PTR	hptr;
+static	SYM_REC_PTR	reloc_table[MAXSYMS];
+static	BPLONG_PTR	last_text;
 
-BPLONG   eof_flag;
-BPLONG   psc_bytes, text_bytes, index_bytes;
-BYTE   magic;
-BYTE   op_mode;
+		BPLONG		eof_flag;
+		BPLONG		psc_bytes, text_bytes, index_bytes;
+		BYTE   		magic;
+		BYTE   		op_mode;
 
 #define OP_MODE_BUILD		0
 #define OP_MODE_FETCH		1
 #define OP_MODE_UNKNOWN		2
 
 struct hrec {
-	BPLONG     l;
-	BPLONG_PTR link;
+	BPLONG		l;
+	BPLONG_PTR	link;
 };
 
-struct hrec *indextab = NULL;
-BPLONG index_table_size = 0;
+struct hrec	*indextab = NULL;
+BPLONG		index_table_size = 0;
 
-BYTE dynload = 0;
-BPLONG temp;
-int temp32;
+BYTE		dynload = 0;
+BPLONG		temp;
+int			temp32;
 
-static FILE *fp;
+static FILE	*fp;
 
-UW32 buf_for_read[7];
+UW32		buf_for_read[7];
 
-static void inserth(BPLONG ttype, BPLONG val, BPLONG_PTR label, struct hrec *bucket);
-static UW32 bp_str_hash(const char *key, int length, UW32 initval);
-static INLINE SYM_REC_PTR search(CHAR_PTR name, BPLONG length, BPLONG arity, SYM_REC_PTR sym_ptr);
+static			void		inserth(BPLONG ttype, BPLONG val, BPLONG_PTR label, struct hrec *bucket);
+static			UW32		bp_str_hash(const char *key, int length, UW32 initval);
+static	INLINE	SYM_REC_PTR search(CHAR_PTR name, BPLONG length, BPLONG arity, SYM_REC_PTR sym_ptr);
 
 /****************************************************************************/
-int load_bytecode_header(void){
-	if (magic!=71){
+int load_bytecode_header(void) {
+	if (magic != 71) {
 		printf("Incompatible bytecode file\n");
 		INVALID_BYTE_CODE;
 	}
 
 	eof_flag = READ_DATA(&magic, 1);
-	if (magic!=21){
+	if (magic != 21) {
 		printf("Incompatible bytecode file\n");
 		INVALID_BYTE_CODE;
 	}
 
 	eof_flag = READ_DATA(&magic, 1);
-	if (magic!=7){
+	if (magic != 7) {
 		printf("Incompatible bytecode file\n");
 		INVALID_BYTE_CODE;
 	}
 
 	eof_flag = READ_DATA(&magic, 1);
-	if (magic!=3){
+	if (magic != 3) {
 		printf("Incompatible bytecode file\n");
 		INVALID_BYTE_CODE;
 	}
 
-	if (0!=(eof_flag = READ_DATA(buf_for_read, 1))) {
+	if (0 != (eof_flag = READ_DATA(buf_for_read, 1))) {
 		INVALID_BYTE_CODE;
 	}
 	psc_bytes = BB4(buf_for_read);
-	if (0!=(eof_flag = READ_DATA(buf_for_read, 1))){
+	if (0 != (eof_flag = READ_DATA(buf_for_read, 1))) {
 		INVALID_BYTE_CODE;
 	}
 	text_bytes = BB4(buf_for_read);
-	if (0!=(eof_flag = READ_DATA(buf_for_read, 1))){
+	if (0 != (eof_flag = READ_DATA(buf_for_read, 1))) {
 		INVALID_BYTE_CODE;
 	}
 	index_bytes = BB4(buf_for_read);
@@ -274,31 +274,33 @@ int load_bytecode_header(void){
 
 int loader(CHAR_PTR file, BPLONG file_type, BPLONG load_damon)
 {
-	BPLONG     err_msg;
-	BPLONG total_size;
-	FILE *old_fp;
+	BPLONG	err_msg;
+	BPLONG	total_size;
+	FILE	*old_fp;
 
 #ifdef WIN32
 	fp = fopen(file, "rb");
 #else
 	fp = fopen(file, "r");
 #endif
-	if (fp == NULL){
+	if (fp == NULL) {
 		printf("file %s not exist\n", file);
 		return 1;
 	}
-/*	printf("\n     ...... loading file %s curr_fence=%x\n", file, curr_fence); */
+#if 0
+	printf("\n     ...... loading file %s curr_fence=%x\n", file, curr_fence);
+#endif
 
-	while (0!=(eof_flag = READ_DATA(&magic, 1)) == 0) {
-		if (load_bytecode_header()==BP_ERROR)
+	while (0 != (eof_flag = READ_DATA(&magic, 1)) == 0) {
+		if (load_bytecode_header() == BP_ERROR)
 			return 1;
 
-		total_size = sizeof(BPLONG)*text_bytes + index_bytes + psc_bytes + 1000;
-		if ((CHAR_PTR)curr_fence+total_size>(CHAR_PTR)parea_water_mark){
-			int success = 0;
-			if (total_size>parea_size) parea_size = total_size;
+		total_size = sizeof(BPLONG) * text_bytes + index_bytes + psc_bytes + 1000;
+		if ((CHAR_PTR)curr_fence + total_size>(CHAR_PTR)parea_water_mark) {
+			int	success = 0;
+			if (total_size > parea_size) parea_size = total_size;
 			ALLOCATE_NEW_PAREA_BLOCK(parea_size, success);
-			if (success==0) return -1;
+			if (success == 0) return -1;
 		}
 
 		err_msg = load_syms(file_type);
@@ -317,10 +319,10 @@ int loader(CHAR_PTR file, BPLONG file_type, BPLONG load_damon)
 		err_msg = load_hashtab();
 		if (err_msg != 0) {
 			printf("error " BPLONG_FMT_STR " in (index) loading file %s: bad index segment\n", err_msg, file);
-			return 1;	/*eventually upper level routines will determine */
+			return 1;	/* eventually upper level routines will determine */
 		}
 
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 2)))
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 2)))
 			return 1;
 
 		*inst_addr = BB4(buf_for_read);
@@ -332,12 +334,14 @@ int loader(CHAR_PTR file, BPLONG file_type, BPLONG load_damon)
 		inst_addr++;
 		curr_fence = (CHAR_PTR)inst_addr;
 		old_fp = fp;
-		if (disassem!=1 && load_damon!=0){
+		if (disassem != 1 && load_damon != 0) {
 			bp_call_term_catch(call_damon_load_atom);
 		}
 		fp = old_fp;
 	}
-/*	printf("<=loader curr_fence=%x\n", curr_fence); */
+#if 0
+	printf("<=loader curr_fence=%x\n", curr_fence);
+#endif
 	fclose(fp);
 	return 0;
 }	/* end of loader */
@@ -345,42 +349,46 @@ int loader(CHAR_PTR file, BPLONG file_type, BPLONG load_damon)
 /*************************************************************************/
 int load_syms(BPLONG file_type)
 {
-	CHAR     name[256];
-	BPLONG     ep_offset;
-	BPLONG     i = 0, j, count = 0;
-//	CHAR     temp_name[MAX_STR_LEN];
-	BYTE     temp_len;
-	BYTE     temp_arity;
+	CHAR	name[256];
+	BPLONG	ep_offset;
+	BPLONG	i = 0, j, count = 0;
+#if 0
+	CHAR	temp_name[MAX_STR_LEN];
+#endif
+	BYTE	temp_len;
+	BYTE	temp_arity;
 
-/*	 printf("=> load_syms	\n"); */
+#if 0
+	 printf("=> load_syms	\n");
+#endif
 	while (count < psc_bytes && eof_flag == 0) {
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 			return 2;
 		ep_offset = BB4(buf_for_read);
-		if (0!=(eof_flag = READ_DATA(&temp_arity, 1)))
+		if (0 != (eof_flag = READ_DATA(&temp_arity, 1)))
 			return 3;
-		if (0!=(eof_flag = READ_DATA(&temp_len, 1)))
+		if (0 != (eof_flag = READ_DATA(&temp_len, 1)))
 			return 4;
-		if (0!=(eof_flag = READ_DATA(name, temp_len)))
+		if (0 != (eof_flag = READ_DATA(name, temp_len)))
 			return 5;
-/*
+#if 0
 		if (dynload == 1 ) {
 			strncpy(temp_name, name, temp_len);
 			printf("load (%s,%i)\n", temp_name, temp_len);
 		}
-*/
-		if (i>=MAXSYMS){
+#endif
+		if (i >= MAXSYMS) {
 			printf("Symbol table overflow:only %i symbols are allowed in one file\n", MAXSYMS);
 			return 1;
 		}
 		reloc_table[i] = insert_sym(name, temp_len, temp_arity);
-		set_temp_ep(reloc_table[i], ep_offset*sizeof(BPLONG));
+		set_temp_ep(reloc_table[i], ep_offset * sizeof(BPLONG));
 		count += temp_len + 6;
 		i++;
 	}
 
-	if (count!=psc_bytes){
-		printf("error in load_syms count=%i, psc_bytes=%i\n",(int)count,(int)psc_bytes);
+	if (count != psc_bytes) {
+		printf("error in load_syms count=%i, psc_bytes=%i\n", (int)count, (int)psc_bytes);
 		return 1;
 	}
 
@@ -395,20 +403,20 @@ int load_syms(BPLONG file_type)
 	Given the name of a bytecode module, this function binds Lst to a list of
 	public predicate and function symbols defined in the module
 *************************************************************************/
-int c_GET_MODULE_SIGNATURE_cf(void){
-	BPLONG File;
-	CHAR_PTR file_name;
-	SYM_REC_PTR sym_ptr;
-	CHAR     name[256];
-	BPLONG   ep_offset;
-	BPLONG   count = 0;
-	BYTE     temp_len;
-	BYTE     temp_arity;
-	BPLONG   ret_lst;
-	BPLONG_PTR ret_lst_ptr;
+int c_GET_MODULE_SIGNATURE_cf(void) {
+	BPLONG		File;
+	CHAR_PTR	file_name;
+	SYM_REC_PTR	sym_ptr;
+	CHAR		name[256];
+	BPLONG		ep_offset;
+	BPLONG		count = 0;
+	BYTE		temp_len;
+	BYTE		temp_arity;
+	BPLONG		ret_lst;
+	BPLONG_PTR	ret_lst_ptr;
 
 	File = ARG(1, 2); DEREF(File);
-	if (!ISATOM(File)){
+	if (!ISATOM(File)) {
 		exception = atom_expected;
 		return BP_FALSE;
 	}
@@ -420,53 +428,59 @@ int c_GET_MODULE_SIGNATURE_cf(void){
 #else
 	fp = fopen(file_name, "r");
 #endif
-	if (fp == NULL){
+	if (fp == NULL) {
 		printf("file %s not exist\n", file_name);
 		exception = file_does_not_exist;
 		return BP_ERROR;
 	}
-/*	printf("\n     ...... loading file %s curr_fence=%x\n", file, curr_fence); */
+#if 0
+	printf("\n     ...... loading file %s curr_fence=%x\n", file, curr_fence);
+#endif
 
 	READ_DATA(&magic, 1);
-	if (load_bytecode_header()==BP_ERROR)
+	if (load_bytecode_header() == BP_ERROR)
 		return BP_ERROR;
 
 	ret_lst_ptr = &ret_lst;
 	while (count < psc_bytes && eof_flag == 0) {
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 1))){
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 1))) {
 			INVALID_BYTE_CODE;
 		}
 		ep_offset = BB4(buf_for_read);
-		if (0!=(eof_flag = READ_DATA(&temp_arity, 1))){
+		if (0 != (eof_flag = READ_DATA(&temp_arity, 1))) {
 			INVALID_BYTE_CODE;
 		}
-		if (0!=(eof_flag = READ_DATA(&temp_len, 1))){
+		if (0 != (eof_flag = READ_DATA(&temp_len, 1))) {
 			INVALID_BYTE_CODE;
 		}
-		if (0!=(eof_flag = READ_DATA(name, temp_len))){
+		if (0 != (eof_flag = READ_DATA(name, temp_len))) {
 			INVALID_BYTE_CODE;
 		}
 
-//		printf("handling %s offset=%d\n", name, ep_offset);
+#if 0
+		printf("handling %s offset=%d\n", name, ep_offset);
+#endif
 
-		if (ep_offset>=0 && temp_len>3 && *name=='e' && *(name+1)=='$' && *(name+2)=='$') {	/* public symbols take the form "e$$modulename$$symname" */
-			int i = 4;
-			while (i<temp_len && (*(name+i-1)!='$' || *(name+i)!='$')) i++;
-//			printf("end with  %s\n", name+i+1);
-			if (i!=temp_len && (i!=7 || (i==7 && (*(name+3)!='g' || *(name+4)!='l' || *(name+5)!='b')))){	/* the module glb is the name of the global module */
-				int is_pred = 1;
-				if (*(name+i+1)=='f' && *(name+i+2)=='$' && *(name+i+3)=='$'){
+		if (ep_offset >= 0 && temp_len > 3 && *name == 'e' && *(name + 1) == '$' && *(name + 2) == '$') {	/* public symbols take the form "e$$modulename$$symname" */
+			int	i = 4;
+			while (i < temp_len && (*(name + i - 1) != '$' || *(name + i) != '$')) i++;
+#if 0
+			printf("end with  %s\n", name + i + 1);
+#endif
+			if (i != temp_len && (i != 7 || (i == 7 && (*(name + 3) != 'g' || *(name + 4) != 'l' || *(name + 5) != 'b')))) {	/* the module glb is the name of the global module */
+				int	is_pred = 1;
+				if (*(name + i + 1) == 'f' && *(name + i + 2) == '$' && *(name + i + 3) == '$') {
 					i += 3;
 					is_pred = 0;
 				}
-				sym_ptr = insert_sym(name+i+1, temp_len-i-1, 0);	/* list takes the form [name, arity, is_pred, qualified_name ...]  */
+				sym_ptr = insert_sym(name + i + 1, temp_len - i-1, 0);	/* list takes the form [name, arity, is_pred, qualified_name ...]  */
 				FOLLOW(heap_top) = ADDTAG(sym_ptr, ATM);
 				FOLLOW(ret_lst_ptr) = ADDTAG(heap_top, LST);
 				heap_top++;
 				ret_lst_ptr = heap_top;
 				heap_top++;
 				//
-				FOLLOW(heap_top) = MAKEINT((is_pred==1) ? temp_arity : temp_arity-1);
+				FOLLOW(heap_top) = MAKEINT((is_pred == 1) ? temp_arity : temp_arity - 1);
 				FOLLOW(ret_lst_ptr) = ADDTAG(heap_top, LST);
 				heap_top++;
 				ret_lst_ptr = heap_top;
@@ -499,12 +513,14 @@ int c_GET_MODULE_SIGNATURE_cf(void){
 /************************************************************************/
 int load_text(void)
 {
-	BPLONG current_opcode = 0;
-	BPLONG count = 0;
-	BPLONG n;
-	SYM_REC_PTR sym_ptr;
+	BPLONG		current_opcode = 0;
+	BPLONG		count = 0;
+	BPLONG		n;
+	SYM_REC_PTR	sym_ptr;
 
-/*	 printf("==> load_text	\n");*/
+#if 0
+	 printf("==> load_text	\n");
+#endif
 
 	/* set text segments chain */
 	inst_addr = (BPLONG_PTR)curr_fence;
@@ -528,7 +544,7 @@ int load_text(void)
 #include "load_inst.h"
 		count++;
 	}
-	if (count != text_bytes)  {
+	if (count != text_bytes) {
 		return 9;					/* missing instructions */
 	}
 	return 0;
@@ -536,28 +552,32 @@ int load_text(void)
 
 int load_hashtab(void)
 {
-	BPLONG     hash_inst_addr, alt, clause_no, temp_len;
-	BPLONG     count = 0;
+	BPLONG	hash_inst_addr, alt, clause_no, temp_len;
+	BPLONG	count = 0;
 
 	CHECK_PCODE((CHAR_PTR)inst_addr, index_bytes);
-/*	 printf("==> load_hashtab	\n"); */
+#if 0
+	 printf("==> load_hashtab	\n");
+#endif
 	while (count < index_bytes && eof_flag == 0) {
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 			return 10;
 		hash_inst_addr = BB4(buf_for_read);
 		hash_inst_addr = (BPLONG)RELOC_ADDR(hash_inst_addr);
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 			return 10;
-//		hash_reg = BB4(buf_for_read);
+#if 0
+		hash_reg = BB4(buf_for_read);
+#endif
 		BB4(buf_for_read);
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 			return 1;
 		clause_no = BB4(buf_for_read);
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 			return 1;
 		alt = BB4(buf_for_read);
 		alt = (BPLONG)RELOC_ADDR(alt);
-		if (0!=(eof_flag = get_index_tab(clause_no, &temp_len)))
+		if (0 != (eof_flag = get_index_tab(clause_no, &temp_len)))
 			return eof_flag;
 		inst_addr = gen_index(hash_inst_addr, clause_no, alt);
 		count += (16 + temp_len);
@@ -568,17 +588,17 @@ int load_hashtab(void)
 
 int get_index_tab(BPLONG clause_no, BPLONG_PTR lenptr)
 {
-	BPLONG     hashval, size, j;
-	BPLONG     count = 0;
-	BYTE     type;
-	BPLONG     val, ttype;
-	BPLONG_PTR label;
+	BPLONG		hashval, size, j;
+	BPLONG		count = 0;
+	BYTE		type;
+	BPLONG		val, ttype;
+	BPLONG_PTR	label;
 
 	hptr = heap_top;
 	size = bp_hsize(clause_no);
-	if (size>index_table_size){
-		if (indextab!=NULL) free(indextab);
-		indextab = (struct hrec *)malloc(sizeof(struct hrec)*size);
+	if (size > index_table_size) {
+		if (indextab != NULL) free(indextab);
+		indextab = (struct hrec *)malloc(sizeof(struct hrec) * size);
 		index_table_size = size;
 	}
 
@@ -587,37 +607,37 @@ int get_index_tab(BPLONG clause_no, BPLONG_PTR lenptr)
 		indextab[j].link = (BPLONG_PTR)(&(indextab[j].link));
 	}
 	for (j = 0; j < clause_no; j++) {
-		if (0!=(eof_flag = READ_DATA(&type, 1)))
+		if (0 != (eof_flag = READ_DATA(&type, 1)))
 			return 11;
 		switch (type) {
-			case 'i': if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+			case 'i': if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 					return 12;
 				val = BB4(buf_for_read);
 				val = MAKEINT(val);
 				count += 9;
-				ttype=0;
+				ttype = 0;
 				break;
-			case 's': if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+			case 's': if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 					return 12;
 				val = BB4(buf_for_read);
 				count += 9;
 				val = (BPLONG)reloc_table[val];
-				if (val==(BPLONG)list_psc) {
-					ttype=1;
+				if (val == (BPLONG)list_psc) {
+					ttype = 1;
 				}
 				else {
-					ttype=2;
+					ttype = 2;
 				}
 				break;
-			case 'c': if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+			case 'c': if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 					return 12;
 				val = BB4(buf_for_read);
 				count += 9;
 				val = (BPLONG)reloc_table[val];
-				if (val==UNTAGGED_ADDR(nil_sym))
-					ttype=3;
+				if (val == UNTAGGED_ADDR(nil_sym))
+					ttype = 3;
 				else
-					ttype=4;
+					ttype = 4;
 				val = ADDTAG(val, ATM);
 				break;
 			default:
@@ -625,7 +645,7 @@ int get_index_tab(BPLONG clause_no, BPLONG_PTR lenptr)
 				ttype = 0;
 				val = 0;
 		}
-		if (0!=(eof_flag = READ_DATA(buf_for_read, 1)))
+		if (0 != (eof_flag = READ_DATA(buf_for_read, 1)))
 			return 13;
 		label = (BPLONG_PTR)BB4(buf_for_read);
 		label = RELOC_ADDR((BPLONG)label);
@@ -641,17 +661,17 @@ int get_index_tab(BPLONG clause_no, BPLONG_PTR lenptr)
 
 BPLONG_PTR gen_index(BPLONG hash_inst_addr, BPLONG clause_no, BPLONG alt)
 {
-	BPLONG_PTR ep1, ep2;
-	BPLONG     j, size;
-	BPLONG  ttype, val;
-	BPLONG_PTR label, jumpaddr, temp;
+	BPLONG_PTR	ep1, ep2;
+	BPLONG		j, size;
+	BPLONG		ttype, val;
+	BPLONG_PTR	label, jumpaddr, temp;
 
 	size = bp_hsize(clause_no);
 	ep1  = inst_addr;
 	*ep1++ = tabsize;
 	*ep1++ = size;
 	ep2 = inst_addr + 2 + size;
-	temp = (BPLONG_PTR)(hash_inst_addr) + 2;	/* fill the slot in the hash inst*/
+	temp = (BPLONG_PTR)(hash_inst_addr) + 2;	/* fill the slot in the hash inst */
 	*temp++ = size;
 	*temp = (BPLONG)ep1;
 
@@ -659,60 +679,60 @@ BPLONG_PTR gen_index(BPLONG hash_inst_addr, BPLONG clause_no, BPLONG alt)
 		if (indextab[j].l == 0) {
 			*ep1++ = alt;
 		} else if (indextab[j].l == 1) {
-			*ep1++ = (BPLONG)*((BPLONG_PTR)(indextab[j].link) + 2);
+			*ep1++ = (BPLONG) * ((BPLONG_PTR)(indextab[j].link) + 2);
 		} else {				/* create conditional jump insts */
 			*ep1++ = (BPLONG)ep2;
 			temp = (BPLONG_PTR)(indextab[j].link);
 			while (*temp != (BPLONG)temp) {
 				ttype = *temp++;
 				val   = *temp++;
-				label = (BPLONG_PTR)*temp++;
+				label = (BPLONG_PTR) * temp++;
 				switch (ttype) {
 					case 0 :
-						if (IS_LAST_HASH_ALT(temp)){
+						if (IS_LAST_HASH_ALT(temp)) {
 							GEN_JUMP(jmp, label, ep2);
 						} else {
-							jumpaddr = ep2+4;	/* size(hash_branch_constant)=4, size(hash_jmpn_constant)=3 */
-							GEN_HASH_BRANCH(hash_branch_constant, val, jumpaddr,((BPLONG_PTR)label+3), ep2);
+							jumpaddr = ep2 + 4;	/* size(hash_branch_constant)=4, size(hash_jmpn_constant)=3 */
+							GEN_HASH_BRANCH(hash_branch_constant, val, jumpaddr, ((BPLONG_PTR)label + 3), ep2);
 						}
 						break;
 					case 1 :
-						if (IS_LAST_HASH_ALT(temp)){
+						if (IS_LAST_HASH_ALT(temp)) {
 							GEN_JUMP(jmp, label, ep2);
 						} else {
-							jumpaddr = ep2+4;
+							jumpaddr = ep2 + 4;
 							GEN_COND_JUMP2(hash_jmpn_list0, jumpaddr, ep2);
 							GEN_JUMP(jmp, label, ep2);
 						}
 						break;
 					case 2 :
-						if (IS_LAST_HASH_ALT(temp)){
+						if (IS_LAST_HASH_ALT(temp)) {
 							GEN_JUMP(jmp, label, ep2);
 						} else {
-							jumpaddr = ep2+4;	/* size(hash_branch_struct)=4, size(hash_jmpn_struct)=3 */
-							GEN_HASH_BRANCH(hash_branch_struct, val, jumpaddr,((BPLONG_PTR)label+3), ep2);
+							jumpaddr = ep2 + 4;	/* size(hash_branch_struct)=4, size(hash_jmpn_struct)=3 */
+							GEN_HASH_BRANCH(hash_branch_struct, val, jumpaddr, ((BPLONG_PTR)label + 3), ep2);
 						}
 						break;
 					case 3 :
-						if (IS_LAST_HASH_ALT(temp)){
+						if (IS_LAST_HASH_ALT(temp)) {
 							GEN_JUMP(jmp, label, ep2);
 						} else {
-							jumpaddr = ep2+4;
+							jumpaddr = ep2 + 4;
 							GEN_COND_JUMP2(hash_jmpn_nil, jumpaddr, ep2);
 							GEN_JUMP(jmp, label, ep2);
 						}
 						break;
 					case 4 :
-						if (IS_LAST_HASH_ALT(temp)){
+						if (IS_LAST_HASH_ALT(temp)) {
 							GEN_JUMP(jmp, label, ep2);
 						} else {
-							jumpaddr = ep2+5;
+							jumpaddr = ep2 + 5;
 							GEN_COND_JUMP(hash_jmpn_constant, val, jumpaddr, ep2);
 							GEN_JUMP(jmp, label, ep2);
 						}
 						break;
 				}
-				temp = (BPLONG_PTR)*temp;
+				temp = (BPLONG_PTR) * temp;
 				CHECK_PCODE((CHAR_PTR)ep2, 0);
 			}
 		}
@@ -722,35 +742,39 @@ BPLONG_PTR gen_index(BPLONG hash_inst_addr, BPLONG clause_no, BPLONG alt)
 
 static void inserth(BPLONG ttype, BPLONG val, BPLONG_PTR label, struct hrec *bucket)
 {
-	BPLONG_PTR temp;
+	BPLONG_PTR	temp;
 
 	bucket->l++;
 	temp = (BPLONG_PTR)&(bucket->link);
 	if (bucket->l > 1) {
-		temp = (BPLONG_PTR)*temp;
-		while ((BPLONG_PTR)*temp != temp)
+		temp = (BPLONG_PTR) * temp;
+		while ((BPLONG_PTR) * temp != temp)
 		{
 
-/*			printf("type = %i	\n", (BPLONG)*temp++);
+#if 0
+			printf("type = %i	\n", (BPLONG)*temp++);
 			printf("val  = %i	\n", (BPLONG)*temp++);
-			printf("label= %x	\n", (BPLONG)*temp++);*/
-			temp = (BPLONG_PTR)*(temp+3);
+			printf("label= %x	\n", (BPLONG)*temp++);
+#endif
+			temp = (BPLONG_PTR) * (temp + 3);
 		}
 	}
 	*temp = (BPLONG)hptr;
 	*hptr++ = ttype;
 	*hptr++ = val;
 	*hptr++ = (BPLONG)label;
-	*hptr++ = *temp + sizeof(BPLONG)*3;
-/*	*hptr++ = (BPLONG)hptr; */
+	*hptr++ = *temp + sizeof(BPLONG) * 3;
+#if 0
+	*hptr++ = (BPLONG)hptr;
+#endif
 }
 
 BPLONG bp_prime(BPLONG numentry)
 {
-	BPLONG i, j, temp;
+	BPLONG	i, j, temp;
 
 	temp = numentry + 1;
-	if ((temp%2)==0) temp++;
+	if ((temp%2) == 0) temp++;
 
 hashsod:
 	j = temp / 2 + 1;
@@ -766,12 +790,12 @@ hashsod:
 /* return a prime-look number */
 BPLONG bp_hsize(BPLONG numentry)
 {
-	BPLONG i, j, temp;
+	BPLONG	i, j, temp;
 
 	temp = numentry + 1;
-	if ((temp%2)==0) temp++;
+	if ((temp%2) == 0) temp++;
 	j = temp / 2 + 1;
-	if (j>29) j = 29;
+	if (j > 29) j = 29;
 hashsod:
 	for (i = 3; i <= j; i += 2) {
 		if ((temp % i) == 0) {
@@ -784,32 +808,32 @@ hashsod:
 
 int dyn_loader(SYM_REC_PTR sym_ptr, BPLONG file_type, BPLONG load_damon)
 {
-	CHAR     s[256], s1[256], s3[256];
-	CHAR_PTR s2;
-	BPLONG     i;
+	CHAR		s[256], s1[256], s3[256];
+	CHAR_PTR	s2;
+	BPLONG		i;
 
 	dynload = 1;
 	namestring(sym_ptr, s1);
 	if (*s1 == '/' || *s1 == '.')
 		return loader(s1, file_type, load_damon);
-	else if (file_type != BUILTIN){
-		if (*s1 == '~'){
+	else if (file_type != BUILTIN) {
+		if (*s1 == '~') {
 			s2 = getenv("HOME");
-			if (s2==NULL){
+			if (s2 == NULL) {
 				fputs("the environment variable HOME is not set\n", stderr);
 			}
-			if (*(s1+1) == '/'){
-				scat(s2,&s1[1], s3);
+			if (*(s1 + 1) == '/') {
+				scat(s2, &s1[1], s3);
 				return loader(s3, file_type, load_damon);
 			}
 			else {
 				i = strlen(s2);
 				i--;
-				while  (*(s2 + i) != '/'){
-					*(s2+i) = '\0';
+				while  (*(s2 + i) != '/') {
+					*(s2 + i) = '\0';
 					i--;
 				}
-				scat(s2,&s1[1], s3);
+				scat(s2, &s1[1], s3);
 				return loader(s3, file_type, load_damon);
 			}
 		}
@@ -817,7 +841,7 @@ int dyn_loader(SYM_REC_PTR sym_ptr, BPLONG file_type, BPLONG load_damon)
 	}
 	else {
 		s2 = getenv("SIMPATH");
-		if (s2==NULL){
+		if (s2 == NULL) {
 			fputs("the environment variable SIMPATH is not set\n", stderr);
 		}
 		while (1) {
@@ -837,8 +861,8 @@ int dyn_loader(SYM_REC_PTR sym_ptr, BPLONG file_type, BPLONG load_damon)
 }
 
 #ifdef ORIG_HASH
-static UW32 bp_str_hash(const char *name, int length, UW32 arity){
-	BPLONG i = 0;
+static UW32 bp_str_hash(const char *name, int length, UW32 arity) {
+	BPLONG	i = 0;
 
 	i = arity + 1;
 	if (length > 0) {				/* first */
@@ -848,11 +872,11 @@ static UW32 bp_str_hash(const char *name, int length, UW32 arity){
 			if (length > 2) {			/* middle */
 				i = (i << 2) + *(name + length / 2);
 				if (length > 3)
-					i = (i << 2) + *(name+(length / 2) - 1);
+					i = (i << 2) + *(name + (length / 2) - 1);
 			}
 		}
 	}
-	if (i<0) i = -i;
+	if (i < 0) i = -i;
 	return i % BUCKET_CHAIN;
 }
 #else
@@ -881,8 +905,8 @@ static UW32 bp_str_hash(const char *name, int length, UW32 arity){
 #endif
 
 #define hashsize(n)		((UW32)1<<(n))
-#define hashmask(n)		(hashsize(n)-1)
-#define rot(x, k)		(((x)<<(k)) | ((x)>>(32-(k))))
+#define hashmask(n)		(hashsize(n) - 1)
+#define rot(x, k)		(((x)<<(k)) | ((x)>>(32 - (k))))
 
 /*
 	-------------------------------------------------------------------------------
@@ -1003,7 +1027,7 @@ static UW32 bp_str_hash(const char *name, int length, UW32 arity){
 
 static UW32 bp_str_hash(const char *key, int length, UW32 initval)
 {
-	UW32 a, b, c;											/* internal state */
+	UW32	a, b, c;											/* internal state */
 	union { const char *ptr; int i; } u;		/* needed for Mac Powerbook G4 */
 
 	/* Set up the internal state */
@@ -1038,49 +1062,49 @@ static UW32 bp_str_hash(const char *key, int length, UW32 initval)
 		*/
 #ifndef VALGRIND
 
-		switch(length)
+		switch (length)
 		{
-			case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
-			case 11: c+=k[2]&0xffffff; b+=k[1]; a+=k[0]; break;
-			case 10: c+=k[2]&0xffff; b+=k[1]; a+=k[0]; break;
-			case 9 : c+=k[2]&0xff; b+=k[1]; a+=k[0]; break;
-			case 8 : b+=k[1]; a+=k[0]; break;
-			case 7 : b+=k[1]&0xffffff; a+=k[0]; break;
-			case 6 : b+=k[1]&0xffff; a+=k[0]; break;
-			case 5 : b+=k[1]&0xff; a+=k[0]; break;
-			case 4 : a+=k[0]; break;
-			case 3 : a+=k[0]&0xffffff; break;
-			case 2 : a+=k[0]&0xffff; break;
-			case 1 : a+=k[0]&0xff; break;
+			case 12: c += k[2]; b += k[1]; a += k[0]; break;
+			case 11: c += k[2] & 0xffffff; b += k[1]; a += k[0]; break;
+			case 10: c += k[2] & 0xffff; b += k[1]; a += k[0]; break;
+			case 9 : c += k[2] & 0xff; b += k[1]; a += k[0]; break;
+			case 8 : b += k[1]; a += k[0]; break;
+			case 7 : b += k[1] & 0xffffff; a += k[0]; break;
+			case 6 : b += k[1] & 0xffff; a += k[0]; break;
+			case 5 : b += k[1] & 0xff; a += k[0]; break;
+			case 4 : a += k[0]; break;
+			case 3 : a += k[0] & 0xffffff; break;
+			case 2 : a += k[0] & 0xffff; break;
+			case 1 : a += k[0] & 0xff; break;
 			case 0 : break;	// return c;				/* zero length strings require no mixing */
 		}
 
 #else	/* make valgrind happy */
 
-		const BYTE *k8;
+		const	BYTE	*k8;
 		k8 = (const BYTE *)k;
-		switch(length)
+		switch (length)
 		{
-			case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
-			case 11: c+=((UW32)k8[10])<<16;	/* fall through */
-			case 10: c+=((UW32)k8[9])<<8;		/* fall through */
-			case 9 : c+=k8[8];						/* fall through */
-			case 8 : b+=k[1]; a+=k[0]; break;
-			case 7 : b+=((UW32)k8[6])<<16;		/* fall through */
-			case 6 : b+=((UW32)k8[5])<<8;		/* fall through */
-			case 5 : b+=k8[4];						/* fall through */
-			case 4 : a+=k[0]; break;
-			case 3 : a+=((UW32)k8[2])<<16;		/* fall through */
-			case 2 : a+=((UW32)k8[1])<<8;		/* fall through */
-			case 1 : a+=k8[0]; break;
+			case 12: c += k[2]; b += k[1]; a += k[0]; break;
+			case 11: c += ((UW32)k8[10])<<16;	/* fall through */
+			case 10: c += ((UW32)k8[9])<<8;		/* fall through */
+			case 9 : c += k8[8];						/* fall through */
+			case 8 : b += k[1]; a += k[0]; break;
+			case 7 : b += ((UW32)k8[6])<<16;		/* fall through */
+			case 6 : b += ((UW32)k8[5])<<8;		/* fall through */
+			case 5 : b += k8[4];						/* fall through */
+			case 4 : a += k[0]; break;
+			case 3 : a += ((UW32)k8[2])<<16;		/* fall through */
+			case 2 : a += ((UW32)k8[1])<<8;		/* fall through */
+			case 1 : a += k8[0]; break;
 			case 0 : break;	// return c;
 		}
 
 #endif	/* !valgrind */
 
 	} else if ((u.i & 0x1) == 0) {
-		const UW16 *k = (const UW16 *)key;			/* read 16-bit chunks */
-		const BYTE  *k8;
+		const	UW16	*k = (const UW16 *)key;			/* read 16-bit chunks */
+		const	BYTE	*k8;
 
 		/*--------------- all but last block: aligned reads and different mixing */
 		while (length > 12)
@@ -1095,32 +1119,32 @@ static UW32 bp_str_hash(const char *key, int length, UW32 initval)
 
 		/*----------------------------- handle the last (probably partial) block */
 		k8 = (const BYTE *)k;
-		switch(length)
+		switch (length)
 		{
-			case 12: c+=k[4]+(((UW32)k[5])<<16);
-				b+=k[2]+(((UW32)k[3])<<16);
-				a+=k[0]+(((UW32)k[1])<<16);
+			case 12: c += k[4] + (((UW32)k[5])<<16);
+				b += k[2] + (((UW32)k[3])<<16);
+				a += k[0] + (((UW32)k[1])<<16);
 				break;
-			case 11: c+=((UW32)k8[10])<<16;		/* fall through */
-			case 10: c+=k[4];
-				b+=k[2]+(((UW32)k[3])<<16);
-				a+=k[0]+(((UW32)k[1])<<16);
+			case 11: c += ((UW32)k8[10])<<16;		/* fall through */
+			case 10: c += k[4];
+				b += k[2] + (((UW32)k[3])<<16);
+				a += k[0] + (((UW32)k[1])<<16);
 				break;
-			case 9 : c+=k8[8];						/* fall through */
-			case 8 : b+=k[2]+(((UW32)k[3])<<16);
-				a+=k[0]+(((UW32)k[1])<<16);
+			case 9 : c += k8[8];						/* fall through */
+			case 8 : b += k[2] + (((UW32)k[3])<<16);
+				a += k[0] + (((UW32)k[1])<<16);
 				break;
-			case 7 : b+=((UW32)k8[6])<<16;		/* fall through */
-			case 6 : b+=k[2];
-				a+=k[0]+(((UW32)k[1])<<16);
+			case 7 : b += ((UW32)k8[6])<<16;		/* fall through */
+			case 6 : b += k[2];
+				a += k[0] + (((UW32)k[1])<<16);
 				break;
-			case 5 : b+=k8[4];						/* fall through */
-			case 4 : a+=k[0]+(((UW32)k[1])<<16);
+			case 5 : b += k8[4];						/* fall through */
+			case 4 : a += k[0] + (((UW32)k[1])<<16);
 				break;
-			case 3 : a+=((UW32)k8[2])<<16;		/* fall through */
-			case 2 : a+=k[0];
+			case 3 : a += ((UW32)k8[2])<<16;		/* fall through */
+			case 2 : a += k[0];
 				break;
-			case 1 : a+=k8[0];
+			case 1 : a += k8[0];
 				break;
 			case 0 : break;	// return c;						/* zero length requires no mixing */
 		}
@@ -1129,7 +1153,7 @@ static UW32 bp_str_hash(const char *key, int length, UW32 initval)
 	else
 #endif
 	{							/* need to read the key one byte at a time */
-		const BYTE *k = (const BYTE *)key;
+		const	BYTE	*k = (const BYTE *)key;
 
 		/*--------------- all but the last block: affect some 32 bits of (a, b, c) */
 		while (length > 12)
@@ -1152,20 +1176,20 @@ static UW32 bp_str_hash(const char *key, int length, UW32 initval)
 		}
 
 		/*-------------------------------- last block: affect all 32 bits of (c) */
-		switch(length)						/* all the case statements fall through */
+		switch (length)						/* all the case statements fall through */
 		{
-			case 12: c+=((UW32)k[11])<<24;
-			case 11: c+=((UW32)k[10])<<16;
-			case 10: c+=((UW32)k[9])<<8;
-			case 9 : c+=k[8];
-			case 8 : b+=((UW32)k[7])<<24;
-			case 7 : b+=((UW32)k[6])<<16;
-			case 6 : b+=((UW32)k[5])<<8;
-			case 5 : b+=k[4];
-			case 4 : a+=((UW32)k[3])<<24;
-			case 3 : a+=((UW32)k[2])<<16;
-			case 2 : a+=((UW32)k[1])<<8;
-			case 1 : a+=k[0];
+			case 12: c += ((UW32)k[11])<<24;
+			case 11: c += ((UW32)k[10])<<16;
+			case 10: c += ((UW32)k[9])<<8;
+			case 9 : c += k[8];
+			case 8 : b += ((UW32)k[7])<<24;
+			case 7 : b += ((UW32)k[6])<<16;
+			case 6 : b += ((UW32)k[5])<<8;
+			case 5 : b += k[4];
+			case 4 : a += ((UW32)k[3])<<24;
+			case 3 : a += ((UW32)k[2])<<16;
+			case 2 : a += ((UW32)k[1])<<8;
+			case 1 : a += k[0];
 				break;
 			case 0 : break;	// return c;
 		}
@@ -1177,19 +1201,19 @@ static UW32 bp_str_hash(const char *key, int length, UW32 initval)
 #endif
 
 /****************************************************************************/
-static INLINE SYM_REC_PTR search(CHAR_PTR name, BPLONG length, BPLONG arity, SYM_REC_PTR sym_ptr)
+static	INLINE	SYM_REC_PTR search(CHAR_PTR name, BPLONG length, BPLONG arity, SYM_REC_PTR sym_ptr)
 {
-	unsigned short i;
-	CHAR_PTR nameptr;
+	unsigned short	i;
+	CHAR_PTR		nameptr;
 
-	while (sym_ptr!=NULL) {
+	while (sym_ptr != NULL) {
 		if (arity  == GET_ARITY(sym_ptr) && length == GET_LENGTH(sym_ptr)) {
 			nameptr = GET_NAME(sym_ptr);
 			for (i = 0; i < length; i++)
 				if (*(name + i) != *(nameptr + i)) goto cont;
 			return sym_ptr;
 		}
-	cont:
+cont:
 		sym_ptr = GET_NEXT(sym_ptr);
 	}
 	return sym_ptr;
@@ -1203,10 +1227,10 @@ SYM_REC_PTR insert(const char *name, BPLONG length, BPLONG arity)
 
 SYM_REC_PTR insert_sym(const char *name, BPLONG length, BPLONG arity)
 {
-	BPLONG      bucket_no;
-	BPLONG i;
-	SYM_REC_PTR sym_ptr;
-	CHAR_PTR nameptr;
+	BPLONG		bucket_no;
+	BPLONG		i;
+	SYM_REC_PTR	sym_ptr;
+	CHAR_PTR	nameptr;
 
 	bucket_no = bp_str_hash(name, length, arity);
 	sym_ptr = (SYM_REC_PTR)hash_table[bucket_no];
@@ -1217,15 +1241,15 @@ SYM_REC_PTR insert_sym(const char *name, BPLONG length, BPLONG arity)
 				if (*(name + i) != *(nameptr + i)) goto cont;
 			return sym_ptr;
 		}
-	cont:
+cont:
 		sym_ptr = GET_NEXT(sym_ptr);
 	}
 	/* insert */
 	number_of_symbols++;
-	if (curr_fence >= (CHAR_PTR)parea_water_mark){
-		int success = 0;
+	if (curr_fence >= (CHAR_PTR)parea_water_mark) {
+		int	success = 0;
 		ALLOCATE_NEW_PAREA_BLOCK(parea_size, success);
-		if (success==0) myquit(OUT_OF_MEMORY,"ld");
+		if (success == 0) myquit(OUT_OF_MEMORY, "ld");
 	}
 
 	ALIGN(CHAR_PTR, curr_fence);	/* insert a sym record */
@@ -1246,17 +1270,21 @@ SYM_REC_PTR insert_sym(const char *name, BPLONG length, BPLONG arity)
 		*curr_fence++ = *name++;
 	*curr_fence++ = '\0';
 
-/*	CHECK_PCODE(curr_fence, 0); */
+#if 0
+	CHECK_PCODE(curr_fence, 0);
+#endif
 
-/*	ALIGN(CHAR_PTR, curr_fence); */
+#if 0
+	ALIGN(CHAR_PTR, curr_fence);
+#endif
 	return sym_ptr;
 }	/* end of insert */
 
 /*********************************************/
 SYM_REC_PTR insert_cpred(CHAR_PTR name, BPLONG arity, int (*func)(void))
 {
-	BPLONG      length;
-	SYM_REC_PTR sym_ptr;
+	BPLONG		length;
+	SYM_REC_PTR	sym_ptr;
 
 	length = strlen(name);
 	sym_ptr = insert_sym(name, length, arity);
@@ -1267,7 +1295,7 @@ SYM_REC_PTR insert_cpred(CHAR_PTR name, BPLONG arity, int (*func)(void))
 
 int set_temp_ep(SYM_REC_PTR sym_ptr, BPLONG ep)
 {
-	if (ep>=0){
+	if (ep >= 0) {
 		GET_ETYPE(sym_ptr) = T_TEMP_PRED;
 		GET_EP(sym_ptr) = (int (*)(void))ep;
 	}
@@ -1278,26 +1306,26 @@ int set_temp_ep(SYM_REC_PTR sym_ptr, BPLONG ep)
 void set_real_ep(SYM_REC_PTR sym_ptr, CHAR_PTR base)
 {
 	if (GET_ETYPE(sym_ptr) == T_TEMP_PRED) {
-		GET_EP(sym_ptr) = (int (*)(void))(base + (BPLONG)GET_EP(sym_ptr));	/*???*/
+		GET_EP(sym_ptr) = (int (*)(void))(base + (BPLONG)GET_EP(sym_ptr));	/* ??? */
 		GET_ETYPE(sym_ptr) = T_PRED;
 	}
 }
 
 
 /************************************?????????????????????*********/
-/*
+#if 0
 unset_file_ptr(SYM_REC_PTR sym_ptr)
 {
 	GET_ETYPE(sym_ptr) = T_ORDI;
 	(BPLONG)GET_EP(sym_ptr) = 0;
 }
-*/
+#endif
 
 /************************************?????????????????????*********/
 CHAR_PTR namestring(SYM_REC_PTR sym_ptr, CHAR_PTR s)
 {
-	BPLONG     i, len;
-	CHAR_PTR st;
+	BPLONG		i, len;
+	CHAR_PTR	st;
 
 	len = GET_LENGTH(sym_ptr);
 	st  = GET_NAME(sym_ptr);
@@ -1311,17 +1339,17 @@ CHAR_PTR namestring(SYM_REC_PTR sym_ptr, CHAR_PTR s)
 	return s;
 }
 
-int c_CURRENT_PREDICATE(void){
-	BPLONG bucket_no, length;
-	SYM_REC_PTR sym_ptr;
-	BPLONG f, n;
-	char *name;
-	BPLONG_PTR top;
+int c_CURRENT_PREDICATE(void) {
+	BPLONG		bucket_no, length;
+	SYM_REC_PTR	sym_ptr;
+	BPLONG		f, n;
+	char		*name;
+	BPLONG_PTR	top;
 
-	f = ARG(1, 2);DEREF(f);if (!ISATOM(f)){
+	f = ARG(1, 2); DEREF(f); if (!ISATOM(f)) {
 		exception = illegal_arguments;   return BP_ERROR;
 	}
-	n = ARG(2, 2);DEREF(n);if (!ISINT(n)){
+	n = ARG(2, 2); DEREF(n); if (!ISINT(n)) {
 		exception = illegal_arguments; return BP_ERROR;
 	}
 	n = INTVAL(n);
@@ -1331,9 +1359,9 @@ int c_CURRENT_PREDICATE(void){
 	length = strlen(name);
 	bucket_no = bp_str_hash(name, length , n);
 	sym_ptr = search(name, length, n, hash_table[bucket_no]);
-	if (sym_ptr==NULL) return BP_FALSE;
+	if (sym_ptr == NULL) return BP_FALSE;
 
-	switch (GET_ETYPE(sym_ptr)){
+	switch (GET_ETYPE(sym_ptr)) {
 	case T_DYNA:
 	case T_INTP:
 	case T_PRED:
@@ -1343,18 +1371,18 @@ int c_CURRENT_PREDICATE(void){
 	}
 }
 
-int c_CURRENT_PREDICATES(void){
-	BPLONG list, temp0, temp1, cell;
-	BPLONG i;
-	SYM_REC_PTR sym_ptr;
+int c_CURRENT_PREDICATES(void) {
+	BPLONG		list, temp0, temp1, cell;
+	BPLONG		i;
+	SYM_REC_PTR	sym_ptr;
 
 	list = ARG(1, 1);
 
 	temp1 = nil_sym;
 	for (i = 0; i < BUCKET_CHAIN; ++i) {
 		sym_ptr = hash_table[i];
-		while (sym_ptr!=NULL){
-			switch (GET_ETYPE(sym_ptr)){
+		while (sym_ptr != NULL) {
+			switch (GET_ETYPE(sym_ptr)) {
 			case T_DYNA:
 			case T_INTP:
 			case T_PRED:
@@ -1377,12 +1405,13 @@ int c_CURRENT_PREDICATES(void){
 
 SYM_REC_PTR look_for_sym_with_entrance(BPLONG_PTR p)
 {
-	BPLONG i;
-	SYM_REC_PTR sym_ptr;
-	for (i=0; i<BUCKET_CHAIN; ++i){
+	BPLONG		i;
+	SYM_REC_PTR	sym_ptr;
+
+	for (i = 0; i < BUCKET_CHAIN; ++i) {
 		sym_ptr = hash_table[i];
-		while (sym_ptr != NULL){
-			if ((BPLONG)GET_ETYPE(sym_ptr)==T_PRED && (BPLONG)GET_EP(sym_ptr)==(BPLONG)p) return sym_ptr;
+		while (sym_ptr != NULL) {
+			if ((BPLONG)GET_ETYPE(sym_ptr) == T_PRED && (BPLONG)GET_EP(sym_ptr) == (BPLONG)p) return sym_ptr;
 			sym_ptr = GET_NEXT(sym_ptr);
 		}
 	}
@@ -1394,7 +1423,7 @@ SYM_REC_PTR look_for_sym_with_entrance(BPLONG_PTR p)
 				list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(BCInsts);					\
 				val = FOLLOW(list_ptr);											\
 				DEREF(val);														\
-				BCInsts = FOLLOW(list_ptr+1);									\
+				BCInsts = FOLLOW(list_ptr + 1);									\
 				DEREF(BCInsts);													\
 			}
 
@@ -1409,16 +1438,16 @@ SYM_REC_PTR look_for_sym_with_entrance(BPLONG_PTR p)
 /* the structure integer(I) means constant integer I */
 #define LoadConstantFromBPList {												\
 				READ_FROM_BCINSTS(temp);										\
-				if (ISSTRUCT(temp)){											\
-					BPLONG_PTR struct_ptr;										\
-					BPLONG i;													\
+				if (ISSTRUCT(temp)) {											\
+					BPLONG_PTR	struct_ptr;										\
+					BPLONG		i;												\
 					struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(temp);				\
-					i = FOLLOW(struct_ptr+1);									\
+					i = FOLLOW(struct_ptr + 1);									\
 					DEREF(i);													\
 					*inst_addr = i;												\
 				} else {														\
 					temp = INTVAL(temp);										\
-					*inst_addr = ADDTAG(reloc_table[temp>>2], ATM);				\
+					*inst_addr = ADDTAG(reloc_table[temp >> 2], ATM);			\
 				}																\
 				inst_addr++;													\
 			}
@@ -1440,17 +1469,17 @@ SYM_REC_PTR look_for_sym_with_entrance(BPLONG_PTR p)
 /*  Z is integer(i) or an integer. The integer means C, u(y), or v(y) depending on the last two bits */
 #define LoadZFromBPList {														\
 				READ_FROM_BCINSTS(temp);										\
-				if (ISSTRUCT(temp)){											\
-					BPLONG_PTR struct_ptr;										\
-					BPLONG i;													\
+				if (ISSTRUCT(temp)) {											\
+					BPLONG_PTR	struct_ptr;										\
+					BPLONG		i;												\
 					struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(temp);				\
-					i = FOLLOW(struct_ptr+1);									\
+					i = FOLLOW(struct_ptr + 1);									\
 					DEREF(i);													\
 					*inst_addr = i;												\
 				} else {														\
 					temp = INTVAL(temp);										\
-					if (TAG(temp)==ATM){										\
-						*inst_addr = ADDTAG(reloc_table[temp>>2], ATM);			\
+					if (TAG(temp) == ATM) {										\
+						*inst_addr = ADDTAG(reloc_table[temp >> 2], ATM);		\
 					} else {													\
 						*inst_addr = temp;										\
 					}															\
@@ -1459,30 +1488,30 @@ SYM_REC_PTR look_for_sym_with_entrance(BPLONG_PTR p)
 			}
 
 #define LoadZsFromBPList(n) {													\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadZFromBPList;											\
 					n--;														\
 				}																\
 			}
 
 #define LoadYsFromBPList(n) {													\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadLiteralFromBPList;										\
 					n--;														\
 				}																\
 			}
 
 #define LoadConstantsFromBPList(n) {											\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadZFromBPList;											\
 					n--;														\
 				}																\
 			}
 
 /* Load in-memory byte codes */
-int c_LOAD_BYTE_CODE_FROM_BPLISTS(void){
-	BPLONG BCSyms, BCInsts, BCHashTabs;
-	BPLONG total_size;
+int c_LOAD_BYTE_CODE_FROM_BPLISTS(void) {
+	BPLONG	BCSyms, BCInsts, BCHashTabs;
+	BPLONG	total_size;
 
 	void load_syms_fromlist();
 	void load_text_fromlist();
@@ -1495,19 +1524,19 @@ int c_LOAD_BYTE_CODE_FROM_BPLISTS(void){
 	BCInsts = ARG(5, 6); DEREF(BCInsts);
 	BCHashTabs = ARG(6, 6); DEREF(BCHashTabs);
 
-/*
+#if 0
 	printf("=>load %d %d %d\n", psc_bytes, text_bytes, index_bytes);
-	write_term(BCSyms); printf("\n");
-	write_term(BCInsts); printf("\n");
-	write_term(BCHashTabs); printf("\n");
-*/
+	write_term(BCSyms);	printf("\n");
+	write_term(BCInsts);	printf("\n");
+	write_term(BCHashTabs);	printf("\n");
+#endif
 
-	total_size = sizeof(BPLONG)*text_bytes + index_bytes + psc_bytes + 1000;
-	if ((CHAR_PTR)curr_fence+total_size>(CHAR_PTR)parea_water_mark){
-		int success = 0;
-		if (total_size>parea_size) parea_size = total_size;
+	total_size = sizeof(BPLONG) * text_bytes + index_bytes + psc_bytes + 1000;
+	if ((CHAR_PTR)curr_fence + total_size>(CHAR_PTR)parea_water_mark) {
+		int	success = 0;
+		if (total_size > parea_size) parea_size = total_size;
 		ALLOCATE_NEW_PAREA_BLOCK(parea_size, success);
-		if (success==0){
+		if (success == 0) {
 			exception = bp_out_of_memory_atom;
 			return BP_ERROR;
 		}
@@ -1529,29 +1558,29 @@ int c_LOAD_BYTE_CODE_FROM_BPLISTS(void){
 */
 void load_syms_fromlist(BPLONG BCSyms)
 {
-	BPLONG i, j;
+	BPLONG	i, j;
 
 	i = 0;
-	while (ISLIST(BCSyms)){
-		BPLONG_PTR list_ptr, struct_ptr;
-		BPLONG sym_struct, ep_offset, arity, len, atm;
-		SYM_REC_PTR sym_ptr;
+	while (ISLIST(BCSyms)) {
+		BPLONG_PTR	list_ptr, struct_ptr;
+		BPLONG		sym_struct, ep_offset, arity, len, atm;
+		SYM_REC_PTR	sym_ptr;
 
 		list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(BCSyms);
 		sym_struct = FOLLOW(list_ptr); DEREF(sym_struct);
-		BCSyms=FOLLOW(list_ptr+1); DEREF(BCSyms);
+		BCSyms = FOLLOW(list_ptr + 1); DEREF(BCSyms);
 		DEREF(sym_struct);
 		struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(sym_struct);
-		ep_offset = FOLLOW(struct_ptr+1); DEREF(ep_offset); ep_offset = INTVAL(ep_offset);
-		arity = FOLLOW(struct_ptr+2); DEREF(arity); arity = INTVAL(arity);
-		len = FOLLOW(struct_ptr+3); DEREF(len); len = INTVAL(len);
-		atm = FOLLOW(struct_ptr+4); DEREF(atm);
+		ep_offset = FOLLOW(struct_ptr + 1); DEREF(ep_offset); ep_offset = INTVAL(ep_offset);
+		arity = FOLLOW(struct_ptr + 2); DEREF(arity); arity = INTVAL(arity);
+		len = FOLLOW(struct_ptr + 3); DEREF(len); len = INTVAL(len);
+		atm = FOLLOW(struct_ptr + 4); DEREF(atm);
 		sym_ptr = (SYM_REC_PTR)GET_ATM_SYM_REC(atm);
 		reloc_table[i] = insert_sym(GET_NAME(sym_ptr), len, arity);
-		set_temp_ep(reloc_table[i], ep_offset*sizeof(BPLONG));
+		set_temp_ep(reloc_table[i], ep_offset * sizeof(BPLONG));
 
 		i++;
-		if (i>=MAXSYMS){
+		if (i >= MAXSYMS) {
 			exception = out_of_range;
 			quit("Out of range in symbol table");
 		}
@@ -1563,8 +1592,8 @@ void load_syms_fromlist(BPLONG BCSyms)
 
 void load_text_fromlist(BPLONG BCInsts)
 {
-	BPLONG n;
-	SYM_REC_PTR sym_ptr;
+	BPLONG		n;
+	SYM_REC_PTR	sym_ptr;
 
 	/* load text */
 	inst_addr = (BPLONG_PTR)curr_fence;
@@ -1573,14 +1602,14 @@ void load_text_fromlist(BPLONG BCInsts)
 	else
 		*last_text = (BPLONG)inst_addr;
 
-	CHECK_PCODE(curr_fence, sizeof(BPLONG)*text_bytes);
+	CHECK_PCODE(curr_fence, sizeof(BPLONG) * text_bytes);
 
-	while (ISLIST(BCInsts)){
-		BPLONG current_opcode;
-		BPLONG_PTR list_ptr;
+	while (ISLIST(BCInsts)) {
+		BPLONG		current_opcode;
+		BPLONG_PTR	list_ptr;
 		list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(BCInsts);
-		current_opcode = FOLLOW(list_ptr); DEREF(current_opcode); current_opcode=INTVAL(current_opcode);
-		BCInsts = FOLLOW(list_ptr+1); DEREF(BCInsts);
+		current_opcode = FOLLOW(list_ptr); DEREF(current_opcode); current_opcode = INTVAL(current_opcode);
+		BCInsts = FOLLOW(list_ptr + 1); DEREF(BCInsts);
 
 #ifdef GCC
 		*(void **)inst_addr++ = jmp_table[current_opcode];
@@ -1601,26 +1630,26 @@ void load_hashtab_fromlist(BPLONG BCHashTabs)
 	void get_index_tab_fromlist();
 
 	CHECK_PCODE((CHAR_PTR)inst_addr, index_bytes);
-	while (ISLIST(BCHashTabs)){
-		BPLONG     hashtab, hash_inst_addr, hash_reg, alt, clause_no, HashArgs;
-		BPLONG_PTR list_ptr, struct_ptr;
+	while (ISLIST(BCHashTabs)) {
+		BPLONG		hashtab, hash_inst_addr, hash_reg, alt, clause_no, HashArgs;
+		BPLONG_PTR	list_ptr, struct_ptr;
 
 		list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(BCHashTabs);
 		hashtab = FOLLOW(list_ptr); DEREF(hashtab);
-		BCHashTabs = FOLLOW(list_ptr+1); DEREF(BCHashTabs);
+		BCHashTabs = FOLLOW(list_ptr + 1); DEREF(BCHashTabs);
 		struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(hashtab);
 
-		temp = FOLLOW(struct_ptr+1); DEREF(temp); temp=INTVAL(temp);
+		temp = FOLLOW(struct_ptr + 1); DEREF(temp); temp = INTVAL(temp);
 		hash_inst_addr = (BPLONG)RELOC_ADDR(temp);
 
-		hash_reg = FOLLOW(struct_ptr+2); DEREF(hash_reg); hash_reg = INTVAL(hash_reg);
+		hash_reg = FOLLOW(struct_ptr + 2); DEREF(hash_reg); hash_reg = INTVAL(hash_reg);
 
-		clause_no = FOLLOW(struct_ptr+3); DEREF(clause_no); clause_no = INTVAL(clause_no);
+		clause_no = FOLLOW(struct_ptr + 3); DEREF(clause_no); clause_no = INTVAL(clause_no);
 
-		temp = FOLLOW(struct_ptr+4); DEREF(temp); temp=INTVAL(temp);
+		temp = FOLLOW(struct_ptr + 4); DEREF(temp); temp = INTVAL(temp);
 		alt = (BPLONG)RELOC_ADDR(temp);
 
-		HashArgs = FOLLOW(struct_ptr+5); DEREF(HashArgs);
+		HashArgs = FOLLOW(struct_ptr + 5); DEREF(HashArgs);
 
 		get_index_tab_fromlist(HashArgs, clause_no);
 		inst_addr = gen_index(hash_inst_addr, clause_no, alt);
@@ -1630,15 +1659,15 @@ void load_hashtab_fromlist(BPLONG BCHashTabs)
 /* Recall that each HashArg takes the form hash_arg(Type, Nval, Lab) */
 void get_index_tab_fromlist(BPLONG HashArgs, BPLONG clause_no)
 {
-	BPLONG     hashval, size, j;
-	BPLONG     val, ttype;
-	BPLONG_PTR label;
+	BPLONG		hashval, size, j;
+	BPLONG		val, ttype;
+	BPLONG_PTR	label;
 
 	hptr = heap_top;
 	size = bp_hsize(clause_no);
-	if (size>index_table_size){
-		if (indextab!=NULL) free(indextab);
-		indextab = (struct hrec *)malloc(sizeof(struct hrec)*size);
+	if (size > index_table_size) {
+		if (indextab != NULL) free(indextab);
+		indextab = (struct hrec *)malloc(sizeof(struct hrec) * size);
 		index_table_size = size;
 	}
 
@@ -1647,50 +1676,50 @@ void get_index_tab_fromlist(BPLONG HashArgs, BPLONG clause_no)
 		indextab[j].link = (BPLONG_PTR)(&(indextab[j].link));
 	}
 
-	while (ISLIST(HashArgs)){
-		BPLONG hash_item, type;
-		BPLONG_PTR list_ptr, struct_ptr;
-		SYM_REC_PTR sym_ptr;
+	while (ISLIST(HashArgs)) {
+		BPLONG		hash_item, type;
+		BPLONG_PTR	list_ptr, struct_ptr;
+		SYM_REC_PTR	sym_ptr;
 		char *nameptr;
 
 		list_ptr = (BPLONG_PTR)UNTAGGED_ADDR(HashArgs);
 		hash_item = FOLLOW(list_ptr); DEREF(hash_item);
-		HashArgs = FOLLOW(list_ptr+1); DEREF(HashArgs);
+		HashArgs = FOLLOW(list_ptr + 1); DEREF(HashArgs);
 		struct_ptr = (BPLONG_PTR)UNTAGGED_ADDR(hash_item);
 
-		type = FOLLOW(struct_ptr+1); DEREF(type);	/* type = c, i, or t */
+		type = FOLLOW(struct_ptr + 1); DEREF(type);	/* type = c, i, or t */
 		sym_ptr = GET_ATM_SYM_REC(type);
 		nameptr = GET_NAME(sym_ptr);
 
-		val = FOLLOW(struct_ptr+2); DEREF(val);
+		val = FOLLOW(struct_ptr + 2); DEREF(val);
 		switch (*nameptr) {
 			case 'i':
-				ttype=0;
+				ttype = 0;
 				break;
 			case 's':
 				val = INTVAL(val);
 				val = (BPLONG)reloc_table[val];
-				if (val==(BPLONG)list_psc) {
-					ttype=1;
+				if (val == (BPLONG)list_psc) {
+					ttype = 1;
 				} else {
-					ttype=2;
+					ttype = 2;
 				}
 				break;
 			case 'c':
 				val = INTVAL(val);
 				val = (BPLONG)reloc_table[val];
-				if (val==UNTAGGED_ADDR(nil_sym))
-					ttype=3;
+				if (val == UNTAGGED_ADDR(nil_sym))
+					ttype = 3;
 				else
-					ttype=4;
+					ttype = 4;
 				val = ADDTAG(val, ATM);
 				break;
 			default:
-				printf("WARNING: unknown type %c in get_index_tab\n",*nameptr);
+				printf("WARNING: unknown type %c in get_index_tab\n", *nameptr);
 				ttype = 0;
 				val = 0;
 		}
-		temp = FOLLOW(struct_ptr+3); DEREF(temp); temp = INTVAL(temp);
+		temp = FOLLOW(struct_ptr + 3); DEREF(temp); temp = INTVAL(temp);
 		label = RELOC_ADDR(temp);
 		hashval = IHASH(val, size);
 		inserth(ttype, val, label, &indextab[hashval]);
@@ -1708,7 +1737,7 @@ void get_index_tab_fromlist(BPLONG HashArgs, BPLONG clause_no)
 
 /* bc_insts[count+1] should be tagged with INT or not depending on bc_insts[count] (1 means tagged and 0 means untagged */
 #define LoadConstantFromCArray {												\
-				if (bc_optags[count]==1){										\
+				if (bc_optags[count] == 1) {									\
 					*inst_addr = MAKEINT(bc_insts[count++]);					\
 				} else {														\
 					*inst_addr = ADDTAG(reloc_table[bc_insts[count++]>>2], ATM);	\
@@ -1730,12 +1759,12 @@ void get_index_tab_fromlist(BPLONG HashArgs, BPLONG clause_no)
 
 /*  Z is integer(i) or an integer. The integer means C, u(y), or v(y) depending on the last two bits */
 #define LoadZFromCArray {														\
-				if (bc_optags[count]==1){										\
+				if (bc_optags[count] == 1) {									\
 					*inst_addr = MAKEINT(bc_insts[count++]);					\
 				} else {														\
 					temp = bc_insts[count++];									\
-					if (TAG(temp)==ATM){										\
-						*inst_addr = ADDTAG(reloc_table[temp>>2], ATM);			\
+					if (TAG(temp) == ATM) {										\
+						*inst_addr = ADDTAG(reloc_table[temp >> 2], ATM);		\
 					} else {													\
 						*inst_addr = temp;										\
 					}															\
@@ -1744,31 +1773,31 @@ void get_index_tab_fromlist(BPLONG HashArgs, BPLONG clause_no)
 			}
 
 #define LoadZsFromCArray(n) {													\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadZFromCArray;											\
 					n--;														\
 				}																\
 			}
 
 #define LoadYsFromCArray(n) {													\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadLiteralFromCArray;										\
 					n--;														\
 				}																\
 			}
 
 #define LoadConstantsFromCArray(n) {											\
-				while (n>0) {													\
+				while (n > 0) {													\
 					LoadZFromCArray;											\
 					n--;														\
 				}																\
 			}
 
 typedef struct {
-	int offset;
-	BYTE arity;
-	BYTE len;
-	char *name;
+	int		offset;
+	BYTE	arity;
+	BYTE	len;
+	char	*name;
 } BC_SYM;
 
 #ifdef PRISM
@@ -1792,7 +1821,7 @@ typedef struct {
 #endif
 
 /* Load byte codes stored in C arrays */
-int load_byte_code_from_c_array(void){
+int load_byte_code_from_c_array(void) {
 	void load_syms_from_c_array();
 	void load_text_from_c_array();
 	void load_hashtab_from_c_array();
@@ -1809,29 +1838,33 @@ int load_byte_code_from_c_array(void){
 	return BP_TRUE;
 }
 
-void load_syms_from_c_array(void){
-	BPLONG i;
-	BPLONG num_of_syms = sizeof(bc_syms)/sizeof(BC_SYM);
+void load_syms_from_c_array(void) {
+	BPLONG	i;
+	BPLONG	num_of_syms = sizeof(bc_syms) / sizeof(BC_SYM);
 
-//	printf("number of syms=%d\n", num_of_syms);
+#if 0
+	printf("number of syms=%d\n", num_of_syms);
+#endif
 
-	for (i=0; i<num_of_syms; i++){
+	for (i = 0; i < num_of_syms; i++) {
 		reloc_table[i] = insert_sym(bc_syms[i].name, bc_syms[i].len, bc_syms[i].arity);
-		set_temp_ep(reloc_table[i], (bc_syms[i].offset)*sizeof(BPLONG));
+		set_temp_ep(reloc_table[i], (bc_syms[i].offset) * sizeof(BPLONG));
 	}
 	ALIGN(CHAR_PTR, curr_fence);
 	for (i = 0; i < num_of_syms; i++)
 		set_real_ep(reloc_table[i], curr_fence);
 }
 
-void load_text_from_c_array(void){
-	BPLONG n;
-	SYM_REC_PTR sym_ptr;
-	BPLONG current_opcode = 0;
-	BPLONG  count;
-	BPLONG text_array_size = sizeof(bc_insts)/sizeof(int);
+void load_text_from_c_array(void) {
+	BPLONG		n;
+	SYM_REC_PTR	sym_ptr;
+	BPLONG		current_opcode = 0;
+	BPLONG		count;
+	BPLONG		text_array_size = sizeof(bc_insts) / sizeof(int);
 
-//	printf("text size=%d\n", text_array_size);
+#if 0
+	printf("text size=%d\n", text_array_size);
+#endif
 
 	inst_addr = (BPLONG_PTR)curr_fence;
 	if (inst_begin == 0)
@@ -1839,12 +1872,13 @@ void load_text_from_c_array(void){
 	else
 		*last_text = (BPLONG)inst_addr;
 	count = 0;
-	while (count<text_array_size){
+	while (count < text_array_size) {
 		current_opcode = bc_insts[count++];
 
-/*		printf("op=%d\n", current_opcode);
+#if 0
+		printf("op=%d\n", current_opcode);
 		printf("\t%s", inst_name[current_opcode]);
-*/
+#endif
 
 #ifdef GCC
 		*(void **)inst_addr++ = jmp_table[current_opcode];
@@ -1855,36 +1889,42 @@ void load_text_from_c_array(void){
 	}
 }
 
-void load_hashtab_from_c_array(void){
-	BPLONG hash_inst_addr, alt, clause_no;
-	BPLONG count, hash_array_size;
+void load_hashtab_from_c_array(void) {
+	BPLONG		hash_inst_addr, alt, clause_no;
+	BPLONG		count, hash_array_size;
 
-	BPLONG     hashval, size, j;
-	BYTE     type;
-	BPLONG     val, ttype;
-	BPLONG_PTR label;
+	BPLONG		hashval, size, j;
+	BYTE		type;
+	BPLONG		val, ttype;
+	BPLONG_PTR	label;
 
-	BPLONG n_hashtabs = 0;
+	BPLONG		n_hashtabs = 0;
 	count = 0;
-	hash_array_size = sizeof(bc_indecies)/sizeof(int);
+	hash_array_size = sizeof(bc_indecies) / sizeof(int);
 
-//	printf("hash_array_size =%d\n", hash_array_size);
+#if 0
+	printf("hash_array_size =%d\n", hash_array_size);
+#endif
 
-	while (count<hash_array_size){
+	while (count < hash_array_size) {
 		n_hashtabs++;
 		hash_inst_addr = (BPLONG)RELOC_ADDR(bc_indecies[count++]);
-//		hash_reg = bc_indecies[count++];
+#if 0
+		hash_reg = bc_indecies[count++];
+#endif
 		bc_indecies[count++];
 		clause_no = bc_indecies[count++];
 		alt = (BPLONG)RELOC_ADDR(bc_indecies[count++]);
 
-//		printf("lab=%d hash_reg=%d clause_no=%d alt=%d\n", hash_inst_addr, hash_reg, clause_no, alt);
+#if 0
+		printf("lab=%d hash_reg=%d clause_no=%d alt=%d\n", hash_inst_addr, hash_reg, clause_no, alt);
+#endif
 
 		hptr = heap_top;
 		size = bp_hsize(clause_no);
-		if (size>index_table_size){
-			if (indextab!=NULL) free(indextab);
-			indextab = (struct hrec *)malloc(sizeof(struct hrec)*size);
+		if (size > index_table_size) {
+			if (indextab != NULL) free(indextab);
+			indextab = (struct hrec *)malloc(sizeof(struct hrec) * size);
 			index_table_size = size;
 		}
 
@@ -1893,29 +1933,31 @@ void load_hashtab_from_c_array(void){
 			indextab[j].link = (BPLONG_PTR)(&(indextab[j].link));
 		}
 
-		for (j=0; j<clause_no; j++){
+		for (j = 0; j < clause_no; j++) {
 			type = (BYTE)bc_indecies[count++];
 			val = bc_indecies[count++];
-//			printf("type=%d val=%d\n", type, val);
+#if 0
+			printf("type=%d val=%d\n", type, val);
+#endif
 			switch (type) {
 				case 'i':
-					ttype=0;
+					ttype = 0;
 					val = MAKEINT(val);
 					break;
 				case 's':
 					val = (BPLONG)reloc_table[val];
-					if (val==(BPLONG)list_psc) {
-						ttype=1;
+					if (val == (BPLONG)list_psc) {
+						ttype = 1;
 					} else {
-						ttype=2;
+						ttype = 2;
 					}
 					break;
 				case 'c':
 					val = (BPLONG)reloc_table[val];
-					if (val==UNTAGGED_ADDR(nil_sym))
-						ttype=3;
+					if (val == UNTAGGED_ADDR(nil_sym))
+						ttype = 3;
 					else
-						ttype=4;
+						ttype = 4;
 					val = ADDTAG(val, ATM);
 					break;
 				default:

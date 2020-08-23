@@ -1,7 +1,7 @@
 /********************************************************************
  *	File	: init_sym.c
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -12,10 +12,10 @@
 #include "term.h"
 #include <string.h>
 
-extern BPLONG interrupt_sym;
-extern SYM_REC_PTR ball_psc;
+extern	BPLONG		interrupt_sym;
+extern	SYM_REC_PTR	ball_psc;
 
-void init_sym(void){
+void init_sym(void) {
 
 	nil_sym = ADDTAG(insert_sym("[]", 2, 0), ATM);
 	period_sym = ADDTAG(insert_sym(".", 1, 0), ATM);
@@ -42,9 +42,9 @@ void init_sym(void){
 	float_psc = insert_sym("$float", 6, 3);
 	bigint_psc = insert_sym("$bigint", 7, 2);
 
-	address_psc = insert_sym("$address", 8, 2);																			//branch
-	socket_psc = insert_sym("$socket", 7, 1);																						//branch
-	stream_psc = insert_sym("$stream", 7, 1);																						//branch
+	address_psc = insert_sym("$address", 8, 2);			// branch
+	socket_psc = insert_sym("$socket", 7, 1);			// branch
+	stream_psc = insert_sym("$stream", 7, 1);			// branch
 
 	timer_psc = BP_NEW_SYM("$timer", 5);
 	enter_dyn_call = insert_sym("$trace_call", 11, 1);
@@ -152,7 +152,7 @@ void init_sym(void){
 	init_char_sym();
 }
 
-void init_error_sym(void){
+void init_error_sym(void) {
 	str_BUILTIN_ERROR1 = BP_NEW_SYM("type_args", 2);
 	str_BUILTIN_ERROR2 = BP_NEW_SYM("type_args", 3);
 	str_BUILTIN_ERROR3 = BP_NEW_SYM("type_args", 4);
@@ -226,11 +226,11 @@ void init_error_sym(void){
 	et_STRING_TOO_LONG  = ADDTAG(BP_NEW_SYM("string_too_long", 0), ATM);
 
 	{
-		BPLONG_PTR ptr;
+		BPLONG_PTR	ptr;
 
 		ALIGN(CHAR_PTR, curr_fence);
 		ptr = (BPLONG_PTR)curr_fence;
-		et_OUT_OF_MEMORY = ADDTAG((BPLONG)ptr, STR);	/* resource_error(out_of_memory) */
+		et_OUT_OF_MEMORY = ADDTAG((BPLONG)ptr, STR);		/* resource_error(out_of_memory) */
 		FOLLOW(ptr++) = (BPLONG)str_RESOURCE_ERROR;
 		FOLLOW(ptr++) = bp_out_of_memory_atom;
 
@@ -249,9 +249,9 @@ void init_error_sym(void){
 }
 
 void init_char_sym(void) {
-	int i;
+	int	i;
 	char c;
-	for (i=1; i<AlphabetSize; i++){
+	for (i = 1; i < AlphabetSize; i++) {
 		c = (char)i;
 		char_sym_table[i] = ADDTAG(insert_sym(&c, 1, 0), ATM);
 	}

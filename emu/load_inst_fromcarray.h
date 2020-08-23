@@ -1,4 +1,4 @@
- switch (current_opcode){
+switch (current_opcode) {
 	case noop:
 	case cut_return:
 	case return_det:
@@ -383,7 +383,7 @@
 		break;
 	case call_var:
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1);
+		n = FOLLOW(inst_addr - 1);
 		LoadZsFromCArray(n);
 		LoadLiteralFromCArray;
 		break;
@@ -638,7 +638,7 @@
 	case unify_arg_list:
 	case build_arg_list:
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1)+1;
+		n = FOLLOW(inst_addr - 1) + 1;
 		LoadZsFromCArray(n);
 		break;
 	case unify_arg_2c:
@@ -656,14 +656,14 @@
 	case move_list:
 		LoadYFromCArray;
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1)+1;
+		n = FOLLOW(inst_addr - 1) + 1;
 		LoadZsFromCArray(n);
 		break;
 	case unify_comp_list:
 	case move_comp_list:
 		LoadYFromCArray;
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1);
+		n = FOLLOW(inst_addr - 1);
 		LoadZsFromCArray(n);
 		break;
 	case unify_cons:
@@ -796,7 +796,7 @@
 	case last_call:
 		LoadLiteralFromCArray;
 		LoadStructFromCArray;
-		sym_ptr = (SYM_REC_PTR)FOLLOW(inst_addr-1);
+		sym_ptr = (SYM_REC_PTR)FOLLOW(inst_addr - 1);
 		n = GET_ARITY(sym_ptr);
 		LoadZsFromCArray(n);
 		LoadLiteralFromCArray;
@@ -806,7 +806,7 @@
 		LoadAddrFromCArray;
 		LoadLiteralFromCArray;
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1);
+		n = FOLLOW(inst_addr - 1);
 		LoadZsFromCArray(n);
 		LoadLiteralFromCArray;
 		break;
@@ -822,7 +822,7 @@
 		LoadAddrFromCArray;
 		LoadLiteralFromCArray;
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1);
+		n = FOLLOW(inst_addr - 1);
 		LoadYsFromCArray(n);
 		LoadLiteralFromCArray;
 		break;
@@ -837,7 +837,7 @@
 		LoadLiteralFromCArray;
 		LoadLiteralFromCArray;
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1);
+		n = FOLLOW(inst_addr - 1);
 		LoadYsFromCArray(n);
 		LoadLiteralFromCArray;
 		break;
@@ -871,13 +871,13 @@
 		LoadYFromCArray;
 		LoadYFromCArray;
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1);
+		n = FOLLOW(inst_addr - 1);
 		LoadYsFromCArray(n);
 		break;
 	case asp_add_tuple:
 		LoadYFromCArray;
 		LoadLiteralFromCArray;
-		n = FOLLOW(inst_addr-1);
+		n = FOLLOW(inst_addr - 1);
 		LoadYsFromCArray(n);
 		break;
 }

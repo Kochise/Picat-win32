@@ -1,7 +1,7 @@
 /********************************************************************
  *	File	: dis.c
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -11,9 +11,9 @@
 #include "inst.h"
 #include "term.h"
 
-/*
+#if 0
 #define DEBUG_DIS
-*/
+#endif
 
 static FILE *filedes;
 
@@ -33,15 +33,15 @@ void dis(void)
 
 void dis_data(void)
 {
-	SYM_REC_PTR psc_ptr;
-	BPLONG i;
+	SYM_REC_PTR	psc_ptr;
+	BPLONG		i;
 
 	fprintf(filedes, "\n/* data below: name, arity, type, axnd entry */\n\n");
 	printf("==> dis_data\n");
 
 	for (i = 0; i < BUCKET_CHAIN; ++i) {
 		psc_ptr = hash_table[i];
-		while (psc_ptr!=NULL) {
+		while (psc_ptr != NULL) {
 			fprintf(filedes, "%lx: ", (BPLONG)psc_ptr);
 			curr_out = filedes;
 			bp_write_pname(GET_NAME(psc_ptr));
@@ -60,11 +60,11 @@ void dis_data(void)
 	fprintf(filedes, "\n");
 }
 
-/*
+#if 0
 void symbol_table_statistics(int *num_of_empty_buckets, int *len_of_longest_chain)
 {
-	SYM_REC_PTR psc_ptr;
-	int i, count;
+	SYM_REC_PTR	psc_ptr;
+	int			i, count;
 
 	*num_of_empty_buckets = 0;
 	*len_of_longest_chain = 0;
@@ -72,17 +72,17 @@ void symbol_table_statistics(int *num_of_empty_buckets, int *len_of_longest_chai
 	for (i = 0; i < BUCKET_CHAIN; ++i) {
 		psc_ptr = hash_table[i];
 		count = 0;
-		while (psc_ptr!=NULL) {
+		while (psc_ptr != NULL) {
 			psc_ptr = GET_NEXT(psc_ptr);
 			count++;
 		}
-		if (count==0)
-			*num_of_empty_buckets = *num_of_empty_buckets+1;
+		if (count == 0)
+			*num_of_empty_buckets = *num_of_empty_buckets + 1;
 		if (count > *len_of_longest_chain)
 			*len_of_longest_chain = count;
 	}
 }
-*/
+#endif
 
 void dis_text(void)
 {
@@ -95,29 +95,31 @@ void dis_text(void)
 		fprintf(filedes, "\nNew segment below	\n\n");
 		while (*cpreg != endfile)
 			print_inst(filedes);
-		cpreg++;cpreg++;
-	} while (0!=(cpreg = (BPLONG_PTR)*cpreg));
+		cpreg++; cpreg++;
+	} while (0 != (cpreg = (BPLONG_PTR)*cpreg));
 }
 
 void print_inst(FILE *filedes)
 {
+	BPLONG		opcode;
+	BPLONG		i, n;
+	SYM_REC_PTR	sym_ptr;
 
-	BPLONG     opcode;
-	BPLONG     i, n;
-	SYM_REC_PTR sym_ptr;
 	if (num_line)
 		fprintf(filedes, "%lx\t", (unsigned long int) cpreg);
 	opcode = *cpreg++;
 
-//	printf("dis %s\n", inst_name[opcode]);
+#if 0
+	printf("dis %s\n", inst_name[opcode]);
+#endif
 
 	if (opcode == tabsize) {
-		i=*cpreg++;
+		i = *cpreg++;
 		fprintf(filedes, "\t %lx\n", i);
 
-		while (i>0) {
-			if (num_line) fprintf(filedes, "%lx\t",(unsigned long int) cpreg);
-			fprintf(filedes, "\t %lx\n",*cpreg++);
+		while (i > 0) {
+			if (num_line) fprintf(filedes, "%lx\t", (unsigned long int) cpreg);
+			fprintf(filedes, "\t %lx\n", *cpreg++);
 			i--;
 		}
 	} else {
@@ -127,18 +129,18 @@ void print_inst(FILE *filedes)
 
 void dis_addr(FILE *filedes, BPLONG operand)
 {
-	fprintf(filedes, "' %lx'",(operand));
+	fprintf(filedes, "' %lx'", (operand));
 }
 
 void dis_y(FILE *filedes, BPLONG operand)
 {
-	fprintf(filedes, " %d",(int)operand);
+	fprintf(filedes, " %d", (int)operand);
 }
 
 void dis_constant(FILE *filedes, BPLONG operand)
 {
-	SYM_REC_PTR sym_ptr;
-	if (ISINT(operand)) fprintf(filedes, "c(%d)",(int)INTVAL(operand));
+	SYM_REC_PTR	sym_ptr;
+	if (ISINT(operand)) fprintf(filedes, "c(%d)", (int)INTVAL(operand));
 	else {
 		sym_ptr = (SYM_REC_PTR)UNTAGGED_ADDR(operand);
 		fprintf(filedes, "c('%s')", GET_NAME(sym_ptr));
@@ -147,43 +149,43 @@ void dis_constant(FILE *filedes, BPLONG operand)
 
 void dis_literal(FILE *filedes, BPLONG operand)
 {
-	fprintf(filedes, " %d",(int)operand);
+	fprintf(filedes, " %d", (int)operand);
 }
 
 void dis_z(FILE *filedes, BPLONG operand)
 {
-	if (TAG(operand)==ATM){
+	if (TAG(operand) == ATM) {
 		dis_constant(filedes, operand);
-	} else if (TAG(operand)==0){	/* vy */
-		if (operand==0)
+	} else if (TAG(operand) == 0) {	/* vy */
+		if (operand == 0)
 			fprintf(filedes, " w");
 		else
-			fprintf(filedes, " v(%d)",(int)(operand>>2));
+			fprintf(filedes, " v(%d)", (int)(operand >> 2));
 	} else {
-		fprintf(filedes, " u(%d)",(int)(operand>>2));
+		fprintf(filedes, " u(%d)", (int)(operand >> 2));
 	}
 }
 
 void dis_struct(FILE *filedes, BPLONG operand)
 {
-	SYM_REC_PTR sym_ptr = (SYM_REC_PTR)operand;
+	SYM_REC_PTR	sym_ptr = (SYM_REC_PTR)operand;
 	fprintf(filedes, "'%s'/%d", GET_NAME(sym_ptr), GET_ARITY(sym_ptr));
 }
 
 void dis_ys(FILE *filedes, BPLONG n)
 {
-	while (n>0){
-		dis_y(filedes,*cpreg++);
+	while (n > 0) {
+		dis_y(filedes, *cpreg++);
 		n--;
-		if (n>=1) fprintf(filedes,",");
+		if (n >= 1) fprintf(filedes, ",");
 	}
 }
 
 void dis_zs(FILE *filedes, BPLONG n)
 {
-	while (n>0){
-		dis_z(filedes,*cpreg++);
+	while (n > 0) {
+		dis_z(filedes, *cpreg++);
 		n--;
-		if (n>=1) fprintf(filedes,",");
+		if (n >= 1) fprintf(filedes, ",");
 	}
 }

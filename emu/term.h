@@ -1,7 +1,7 @@
 /********************************************************************
  *	File	: term.h
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -64,11 +64,11 @@
 #define ISSTRUCT(op)			((TAG_MASK & (op)) == STR)
 #define IS_SUSP_VAR(op)			(((op) & TAG_MASK) == SUSP)
 #define ISINT(op) 				(((op) & TAG_MASK) == INT_TAG)
-#define ISFLOAT(op)				(ISSTRUCT(op) && FOLLOW(UNTAGGED_ADDR(op))==(BPLONG)float_psc)
-#define IS_FLOAT_PSC(op)		(FOLLOW(UNTAGGED_ADDR(op))==(BPLONG)float_psc)
-#define ISADDR(op)				(ISSTRUCT(op) && FOLLOW(UNTAGGED_ADDR(op))==(BPLONG)address_psc)
-#define IS_BIGINT(op) 			(ISSTRUCT(op) && FOLLOW(UNTAGGED_ADDR(op))==(BPLONG)bigint_psc)
-#define IS_BIGINT_PSC(op)		(FOLLOW(UNTAGGED_ADDR(op))==(BPLONG)bigint_psc)
+#define ISFLOAT(op)				(ISSTRUCT(op) && FOLLOW(UNTAGGED_ADDR(op)) == (BPLONG)float_psc)
+#define IS_FLOAT_PSC(op)		(FOLLOW(UNTAGGED_ADDR(op)) == (BPLONG)float_psc)
+#define ISADDR(op)				(ISSTRUCT(op) && FOLLOW(UNTAGGED_ADDR(op)) == (BPLONG)address_psc)
+#define IS_BIGINT(op) 			(ISSTRUCT(op) && FOLLOW(UNTAGGED_ADDR(op)) == (BPLONG)bigint_psc)
+#define IS_BIGINT_PSC(op)		(FOLLOW(UNTAGGED_ADDR(op)) == (BPLONG)bigint_psc)
 #define ISNONVAR(op)			(TAG(op))
 #define ISFREE(var)				((BPLONG)var == FOLLOW(var))	/* must be a ref */
 #define ISATOM(op)				(((op) & TAG_MASK) == ATM)
@@ -79,7 +79,7 @@
 #define MAKEINT32(op)			(((int)(op) << 2) | INT_TAG32)
 #define MAKEINT(op)				(((BPLONG)(op) << 2) | INT_TAG)
 #define MAKE_INT_OR_BIGINT(op)	(BP_IN_1W_INT_RANGE(op) ? MAKEINT(op) : bp_int_to_bigint(op))
-#define INTVAL(op)				(((BPLONG)(op) <<1) >> 3)
+#define INTVAL(op)				(((BPLONG)(op) << 1) >> 3)
 #define VALOF_INT_OR_BIGINT(op)	(ISINT(op) ? INTVAL(op) : bp_bigint_to_int(op))
 #define NUMVAL(op)				(ISINT(op) ? INTVAL(op) : floatval(op))
 
@@ -124,36 +124,39 @@
 #define GET_SYM_NAME(op)		GET_NAME(GET_SYM_REC(op))
 
 #define DEREF(op)																\
-	while (ISREF(op)) {															\
-	top =  (BPLONG_PTR)FOLLOW(op);												\
-	if ((BPLONG)top==op)														\
-		break;																	\
-	op = (BPLONG)top;															\
-	}
+			while (ISREF(op)) {													\
+				top =  (BPLONG_PTR)FOLLOW(op);									\
+				if ((BPLONG)top == op)											\
+					break;														\
+				op = (BPLONG)top;												\
+			}
 
 #define DEREF2(op, VarCode)														\
-	while (ISREF(op)) {															\
-	top =  (BPLONG_PTR)FOLLOW(op);												\
-	if ((BPLONG)top==op){VarCode;}												\
-	op = (BPLONG)top;															\
-	}
+			while (ISREF(op)) {													\
+				top =  (BPLONG_PTR)FOLLOW(op);									\
+				if ((BPLONG)top == op) { VarCode; }								\
+				op = (BPLONG)top;												\
+			}
 
 
-#define DEREF_NONVAR(op) while (ISREF(op))										\
-	op = FOLLOW(op)																\
+#define DEREF_NONVAR(op)														\
+			while (ISREF(op))													\
+				op = FOLLOW(op)
 
-#define DEREF_SUSP_VAR(op, dv_ptr) while (ISREF(op)){																																\
-	dv_ptr = op;																\
-	op = FOLLOW(op);}															\
+#define DEREF_SUSP_VAR(op, dv_ptr)												\
+			while (ISREF(op)) {													\
+				dv_ptr = op;													\
+				op = FOLLOW(op); }
 
-#define NDEREF(op, labl)	top = (BPLONG_PTR)FOLLOW(op);																																\
-	if ((BPLONG)top!=op) {														\
-	op = (BPLONG)top;															\
-	goto labl;																	\
-	}
+#define NDEREF(op, labl)														\
+			top = (BPLONG_PTR)FOLLOW(op);										\
+			if ((BPLONG)top != op) {											\
+				op = (BPLONG)top;												\
+				goto labl;														\
+			}
 
-#define IsNumberedVar(term) (((term) & TAG_MASK)==TAG_MASK)
-#define NumberVar(num) (((BPLONG)(num) << 2) | TAG_MASK)
+#define IsNumberedVar(term)	(((term) & TAG_MASK) == TAG_MASK)
+#define NumberVar(num)		(((BPLONG)(num) << 2) | TAG_MASK)
 
 /****************************************************************************/
 /* The following are macros for setting heap values. */
@@ -161,11 +164,11 @@
 #define MAKE_FREE(type, var)	(var) = (type)&(var)
 /* must pass a simple pointer, not an expression */
 
-#define NEW_HEAP_FREE *heap_top = (BPLONG)heap_top; heap_top++
+#define NEW_HEAP_FREE			*heap_top = (BPLONG)heap_top; heap_top++
 
 /* make a free variable on the top of the heap */
 
-#define NEW_HEAP_NODE(x)			*heap_top++ = x
+#define NEW_HEAP_NODE(x)		*heap_top++ = x
 /* make a new heap node with value x (one word type) */
 
 /*****************************************************************************/
@@ -177,19 +180,19 @@
 #define GET_NAME(ptr)		((ptr)->nameptr)
 #define GET_NEXT(ptr)		((ptr)->next)
 
-#define BP_NEW_SYM(name, arity)			insert_sym(name, strlen(name), arity)
+#define BP_NEW_SYM(name, arity)	insert_sym(name, strlen(name), arity)
 
-#define IHASH(val, size)				(((unsigned long int)val >>2 ) % size)
+#define IHASH(val, size)		(((unsigned long int)val >>2 ) % size)
 
 #ifdef  M64BITS
-#define ALIGN(type, ptr)				ptr = (type)((BPULONG)((CHAR_PTR)ptr + 7) & 0xfffffffffffffff8ULL)
+#define ALIGN(type, ptr)		ptr = (type)((BPULONG)((CHAR_PTR)ptr + 7) & 0xfffffffffffffff8ULL)
 #else
-#define ALIGN(type, ptr)				ptr = (type)((BPULONG)((CHAR_PTR)ptr + 3) & 0xfffffffc)
+#define ALIGN(type, ptr)		ptr = (type)((BPULONG)((CHAR_PTR)ptr + 3) & 0xfffffffc)
 #endif
 
-#define ASSIGN_f_atom(op, value)		{FOLLOW(op)=value;}
-#define ASSIGN_v_heap_term(op, value)	{FOLLOW(op)=value;PUSHTRAIL(op);}
-#define ASSIGN_sv_heap_term(op, value)	{FOLLOW(op)=value;PUSHTRAIL_s(op);}
+#define ASSIGN_f_atom(op, value) { FOLLOW(op) = value; }
+#define ASSIGN_v_heap_term(op, value) { FOLLOW(op) = value; PUSHTRAIL(op); }
+#define ASSIGN_sv_heap_term(op, value) { FOLLOW(op) = value; PUSHTRAIL_s(op); }
 
 #define SWITCH_OP(op, nderef, VarCode, AtmCode, LstCode, StrCode, SuspCode)		\
 			nderef: switch (TAG(op)) {											\
@@ -204,8 +207,8 @@
 					LstCode;													\
 					break;														\
 				case STR:														\
-					if (op>0) StrCode											\
-						else SuspCode;break;}
+					if (op > 0) StrCode											\
+						else SuspCode; break; }
 
 #define SWITCH_OP_NOSUSP(op, nderef, VarCode, AtmCode, LstCode, StrCode)		\
 			nderef: switch (TAG(op)) {											\
@@ -220,24 +223,24 @@
 					LstCode;													\
 					break;														\
 				case STR:														\
-					StrCode;break;}
+					StrCode; break; }
 
 #define SWITCH_OP_STRUCT(op, nderef, VarCode, StrCode, SuspCode)				\
 			nderef:																\
-			if (ISREF(op)){														\
+			if (ISREF(op)) {													\
 				NDEREF(op, nderef);												\
 				VarCode;														\
-			} else if (ISSTRUCT(op)){											\
+			} else if (ISSTRUCT(op)) {											\
 				StrCode;														\
-			} else if (IS_SUSP_VAR(op)){										\
+			} else if (IS_SUSP_VAR(op)) {										\
 				SuspCode;														\
 			}
 
 #define SWITCH_OP_INT(op, nderef, VarCode, IntCode, OtherCode)					\
 			nderef:																\
-			if (ISINT(op)){														\
+			if (ISINT(op)) {													\
 				IntCode;														\
-			} else if (ISREF(op)){												\
+			} else if (ISREF(op)) {												\
 				NDEREF(op, nderef);												\
 				VarCode;														\
 			} else {															\
@@ -246,104 +249,104 @@
 
 #define SWITCH_OP_ATM(op, nderef, VarCode, AtmCode, SuspCode)					\
 			DEREF2(op, VarCode);												\
-			if (TAG(op)==ATM) {													\
+			if (TAG(op) == ATM) {												\
 				AtmCode;														\
-			} else if (op<0){													\
+			} else if (op < 0) {												\
 				SuspCode;														\
 			}
 
 #define SWITCH_OP_LST(op, nderef, VarCode, LstCode, SuspCode) {					\
 				nderef:															\
-				if (ISREF(op)){													\
+				if (ISREF(op)) {												\
 					NDEREF(op, nderef);											\
 					VarCode;													\
-				} else if (ISLIST(op)){											\
+				} else if (ISLIST(op)) {										\
 					LstCode;													\
-				} else if (IS_SUSP_VAR(op)){									\
+				} else if (IS_SUSP_VAR(op)) {									\
 					SuspCode;													\
 				}																\
 			}
 
 #define SWITCH_OP_NIL(op, nderef, VarCode, NilCode, SuspCode)					\
 			nderef:																\
-			if (ISREF(op)){														\
+			if (ISREF(op)) {													\
 				NDEREF(op, nderef);												\
 				VarCode;														\
-			} else if (ISNIL(op)){												\
+			} else if (ISNIL(op)) {												\
 				NilCode;														\
-			}	else if (IS_SUSP_VAR(op)){										\
+			}	else if (IS_SUSP_VAR(op)) {										\
 				SuspCode;														\
 			}
 
 #define SWITCH_OP_LST_NIL(op, nderef, VarCode, LstCode, NilCode, SuspCode)		\
 			nderef:																\
-			if (ISREF(op)){														\
+			if (ISREF(op)) {													\
 				NDEREF(op, nderef);												\
 				VarCode;														\
-			} else if (ISLIST(op)){												\
+			} else if (ISLIST(op)) {											\
 				LstCode;														\
-			} else if (ISNIL(op)){												\
+			} else if (ISNIL(op)) {												\
 				NilCode;														\
-			} else if (IS_SUSP_VAR(op)){										\
+			} else if (IS_SUSP_VAR(op)) {										\
 				SuspCode;														\
 			}
 
 #ifdef M64BITS
-#define BP_HASH_CODE1(op, hashcode, lab){										\
+#define BP_HASH_CODE1(op, hashcode, lab) {										\
 				SWITCH_OP(op, lab,												\
-					{hashcode = 0;},											\
-					{hashcode = ((op & HASH_BITS)>>2);},						\
-					{hashcode = (ISLIST(op)) ? list_psc_hashcode : 0;},			\
-					{hashcode = ((BPLONG)GET_STR_SYM_REC(op) & HASH_BITS)>>3;},	\
-					{hashcode = 0;});											\
+					{ hashcode = 0; },											\
+					{ hashcode = ((op & HASH_BITS)>>2); },						\
+					{ hashcode = (ISLIST(op)) ? list_psc_hashcode : 0; },		\
+					{ hashcode = ((BPLONG)GET_STR_SYM_REC(op) & HASH_BITS)>>3; },	\
+					{ hashcode = 0; });											\
 			}
 #else
-#define BP_HASH_CODE1(op, hashcode, lab){										\
+#define BP_HASH_CODE1(op, hashcode, lab) {										\
 				SWITCH_OP(op, lab,												\
-					{hashcode = 0;},											\
-					{hashcode = ((op & HASH_BITS)>>2);},						\
-					{hashcode = (ISLIST(op)) ? list_psc_hashcode : 0;},			\
-					{hashcode = ((BPLONG)GET_STR_SYM_REC(op) & HASH_BITS)>>2;},	\
-					{hashcode = 0;});											\
+					{ hashcode = 0; },											\
+					{ hashcode = ((op & HASH_BITS)>>2); },						\
+					{ hashcode = (ISLIST(op)) ? list_psc_hashcode : 0; },		\
+					{ hashcode = ((BPLONG)GET_STR_SYM_REC(op) & HASH_BITS)>>2; },	\
+					{ hashcode = 0; });											\
 			}
 #endif
 
 #ifdef M64BITS
-#define BP_HASH_KEY1_CODE1(op, key, hashcode, lab){								\
+#define BP_HASH_KEY1_CODE1(op, key, hashcode, lab) {							\
 				SWITCH_OP(op, lab,												\
-					{key = BP_ZERO; hashcode = 0;},								\
-					{key = op; hashcode = ((op & HASH_BITS)>>2);},				\
-					{if (ISLIST(op)){key = list_psc_int; hashcode = list_psc_hashcode;} else {key = BP_ZERO; hashcode = 0;}},	\
-					{SYM_REC_PTR sym_ptr = GET_STR_SYM_REC(op); key = ADDTAG((BPLONG)sym_ptr, INT_TAG); hashcode = ((BPLONG)sym_ptr & HASH_BITS)>>3;},	\
-					{key = BP_ZERO; hashcode = 0;});							\
+					{ key = BP_ZERO; hashcode = 0; },							\
+					{ key = op; hashcode = ((op & HASH_BITS)>>2); },			\
+					{ if (ISLIST(op)) { key = list_psc_int; hashcode = list_psc_hashcode; } else { key = BP_ZERO; hashcode = 0; }},	\
+					{ SYM_REC_PTR sym_ptr = GET_STR_SYM_REC(op); key = ADDTAG((BPLONG)sym_ptr, INT_TAG); hashcode = ((BPLONG)sym_ptr & HASH_BITS)>>3; },	\
+					{ key = BP_ZERO; hashcode = 0; });							\
 			}
 #else
-#define BP_HASH_KEY1_CODE1(op, key, hashcode, lab){								\
+#define BP_HASH_KEY1_CODE1(op, key, hashcode, lab) {							\
 				SWITCH_OP(op, lab,												\
-					{key = BP_ZERO; hashcode = 0;},								\
-					{key = op; hashcode = ((op & HASH_BITS)>>2);},				\
-					{if (ISLIST(op)){key = list_psc_int; hashcode = list_psc_hashcode;} else {key = BP_ZERO; hashcode = 0;}},	\
-					{SYM_REC_PTR sym_ptr = GET_STR_SYM_REC(op); key = ADDTAG((BPLONG)sym_ptr, INT_TAG); hashcode = ((BPLONG)sym_ptr & HASH_BITS)>>2;},	\
-					{key = BP_ZERO; hashcode = 0;});							\
+					{ key = BP_ZERO; hashcode = 0; },							\
+					{ key = op; hashcode = ((op & HASH_BITS)>>2); },			\
+					{ if (ISLIST(op)) { key = list_psc_int; hashcode = list_psc_hashcode; } else { key = BP_ZERO; hashcode = 0; }},	\
+					{ SYM_REC_PTR sym_ptr = GET_STR_SYM_REC(op); key = ADDTAG((BPLONG)sym_ptr, INT_TAG); hashcode = ((BPLONG)sym_ptr & HASH_BITS)>>2; },	\
+					{ key = BP_ZERO; hashcode = 0; });							\
 			}
 #endif
 
-#define BP_HASH_KEY1(op, key, lab){												\
+#define BP_HASH_KEY1(op, key, lab) {											\
 				SWITCH_OP(op, lab,												\
-					{key = BP_ZERO;},											\
-					{key = op;},												\
-					{if (ISLIST(op)) key = list_psc_int; else key = BP_ZERO;},	\
-					{key = ADDTAG((BPLONG)GET_STR_SYM_REC(op), INT_TAG);},		\
-					{key = BP_ZERO;});											\
+					{ key = BP_ZERO; },											\
+					{ key = op; },												\
+					{ if (ISLIST(op)) key = list_psc_int; else key = BP_ZERO; },	\
+					{ key = ADDTAG((BPLONG)GET_STR_SYM_REC(op), INT_TAG); },	\
+					{ key = BP_ZERO; });										\
 			}
 
 #define SWITCH_OP_VAR(op, nderef, VarCode, SuspCode, OtherCode)					\
 			nderef:																\
-			if (IS_VAR_OR_STRUCT(op)){											\
-				if (ISREF(op)){													\
+			if (IS_VAR_OR_STRUCT(op)) {											\
+				if (ISREF(op)) {												\
 					NDEREF(op, nderef);											\
 					VarCode;													\
-				} else if (op<0){												\
+				} else if (op < 0) {											\
 					SuspCode;													\
 				} else {														\
 					OtherCode;													\
@@ -354,8 +357,8 @@
 
 #define SWITCH_OP_STACK_VAR(op, nderef, VarCode, OtherCode)						\
 			nderef:																\
-			if (ISREF(op)){														\
-				if ((BPLONG_PTR)op>LOCAL_TOP){									\
+			if (ISREF(op)) {													\
+				if ((BPLONG_PTR)op > LOCAL_TOP) {								\
 					NDEREF(op, nderef);											\
 					VarCode;													\
 				} else {														\
@@ -372,7 +375,7 @@
 
 #define INSERT_TRIGGER_var_ins(dv_ptr) {										\
 				if (DV_ins_cs(dv_ptr) != (BPLONG)nil_sym) {						\
-					if (trigger_no>=MAXTRIGGERS) quit("Event queue overflowed (ins)\n");	\
+					if (trigger_no >= MAXTRIGGERS) quit("Event queue overflowed (ins)\n");	\
 					else {														\
 						toam_signal_vec |= TRIGGER_ON;							\
 						triggeredCs[++trigger_no] = A_DV_ins_cs(dv_ptr);		\
@@ -383,7 +386,7 @@
 
 #define INSERT_TRIGGER_dvar_ins(dv_ptr) {										\
 				if (DV_ins_cs(dv_ptr) != (BPLONG)nil_sym) {						\
-					if (trigger_no>=MAXTRIGGERS) quit("Event queue overflowed (ins)\n");	\
+					if (trigger_no >= MAXTRIGGERS) quit("Event queue overflowed (ins)\n");	\
 					else {														\
 						toam_signal_vec |= TRIGGER_ON;							\
 						triggeredCs[++trigger_no] = A_DV_ins_cs(dv_ptr);		\
@@ -395,7 +398,7 @@
 
 #define INSERT_TRIGGER_minmax(dv_ptr)											\
 			if (DV_minmax_cs(dv_ptr) != (BPLONG)nil_sym) {						\
-				if (trigger_no>=MAXTRIGGERS) quit("Event queue overflowed (bound)\n");	\
+				if (trigger_no >= MAXTRIGGERS) quit("Event queue overflowed (bound)\n");	\
 				else {															\
 					toam_signal_vec |= TRIGGER_ON;								\
 					triggeredCs[++trigger_no] = A_DV_minmax_cs(dv_ptr);			\
@@ -407,7 +410,7 @@
 /* record the triggering frame also */
 #define INSERT_TRIGGER_minmax_checkseed(dv_ptr, fp)								\
 			if (DV_minmax_cs(dv_ptr) != (BPLONG)nil_sym) {						\
-				if (trigger_no>=MAXTRIGGERS) quit("Event queue overflowed (bound1)\n");	\
+				if (trigger_no >= MAXTRIGGERS) quit("Event queue overflowed (bound1)\n");	\
 				else {															\
 					toam_signal_vec |= TRIGGER_ON;								\
 					triggeredCs[++trigger_no] = A_DV_minmax_cs(dv_ptr);			\
@@ -419,7 +422,7 @@
 /* Notice that agents watching dom_any events are also attached to DV_dom_cs */
 #define INSERT_TRIGGER_dom(dv_ptr, elm)											\
 			if (DV_dom_cs(dv_ptr) != (BPLONG)nil_sym) {							\
-				if (trigger_no>=MAXTRIGGERS) quit("Event queue overflowed (dom)\n");	\
+				if (trigger_no >= MAXTRIGGERS) quit("Event queue overflowed (dom)\n");	\
 				else {															\
 					toam_signal_vec |= TRIGGER_ON;								\
 					triggeredCs[++trigger_no] = A_DV_dom_cs(dv_ptr);			\
@@ -429,7 +432,7 @@
 			}
 
 #define INSERT_TRIGGER_outer_dom0(dv_ptr, elm)									\
-			if (trigger_no>=MAXTRIGGERS) quit("Event queue overflowed (dom_any)\n");	\
+			if (trigger_no >= MAXTRIGGERS) quit("Event queue overflowed (dom_any)\n");	\
 			else {																\
 				toam_signal_vec |= TRIGGER_ON;									\
 				triggeredCs[++trigger_no] = A_DV_outer_dom_cs(dv_ptr);			\
@@ -439,11 +442,11 @@
 
 #define INSERT_TRIGGER_outer_dom(dv_ptr, elm)									\
 			if (DV_outer_dom_cs(dv_ptr) != (BPLONG)nil_sym) {					\
-				INSERT_TRIGGER_outer_dom0(dv_ptr, elm);}
+				INSERT_TRIGGER_outer_dom0(dv_ptr, elm); }
 
 #define INSERT_TRIGGER_event(dv_ptr, elm)										\
 			if (DV_dom_cs(dv_ptr) != (BPLONG)nil_sym) {							\
-				if (trigger_no>=MAXTRIGGERS) quit("Event queue overflowed (general)\n");	\
+				if (trigger_no >= MAXTRIGGERS) quit("Event queue overflowed (general)\n");	\
 				else {															\
 					toam_signal_vec |= TRIGGER_ON;								\
 					triggeredCs[++trigger_no] = A_DV_dom_cs(dv_ptr);			\
@@ -457,13 +460,13 @@
 #define A_DV_var(dv_ptr)			dv_ptr
 #define DV_var(dv_ptr)				FOLLOW(dv_ptr)
 
-#define A_DV_type(dv_ptr)			(dv_ptr+1)
-#define DV_type(dv_ptr)				FOLLOW(dv_ptr+1)
+#define A_DV_type(dv_ptr)			(dv_ptr + 1)
+#define DV_type(dv_ptr)				FOLLOW(dv_ptr + 1)
 
-#define A_DV_bit_vector_ptr(dv_ptr)	(dv_ptr+1)
-#define DV_bit_vector_ptr(dv_ptr)	FOLLOW(dv_ptr+1)
+#define A_DV_bit_vector_ptr(dv_ptr)	(dv_ptr + 1)
+#define DV_bit_vector_ptr(dv_ptr)	FOLLOW(dv_ptr + 1)
 /*
-	bit_vector_ptr points to a variable-sized structure of the following fields
+	bit_vector_ptr points to a variable - sized structure of the following fields
 	low_ptr
 	up_ptr
 	low_ptr : word
@@ -471,44 +474,44 @@
 	up_ptr : word
 */
 
-#define A_DV_ins_cs(dv_ptr)			(dv_ptr+2)
-#define DV_ins_cs(dv_ptr)			FOLLOW(dv_ptr+2)
+#define A_DV_ins_cs(dv_ptr)			(dv_ptr + 2)
+#define DV_ins_cs(dv_ptr)			FOLLOW(dv_ptr + 2)
 
-#define A_DV_attached(dv_ptr)		(dv_ptr+3)
-#define DV_attached(dv_ptr)			FOLLOW(dv_ptr+3)
+#define A_DV_attached(dv_ptr)		(dv_ptr + 3)
+#define DV_attached(dv_ptr)			FOLLOW(dv_ptr + 3)
 
-#define A_DV_size(dv_ptr)			(dv_ptr+4)
-#define DV_size(dv_ptr)				FOLLOW(dv_ptr+4)
+#define A_DV_size(dv_ptr)			(dv_ptr + 4)
+#define DV_size(dv_ptr)				FOLLOW(dv_ptr + 4)
 
-#define A_DV_first(dv_ptr)			(dv_ptr+5)
-#define DV_first(dv_ptr)			FOLLOW(dv_ptr+5)
+#define A_DV_first(dv_ptr)			(dv_ptr + 5)
+#define DV_first(dv_ptr)			FOLLOW(dv_ptr + 5)
 
-#define A_DV_last(dv_ptr)			(dv_ptr+6)
-#define DV_last(dv_ptr)				FOLLOW(dv_ptr+6)
+#define A_DV_last(dv_ptr)			(dv_ptr + 6)
+#define DV_last(dv_ptr)				FOLLOW(dv_ptr + 6)
 
-#define A_DV_minmax_cs(dv_ptr)		(dv_ptr+7)
-#define DV_minmax_cs(dv_ptr)		FOLLOW(dv_ptr+7)
+#define A_DV_minmax_cs(dv_ptr)		(dv_ptr + 7)
+#define DV_minmax_cs(dv_ptr)		FOLLOW(dv_ptr + 7)
 
-#define A_DV_dom_cs(dv_ptr)			(dv_ptr+8)
-#define DV_dom_cs(dv_ptr)			FOLLOW(dv_ptr+8)
+#define A_DV_dom_cs(dv_ptr)			(dv_ptr + 8)
+#define DV_dom_cs(dv_ptr)			FOLLOW(dv_ptr + 8)
 
-#define A_DV_outer_dom_cs(dv_ptr)	(dv_ptr+9)
-#define DV_outer_dom_cs(dv_ptr)		FOLLOW(dv_ptr+9)
+#define A_DV_outer_dom_cs(dv_ptr)	(dv_ptr + 9)
+#define DV_outer_dom_cs(dv_ptr)		FOLLOW(dv_ptr + 9)
 
 #define SIZE_OF_DV					10
 
 #define BV_low_val(bv_ptr)			FOLLOW(bv_ptr)
 
-#define BV_up_val(bv_ptr)			FOLLOW(bv_ptr+1)
+#define BV_up_val(bv_ptr)			FOLLOW(bv_ptr + 1)
 
-#define BV_base_ptr(bv_ptr)			(bv_ptr+2)
+#define BV_base_ptr(bv_ptr)			(bv_ptr + 2)
 
 
 #define IT_DOMAIN					1
 #define UN_DOMAIN					0
 
 #ifdef LINUX
-#define IS_BV_DOMAIN(dv_ptr)		(DV_type(dv_ptr)!=IT_DOMAIN && DV_type(dv_ptr)!=UN_DOMAIN)
+#define IS_BV_DOMAIN(dv_ptr)		(DV_type(dv_ptr) != IT_DOMAIN && DV_type(dv_ptr) != UN_DOMAIN)
 #else
 #define IS_BV_DOMAIN(dv_ptr)		((BPULONG)DV_type(dv_ptr)>1)
 #endif
@@ -521,23 +524,23 @@
 	0..31             0
 	-32..-1          -1
 */
-#define WORD_NUMBER(val) (val>=0) ? (val/NBITS_IN_LONG) : -(-val+NBITS_IN_LONG-1)/NBITS_IN_LONG
+#define WORD_NUMBER(val) (val >= 0) ? (val / NBITS_IN_LONG) : -(-val + NBITS_IN_LONG - 1) / NBITS_IN_LONG
 
 
-#define WORD_OFFSET(bv_ptr, elm, w, w_ptr, offset){								\
-			offset = elm-BV_low_val(bv_ptr);									\
-			w_ptr = (BPLONG_PTR)BV_base_ptr(bv_ptr) + offset/NBITS_IN_LONG;		\
+#define WORD_OFFSET(bv_ptr, elm, w, w_ptr, offset) {							\
+			offset = elm - BV_low_val(bv_ptr);									\
+			w_ptr = (BPLONG_PTR)BV_base_ptr(bv_ptr) + offset / NBITS_IN_LONG;	\
 			offset = offset % NBITS_IN_LONG;									\
 			w = FOLLOW(w_ptr); }
 
-#define NEXT_IN_WORD(from, w, w_ptr, offset, mask){								\
+#define NEXT_IN_WORD(from, w, w_ptr, offset, mask) {							\
 				mask = (MASK_FF << offset);										\
-				if ((w & mask)==0L){											\
+				if ((w & mask) == 0L) {											\
 					w_ptr++;													\
 					w = FOLLOW(w_ptr);											\
 					from = from + NBITS_IN_LONG - offset;						\
 					offset = 0L;												\
-					while (w==0L){												\
+					while (w == 0L) {											\
 						w_ptr++;												\
 						w = FOLLOW(w_ptr);										\
 						from = from + NBITS_IN_LONG;							\
@@ -546,10 +549,10 @@
 			}
 
 
-#define NEXT_IN_ELM(elm, w, offset, mask){										\
-				while ((w & ((BPULONG)0xff << offset))==0){offset += 8; elm += 8;}	\
+#define NEXT_IN_ELM(elm, w, offset, mask) {										\
+				while ((w & ((BPULONG)0xff << offset)) == 0) { offset += 8; elm += 8; }	\
 				mask = ((BPULONG)0x1 << offset);								\
-				while (!(w & mask)){											\
+				while (!(w & mask)) {											\
 					elm++;														\
 					mask <<= 1;													\
 					offset++;													\
@@ -557,40 +560,40 @@
 			}
 
 /* elm is the next element that is in the domain, mask is the mask for the elm */
-#define BV_NEXT_IN(bv_ptr, elm, w, w_ptr, offset, mask){						\
+#define BV_NEXT_IN(bv_ptr, elm, w, w_ptr, offset, mask) {						\
 				WORD_OFFSET(bv_ptr, elm, w, w_ptr, offset);						\
 				NEXT_IN_WORD(elm, w, w_ptr, offset, mask);						\
 				NEXT_IN_ELM(elm, w, offset, mask);								\
 			}
 
-#define PREV_IN_WORD(elm, w, w_ptr, offset, mask){								\
-				mask = (MASK_FF >> (NBITS_IN_LONG-1-offset));					\
-				while ((w & mask) == 0){										\
+#define PREV_IN_WORD(elm, w, w_ptr, offset, mask) {								\
+				mask = (MASK_FF >> (NBITS_IN_LONG - 1-offset));					\
+				while ((w & mask) == 0) {										\
 					w_ptr--;													\
 					w = FOLLOW(w_ptr);											\
 					elm = elm - offset -1;										\
-					offset = NBITS_IN_LONG-1;									\
+					offset = NBITS_IN_LONG - 1;									\
 					mask = MASK_FF;												\
 				}																\
 			}
 
-#define PREV_IN_ELM(elm, w, offset, mask){										\
+#define PREV_IN_ELM(elm, w, offset, mask) {										\
 				mask = ((BPULONG)0x1 << offset);								\
-				while ((w & mask) ==0){											\
+				while ((w & mask) == 0) {										\
 					elm--;														\
 					mask >>= 1;													\
 				}																\
 			}
 
-#define BV_PREV_IN(bv_ptr, elm, w, w_ptr, offset, mask){						\
+#define BV_PREV_IN(bv_ptr, elm, w, w_ptr, offset, mask) {						\
 				WORD_OFFSET(bv_ptr, elm, w, w_ptr, offset);						\
 				PREV_IN_WORD(elm, w, w_ptr, offset, mask);						\
 				PREV_IN_ELM(elm, w, offset, mask);								\
 			}
 
 /********************************************/
-#define IS_IT_DOMAIN(dv_ptr)	(DV_type(dv_ptr)==IT_DOMAIN)
-#define IS_UN_DOMAIN(dv_ptr)	(DV_type(dv_ptr)==UN_DOMAIN)
+#define IS_IT_DOMAIN(dv_ptr)	(DV_type(dv_ptr) == IT_DOMAIN)
+#define IS_UN_DOMAIN(dv_ptr)	(DV_type(dv_ptr) == UN_DOMAIN)
 
 #define TRAIL_VAR				0
 #define TRAIL_VAL_ATOMIC		1
@@ -608,20 +611,20 @@
 			}
 
 /* a must be positive */
-#define UP_DIV(V, X, a){														\
-				if (X>=0) {														\
-					V = X/a;													\
-					if (V*a != X) V++;											\
+#define UP_DIV(V, X, a) {														\
+				if (X >= 0) {													\
+					V = X / a;													\
+					if (V * a != X) V++;										\
 				} else {														\
-					V = X/a;													\
+					V = X / a;													\
 				}																\
 			}
 
-#define LOW_DIV(V, X, a){														\
-				if (X>=0) {														\
-					V = X/a;													\
+#define LOW_DIV(V, X, a) {														\
+				if (X >= 0) {													\
+					V = X / a;													\
 				} else {														\
-					V = X/a;													\
-					if (V*a!=X) V--;											\
+					V = X / a;													\
+					if (V * a != X) V--;										\
 				}																\
 			}

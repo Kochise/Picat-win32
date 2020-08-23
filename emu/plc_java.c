@@ -33,7 +33,9 @@
 	if (ISATOM(obj)) => javaMethod, javaGetField, javaSetField
 	PnameToTerm => bp_string_2_term
 */
-//#define JNICALL __cdecl
+#if 0
+#define JNICALL __cdecl
+#endif
 
 #include  <stdlib.h>
 #include "bprolog.h"
@@ -41,45 +43,45 @@
 #include "jni.h"
 #include "event.h"
 
-/*
+#if 0
 	#define DEBUG_EVENT
-*/
+#endif
 typedef struct _jobject *jref;
 
-extern SYM_REC_PTR objectRef;
-/* extern char *malloc();*/
-/*
+extern	SYM_REC_PTR	objectRef;
+#if 0
+extern char *malloc();
 char *malloc();
 char *bp_get_name();
-*/
+#endif
 
 /* #include "Pinterface.h" */
-static jclass class_Object;
-static jclass class_ArrayOfObject;
-static jclass class_String;
-static jmethodID conv_String;
-static jmethodID bytes_String;
-static jclass class_Integer;
-static jmethodID init_Integer;
-static jclass class_BigInteger;
-static jmethodID init_BigInteger;
-static jclass class_Double;
-static jmethodID init_Double;
-static jclass class_Number;
-static jclass class_Boolean;
-static jclass class_Character;
-static jclass class_Exception;
-static jclass class_Plc;
-static jmethodID result_Plc;
-static jmethodID instance_Plc;
-static jmethodID static_Plc;
-static jmethodID set_Plc;
-static jmethodID get_Plc;
-static jmethodID new_Plc;
-static JNIEnv   *Env;
+static	jclass		class_Object;
+static	jclass		class_ArrayOfObject;
+static	jclass		class_String;
+static	jmethodID	conv_String;
+static	jmethodID	bytes_String;
+static	jclass		class_Integer;
+static	jmethodID	init_Integer;
+static	jclass		class_BigInteger;
+static	jmethodID	init_BigInteger;
+static	jclass		class_Double;
+static	jmethodID	init_Double;
+static	jclass		class_Number;
+static	jclass		class_Boolean;
+static	jclass		class_Character;
+static	jclass		class_Exception;
+static	jclass		class_Plc;
+static	jmethodID	result_Plc;
+static	jmethodID	instance_Plc;
+static	jmethodID	static_Plc;
+static	jmethodID	set_Plc;
+static	jmethodID	get_Plc;
+static	jmethodID	new_Plc;
+static	JNIEnv   	*Env;
 
 static void java2prolog(JNIEnv *env, jobject val, BPLONG arg) {
-	char *str;
+	char	*str;
 	if (!val) return;
 	if ((*env)->IsInstanceOf(env, val, class_Number)) {
 		jobject obj = (*env)->CallObjectMethod(env, val,
@@ -90,12 +92,16 @@ static void java2prolog(JNIEnv *env, jobject val, BPLONG arg) {
 		else str = "invalid argument";
 		/* !!! */
 		if ((*env)->IsInstanceOf(env, val, class_Double) || (*env)->IsInstanceOf(env, val, class_Double)) {
-//			double atof();
+#if 0
+			double atof();
+#endif
 			unify(arg, encodefloat1(atof(str)));
 		} else {
 			unify(arg, MAKEINT(atoi(str)));
 		}
-/*		bprolog_string_2_term(str, arg);  */
+#if 0
+		bprolog_string_2_term(str, arg);
+#endif
 		if (obj) {
 			(*env)->ReleaseStringUTFChars(env, obj, str);
 			(*env)->DeleteLocalRef(env, obj);
@@ -103,7 +109,7 @@ static void java2prolog(JNIEnv *env, jobject val, BPLONG arg) {
 	} else if ((*env)->IsInstanceOf(env, val, class_Boolean)) {
 		jboolean b = (*env)->CallBooleanMethod(env, val,
 							(*env)->GetMethodID(env, class_Boolean,
-							"booleanValue","()Z"),
+							"booleanValue", "()Z"),
 							0);
 		PuInt(arg, (BPLONG)b);
 	} else if ((*env)->IsInstanceOf(env, val, class_String) ||
@@ -118,21 +124,21 @@ static void java2prolog(JNIEnv *env, jobject val, BPLONG arg) {
 /*		PuAtom(arg, str); */
 		(*env)->ReleaseStringUTFChars(env, val, str);
 	} else if ((*env)->IsInstanceOf(env, val, class_ArrayOfObject)) {
-		jsize i;
-		BPLONG list;
+		jsize	i;
+		BPLONG	list;
 		jsize len = (*env)->GetArrayLength(env, val);
 		list = Plistn(len);
 		unify(arg, list);
-		for(i=0; i<len; i++) {
-			BPLONG car = PlistCar(arg);
+		for (i = 0; i < len; i++) {
+			BPLONG	car = PlistCar(arg);
 			java2prolog(env, (*env)->GetObjectArrayElement(env, val, i), car);
 			arg = PlistCdr(arg);
 		}
 	} else	/* if ((*env)->IsInstanceOf(env, val, class_Object)) */ {
 #if defined(DEBUG)
 		jobject mess = (*env)->CallObjectMethod(env, val,
-												(*env)->GetMethodID(env,(*env)->GetObjectClass(env, val),
-												"toString","()Ljava/lang/String;"), 0);
+												(*env)->GetMethodID(env, (*env)->GetObjectClass(env, val),
+												"toString", "()Ljava/lang/String; "), 0);
 		const char *str = (*env)->GetStringUTFChars(env, mess, NULL);
 		(*env)->DeleteLocalRef(env, mess);
 #endif
@@ -143,17 +149,19 @@ static jref addr2ref(JNIEnv *env, BPLONG addr) {
 	return (jref)PvalueOfAddr(addr);
 }
 static jref prolog2java(JNIEnv *env, BPLONG arg) {
-	const char *str;
-	BPLONG_PTR top;
-	double PvalueOfReal();
-	char *PnumberToStr();
+	const	char		*str;
+			BPLONG_PTR	top;
+			double		PvalueOfReal();
+			char		*PnumberToStr();
 
-//	printf("prolog2java "); write_term(arg); printf("\n");
+#if 0
+	printf("prolog2java ");	write_term(arg);	printf("\n");
+#endif
 	DEREF(arg);
 	if (PisInt(arg)) {
 		if (PisLong(arg)) {
-			jref res;
-			jref bignum;
+			jref	res;
+			jref	bignum;
 			str = PnumberToStr(arg);
 			res = (*env)->NewStringUTF(env, str);
 			bignum = (*env)->NewObject(env, class_BigInteger, init_BigInteger, res);
@@ -168,34 +176,37 @@ static jref prolog2java(JNIEnv *env, BPLONG arg) {
 								(jdouble)PvalueOfReal(arg));
 	} else if (PisAddr(arg)) {
 		return addr2ref(env, arg);
-/*      } else if (str=(char*)PutfOfAtom(arg)) {
+#if 0
+	} else if (str = (char*)PutfOfAtom(arg)) {
 		return (*env)->NewStringUTF(env, str);
-*/
+#endif
 	} else if (PisList(arg) || ISNIL(arg)) {
-		int len = PlistLength(arg);
-		jref array = (*env)->NewObjectArray(env, len, class_Object, 0);
-		int i;
-		jref res;
-		BPLONG_PTR ptr;
-		for(i=0; i<len; i++) {
+		int			len = PlistLength(arg);
+		jref		array = (*env)->NewObjectArray(env, len, class_Object, 0);
+		int			i;
+		jref		res;
+		BPLONG_PTR	ptr;
+		for (i = 0; i < len; i++) {
 			ptr = (BPLONG_PTR)UNTAGGED_ADDR(arg);
 			res = prolog2java(env, FOLLOW(ptr));
 			(*env)->SetObjectArrayElement(env, array, i, res);
 			(*env)->DeleteLocalRef(env, res);
-			arg = FOLLOW(ptr+1);
+			arg = FOLLOW(ptr + 1);
 			DEREF(arg);
 		}
 		return array;
-	} else if (PisAtom(arg)){
-		str=bp_get_name(arg);
+	} else if (PisAtom(arg)) {
+		str = bp_get_name(arg);
 		return (*env)->NewStringUTF(env, str);
 	} else if (PisCompound(arg)) {
-		int len = ParityOfCompound(arg);
-//		printf(" PisCompound %d ", len); write_term(arg); printf("\n");
-		jref array = (*env)->NewObjectArray(env, len, class_Object, 0);
-		int i;
-		for(i=0; i<len; i++) {
-			jref res = prolog2java(env, PargOfCompound(arg, i));
+		int		len = ParityOfCompound(arg);
+#if 0
+		printf(" PisCompound %d ", len);	write_term(arg);	printf("\n");
+#endif
+		jref	array = (*env)->NewObjectArray(env, len, class_Object, 0);
+		int		i;
+		for (i = 0; i < len; i++) {
+			jref	res = prolog2java(env, PargOfCompound(arg, i));
 			(*env)->SetObjectArrayElement(env, array, i, res);
 			(*env)->DeleteLocalRef(env, res);
 		}
@@ -206,11 +217,13 @@ static jref prolog2java(JNIEnv *env, BPLONG arg) {
 }
 static jref
 prolog2javaArray(JNIEnv *env, BPLONG arg) {
-	jref result;
-	BPLONG_PTR top;
+	jref		result;
+	BPLONG_PTR	top;
 
 	DEREF(arg);
-	//  printf("prolog2javaArray "); write_term(arg); printf("\n");
+#if 0
+	printf("prolog2javaArray ");	write_term(arg);	printf("\n");
+#endif
 	if (PisCompound(arg)) result = prolog2java(env, arg);
 	else result = (*env)->NewObjectArray(env, 0, class_Object, 0);
 	return result;
@@ -271,17 +284,17 @@ static void initialize(JNIEnv *env, jref arrayobj) {
 }
 
 static int callJavaException(JNIEnv *env) {
-	char *str;
-	jobject mess = NULL;
-	jobject e = (*env)->ExceptionOccurred(env);
-	BPLONG command = Pfunctorn(Patom("jiplException"), 1);
+	char	*str;
+	jobject	mess = NULL;
+	jobject	e = (*env)->ExceptionOccurred(env);
+	BPLONG	command = Pfunctorn(Patom("jiplException"), 1);
 	(*env)->ExceptionDescribe(env);
 	if (e) {
-		jclass exclass = (*env)->GetObjectClass(env, e);
+		jclass	exclass = (*env)->GetObjectClass(env, e);
 		(*env)->CallObjectMethod(env, e,
-								(*env)->GetMethodID(env, exclass,"printStackTrace","()V"), 0);
+								(*env)->GetMethodID(env, exclass, "printStackTrace", "()V"), 0);
 		mess = (*env)->CallObjectMethod(env, e,
-										(*env)->GetMethodID(env, exclass,"toString","()Ljava/lang/String;"),
+										(*env)->GetMethodID(env, exclass, "toString","()Ljava/lang/String;"),
 										0);
 	}
 	if (mess) str = (char *)((*env)->GetStringUTFChars(env, mess, NULL));
@@ -297,11 +310,11 @@ static int callJavaException(JNIEnv *env) {
 }
 
 static jclass findClass(JNIEnv *env, const char *name) {
-	jclass clazz = (*env)->FindClass(env, name);
+	jclass	clazz = (*env)->FindClass(env, name);
 	if (!clazz) {
-		char *lname = (char*)malloc(strlen(name)+32);
-		if (lname==NULL) myquit(OUT_OF_MEMORY,"plc");
-		sprintf(lname,"java/lang/%s", name);
+		char	*lname = (char*)malloc(strlen(name) + 32);
+		if (lname == NULL) myquit(OUT_OF_MEMORY, "plc");
+		sprintf(lname, "java/lang/%s", name);
 		clazz = (*env)->FindClass(env, lname);
 		free(lname);
 	}
@@ -314,25 +327,29 @@ static jclass findClass(JNIEnv *env, const char *name) {
 
 int javaMethod1(BPLONG obj, BPLONG method, BPLONG result);
 
-int javaMethod(void){
-	BPLONG_PTR top;
-	BPLONG obj = ARG(1, 3);
-	BPLONG method = ARG(2, 3);
-	BPLONG result = ARG(3, 3);
+int javaMethod(void) {
+	BPLONG_PTR	top;
+	BPLONG		obj = ARG(1, 3);
+	BPLONG		method = ARG(2, 3);
+	BPLONG		result = ARG(3, 3);
 	DEREF(obj);
-/*	printf("javaMethod ");write_term(method);printf("\n"); */
+#if 0
+	printf("javaMethod ");	write_term(method);	printf("\n");
+#endif
 	return javaMethod1(obj, method, result);
 }
 
 int javaMethod1(BPLONG obj, BPLONG method, BPLONG result) {
-	JNIEnv *env = Env;
-	const char *functor = (const char*)PascOfFunc(method);
-//	printf("functor = %s\n", functor);
+			JNIEnv	*env = Env;
+	const	char	*functor = (const char*)PascOfFunc(method);
+#if 0
+	printf("functor = %s\n", functor);
+#endif
 	/* !!! */
-	jstring funcname = (*env)->NewStringUTF(env, functor);
-	jref args = prolog2javaArray(env, method);
-	jobject res;
-
+			jstring	funcname = (*env)->NewStringUTF(env, functor);
+			jref	args = prolog2javaArray(env, method);
+			jobject	res;
+		
 	if ((*env)->ExceptionCheck(env)) {
 		return callJavaException(env);
 	}
@@ -340,9 +357,11 @@ int javaMethod1(BPLONG obj, BPLONG method, BPLONG result) {
 		res = (*env)->CallStaticObjectMethod(env, class_Plc, instance_Plc,
 											addr2ref(env, obj), funcname, args);
 	} else  if (ISATOM(obj)) {
-		const char *class = (const char*)PascOfAtom(obj);
-		jclass clazz;
-/*		printf("findClass %s", class);write_term(obj);printf("\n"); */
+		const	char	*class = (const char*)PascOfAtom(obj);
+				jclass	clazz;
+#if 0
+		printf("findClass %s", class);	write_term(obj);	printf("\n");
+#endif
 
 		/* !!! */
 		clazz = findClass(env, class);
@@ -366,17 +385,17 @@ int javaMethod1(BPLONG obj, BPLONG method, BPLONG result) {
 	return BP_TRUE;
 }
 
-int javaRegisterEventListener(int source_no, int event_no){
-	JNIEnv *env = Env;
-	const char *functor = "registerEventListener";
-	jstring funcname = (*env)->NewStringUTF(env, functor);
-	jref args;
-	jref elm;
+int javaRegisterEventListener(int source_no, int event_no) {
+			JNIEnv	*env = Env;
+	const	char	*functor = "registerEventListener";
+			jstring	funcname = (*env)->NewStringUTF(env, functor);
+			jref	args;
+			jref	elm;
 	if ((*env)->ExceptionCheck(env)) {
 		return callJavaException(env);
 	} else {
-		const char *class = "bprolog/cg/BPP";
-		jclass clazz;
+		const	char	*class = "bprolog/cg/BPP";
+				jclass	clazz;
 		/* !!! */
 		clazz = findClass(env, class);
 		if (!clazz) return callJavaException(env);
@@ -400,37 +419,37 @@ int javaRegisterEventListener(int source_no, int event_no){
 	return BP_TRUE;
 }
 
-int javaGetField1(BPLONG obj, const char*field, BPLONG value);
+int javaGetField1(BPLONG obj, const char *field, BPLONG value);
 
-int javaGetField(void){
-	BPLONG_PTR top;
-	BPLONG obj, field, value;
+int javaGetField(void) {
+	BPLONG_PTR	top;
+	BPLONG		obj, field, value;
 	obj = ARG(1, 3);
 	field = ARG(2, 3);
 	value = ARG(3, 3);
 	DEREF(obj);
 	DEREF(field);
 	DEREF(value);
-	if (!ISATOM(field)){
+	if (!ISATOM(field)) {
 		exception = illegal_arguments;
 		return BP_ERROR;
 	}
 	return javaGetField1(obj, bp_get_name(field), value);
 }
 
-int javaGetField1(BPLONG obj, const char*field, BPLONG value) {
-	JNIEnv *env = Env;
+int javaGetField1(BPLONG obj, const char *field, BPLONG value) {
+	JNIEnv	*env = Env;
 	/* !!! */
-	jstring fieldname = (*env)->NewStringUTF(env, field);
-	jobject val;
+	jstring	fieldname = (*env)->NewStringUTF(env, field);
+	jobject	val;
 
 	if (PisAddr(obj)) {	/* assuming, obj is an Instance */
 		val = (*env)->CallStaticObjectMethod(env, class_Plc, get_Plc,
 											NULL, addr2ref(env, obj), fieldname);
 	} else if (ISATOM(obj)) {
-		char *class = (char*)PascOfAtom(obj);
+		char	*class = (char*)PascOfAtom(obj);
 		/* !!! */
-		jclass clazz = findClass(env, class);
+		jclass	clazz = findClass(env, class);
 		if (!clazz) return callJavaException(env);
 		val = (*env)->CallStaticObjectMethod(env, class_Plc, get_Plc,
 											clazz, NULL, fieldname);
@@ -448,11 +467,11 @@ int javaGetField1(BPLONG obj, const char*field, BPLONG value) {
 	return BP_TRUE;
 }
 
-int javaSetField1(BPLONG obj, const char*field, BPLONG value);
+int javaSetField1(BPLONG obj, const char *field, BPLONG value);
 
-int javaSetField(void){
-	BPLONG_PTR top;
-	BPLONG obj, field, value;
+int javaSetField(void) {
+	BPLONG_PTR	top;
+	BPLONG		obj, field, value;
 
 	obj = ARG(1, 3);
 	field = ARG(2, 3);
@@ -460,28 +479,28 @@ int javaSetField(void){
 	DEREF(obj);
 	DEREF(field);
 	DEREF(value);
-	if (!ISATOM(field)){
+	if (!ISATOM(field)) {
 		exception = illegal_arguments;
 		return BP_ERROR;
 	}
 	return javaSetField1(obj, bp_get_name(field), value);
 }
 
-int javaSetField1(BPLONG obj, const char*field, BPLONG value) {
-	JNIEnv *env = Env;
+int javaSetField1(BPLONG obj, const char *field, BPLONG value) {
+	JNIEnv	*env = Env;
 	/* !!! */
-	jstring fieldname = (*env)->NewStringUTF(env, field);
+	jstring	fieldname = (*env)->NewStringUTF(env, field);
 
 	if (PisAddr(obj)) {	/* assuming, obj is an Instance */
-		jref res = prolog2java(env, value);
+		jref	res = prolog2java(env, value);
 		(*env)->CallStaticObjectMethod(env, class_Plc, set_Plc,
 										NULL, addr2ref(env, obj), fieldname, res);
 		(*env)->DeleteLocalRef(env, res);
 	} else if (ISATOM(obj)) {
-		char *class = (char*)PascOfAtom(obj);
+		char	*class = (char*)PascOfAtom(obj);
 		/* !!! */
-		jclass clazz = findClass(env, class);
-		jref res = prolog2java(env, value);
+		jclass	clazz = findClass(env, class);
+		jref	res = prolog2java(env, value);
 		if (!clazz) return callJavaException(env);
 		(*env)->CallStaticObjectMethod(env, class_Plc, set_Plc,
 										clazz, NULL, fieldname, res);
@@ -499,17 +518,19 @@ int javaSetField1(BPLONG obj, const char*field, BPLONG value) {
 	return BP_TRUE;
 }
 
-int javaConstructor(void){
-	BPLONG init = ARG(1, 2);
-	BPLONG objaddr=ARG(2, 2);
-	JNIEnv *env = Env;
-	jref args = prolog2javaArray(env, init);
-	const char *class = (const char*)PascOfFunc(init);
-	jclass clazz;
-	jobject obj;
-//	char fullname[64];
+int javaConstructor(void) {
+			BPLONG	init = ARG(1, 2);
+			BPLONG	objaddr = ARG(2, 2);
+			JNIEnv	*env = Env;
+			jref	args = prolog2javaArray(env, init);
+	const	char	*class = (const char*)PascOfFunc(init);
+			jclass	clazz;
+			jobject	obj;
+#if 0
+			char	fullname[64];
+#endif
 
-	/* !!!*/
+	/* !!! */
 	clazz = findClass(env, class);
 	if (!clazz) return callJavaException(env);
 	obj =  (*env)->CallStaticObjectMethod(env, class_Plc, new_Plc, clazz, args);
@@ -526,77 +547,81 @@ int javaConstructor(void){
 }
 
 void javaDeleteRef2(BPLONG objaddr) {
-	JNIEnv *env = Env;
-	jref ref = (jref)PvalueOfAddr(objaddr);
+	JNIEnv	*env = Env;
+	jref	ref = (jref)PvalueOfAddr(objaddr);
 	(*env)->DeleteGlobalRef(env, ref);		/* -1 */
 }
 
-int javaDeleteRef(void){
-	BPLONG objaddr = ARG(1, 1);
+int javaDeleteRef(void) {
+	BPLONG	objaddr = ARG(1, 1);
 	javaDeleteRef2(objaddr);
 	return 1;
 }
 
 #include "bprolog_plc_Plc.h"
 JNIEXPORT void JNICALL Java_bprolog_plc_Plc_startPlc(JNIEnv *env, jclass clazz, jarray args, jarray oa) {
-	int i;
-	int argc = 0;
-	char* argv[24];
-	static jboolean once = JNI_FALSE;
+			int			i;
+			int			argc = 0;
+			char*		argv[24];
+	static	jboolean	once = JNI_FALSE;
 
 	if (once) return;
 	once = JNI_TRUE;
 
 	if ((BPLONG)((*env)->GetArrayLength(env, args))>24) quit("too many arguments in bpp");
 	argv[argc++] = "jipl";
-	for (i=(BPLONG)((*env)->GetArrayLength(env, args)); --i>=0;) {
-		jobject arg = (*env)->GetObjectArrayElement(env, args, argc-1);
+	for (i = (BPLONG)((*env)->GetArrayLength(env, args));-- i >= 0; ) {
+		jobject arg = (*env)->GetObjectArrayElement(env, args, argc - 1);
 		/* !!! */
 		argv[argc++] = (char *)((*env)->GetStringUTFChars(env, arg, NULL));
 	}
 	PinitP(argc, argv);
-/*	PexecP("true"); */
-	for (i=(BPLONG)((*env)->GetArrayLength(env, args)); --i>=0;) {
+#if 0
+	PexecP("true");
+#endif
+	for (i = (BPLONG)((*env)->GetArrayLength(env, args)); --i >= 0; ) {
 		jobject arg = (*env)->GetObjectArrayElement(env, args, i);
-		(*env)->ReleaseStringUTFChars(env, arg, argv[i+1]);
+		(*env)->ReleaseStringUTFChars(env, arg, argv[i + 1]);
 	}
 
 	/* initialize compiled Prolog modules */
-/*	jni_interface(); */
-/*	plc_sup(); */
+#if 0
+	jni_interface();
+	plc_sup();
+#endif
 	initialize(env, oa);
 }
 JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_exec(JNIEnv *env, jclass clazz, jstring cmd) {
-	jboolean result;
-	char *ucmd;
+	jboolean	result;
+	char		*ucmd;
 
-	/* !!!*/
+	/* !!! */
 	Env = env;
-	result = Pexecute(ucmd=(char *)((*env)->GetStringUTFChars(env, cmd, NULL)));
+	result = Pexecute(ucmd = (char *)((*env)->GetStringUTFChars(env, cmd, NULL)));
 	(*env)->ReleaseStringUTFChars(env, cmd, ucmd);
 	return result;
 }
-JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_call(JNIEnv *env, jobject self, jstring functor, jarray args){
-	int i;
-	int rc;
+JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_call(JNIEnv *env, jobject self, jstring functor, jarray args) {
+	int		i;
+	int		rc;
 	/* !!! */
-	char *name = (char *)((*env)->GetStringUTFChars(env, functor, NULL));
-	int arity = (BPLONG)((*env)->GetArrayLength(env, args));
-	BPLONG command = Pfunctorn(Patom(name), arity);
+	char	*name = (char *)((*env)->GetStringUTFChars(env, functor, NULL));
+	int		arity = (BPLONG)((*env)->GetArrayLength(env, args));
+	BPLONG	command = Pfunctorn(Patom(name), arity);
 
 	Env = env;
 	(*env)->ReleaseStringUTFChars(env, functor, name);
-	for (i=0; i<arity; i++) {
+	for (i = 0; i < arity; i++) {
 		jobject arg = (*env)->GetObjectArrayElement(env, args, i);
 		if (arg) java2prolog(env, arg, PargOfCompound(command, i));
 	}
 	rc = PcallX(command);
 	if (rc) {
 		jobject arg;
-		for (i=0; i<arity; i++) {
+		for (i = 0; i < arity; i++) {
 			arg = (*env)->GetObjectArrayElement(env, args, i);
 			if (arg == NULL) {
-				jref res = prolog2java(env, PargOfCompound(command, i));
+				jref	res = prolog2java(env, PargOfCompound(command, i));
 				(*env)->CallVoidMethod(env, self, result_Plc, i, res);
 				(*env)->DeleteLocalRef(env, res);
 			}
@@ -606,9 +631,9 @@ JNIEXPORT jboolean JNICALL Java_bprolog_plc_Plc_call(JNIEnv *env, jobject self, 
 	return (jboolean)rc;
 }
 
-void Cboot_plc(void){
-	extern int c_cg_print_component();
-	extern int cg_get_default_window();
+void Cboot_plc(void) {
+	extern	int	c_cg_print_component();
+	extern	int	cg_get_default_window();
 
 	objectRef = insert_sym("$objectAddr", 11, 2);
 	insert_cpred("javaConstructor", 2, javaConstructor);
@@ -623,15 +648,15 @@ void Cboot_plc(void){
 #include "bprolog_cg_CgEvent.h"
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1mouse_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jint type, jint x, jint y, jint count, jint modifiers){
-	CgMouseEventClass mouseEventObject;
+(JNIEnv *env, jclass class, jint no, jint type, jint x, jint y, jint count, jint modifiers) {
+	CgMouseEventClass	mouseEventObject;
 
 #ifdef DEBUG_EVENT
 	printf("mouse event: %d %d\n", no, type);
 #endif
 
 	mouseEventObject = (CgMouseEventClass)malloc(sizeof(struct CgMouseEvent));
-	if (mouseEventObject==NULL) myquit(OUT_OF_MEMORY,"plc");
+	if (mouseEventObject == NULL) myquit(OUT_OF_MEMORY, "plc");
 	mouseEventObject->type = type;
 	mouseEventObject->x = x;
 	mouseEventObject->y = y;
@@ -642,27 +667,27 @@ JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1mouse_1event_1to_1bprolog
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1window_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jint type){
+(JNIEnv *env, jclass class, jint no, jint type) {
 
 #ifdef DEBUG_EVENT
 	printf("window event: %d %d\n", no, type);
 #endif
 
-	add_to_event_pool(MAKEINT(no), type,(void *)MAKEINT(type));
+	add_to_event_pool(MAKEINT(no), type, (void *)MAKEINT(type));
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1focus_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jint type){
+(JNIEnv *env, jclass class, jint no, jint type) {
 
 #ifdef DEBUG_EVENT
 	printf("focus event: %d %d\n", no, type);
 #endif
 
-	add_to_event_pool(MAKEINT(no), type,(void *)MAKEINT(type));
+	add_to_event_pool(MAKEINT(no), type, (void *)MAKEINT(type));
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1key_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jint type, jint code, jchar ch, jint modifiers){
+(JNIEnv *env, jclass class, jint no, jint type, jint code, jchar ch, jint modifiers) {
 	CgKeyEventClass keyEventObject;
 
 #ifdef DEBUG_EVENT
@@ -670,7 +695,7 @@ JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1key_1event_1to_1bprolog
 #endif
 
 	keyEventObject  = (CgKeyEventClass)malloc(sizeof(struct CgKeyEvent));
-	if (keyEventObject==NULL) myquit(OUT_OF_MEMORY,"plc");
+	if (keyEventObject == NULL) myquit(OUT_OF_MEMORY, "plc");
 	keyEventObject->type = type;
 	keyEventObject->code = code;
 	keyEventObject->ch = ch;
@@ -680,7 +705,7 @@ JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1key_1event_1to_1bprolog
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1component_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jint type, jint x, jint y, jint width, jint height){
+(JNIEnv *env, jclass class, jint no, jint type, jint x, jint y, jint width, jint height) {
 
 	CgComponentEventClass componentEventObject;
 
@@ -689,7 +714,7 @@ JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1component_1event_1to_1bprol
 #endif
 
 	componentEventObject = (CgComponentEventClass)malloc(sizeof(struct CgComponentEvent));
-	if (componentEventObject==NULL) myquit(OUT_OF_MEMORY,"plc");
+	if (componentEventObject == NULL) myquit(OUT_OF_MEMORY, "plc");
 	componentEventObject->type = type;
 	componentEventObject->x = x;
 	componentEventObject->y = y;
@@ -700,33 +725,35 @@ JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1component_1event_1to_1bprol
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1action_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no){
+(JNIEnv *env, jclass class, jint no) {
 
 #ifdef DEBUG_EVENT
 	printf("action event: %d\n", no);
 #endif
 
-	add_to_event_pool(MAKEINT(no), ActionPerformed,(void *)MAKEINT(ActionPerformed));
+	add_to_event_pool(MAKEINT(no), ActionPerformed, (void *)MAKEINT(ActionPerformed));
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1text_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jstring text){
-//	const char *str;
+(JNIEnv *env, jclass class, jint no, jstring text) {
+#if 0
+	const	char	*str;
+#endif
 #ifdef DEBUG_EVENT
 	printf("text event: %d %d\n", no);
 #endif
-	add_to_event_pool(MAKEINT(no), TextValueChanged,(void *)MAKEINT(TextValueChanged));
+	add_to_event_pool(MAKEINT(no), TextValueChanged, (void *)MAKEINT(TextValueChanged));
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1item_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jint index, jint change){
+(JNIEnv *env, jclass class, jint no, jint index, jint change) {
 
 	CgItemEventClass itemEventObject;
 #ifdef DEBUG_EVENT
 	printf("item event: %d %d\n", no, index);
 #endif
 	itemEventObject = (CgItemEventClass)malloc(sizeof(struct CgItemEvent));
-	if (itemEventObject==NULL) myquit(OUT_OF_MEMORY,"plc");
+	if (itemEventObject == NULL) myquit(OUT_OF_MEMORY, "plc");
 	itemEventObject->type = ItemStateChanged;
 	itemEventObject->index = index;
 	itemEventObject->change = change;
@@ -734,10 +761,10 @@ JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1item_1event_1to_1bprolog
 }
 
 JNIEXPORT void JNICALL Java_bprolog_cg_CgEvent_post_1adjustment_1event_1to_1bprolog
-(JNIEnv *env, jclass class, jint no, jint adjust_type, jint value){
+(JNIEnv *env, jclass class, jint no, jint adjust_type, jint value) {
 	CgAdjustmentEventClass adjustmentEventObject;
 	adjustmentEventObject = (CgAdjustmentEventClass)malloc(sizeof(struct CgAdjustmentEvent));
-	if (adjustmentEventObject==NULL) myquit(OUT_OF_MEMORY,"plc");
+	if (adjustmentEventObject == NULL) myquit(OUT_OF_MEMORY, "plc");
 	adjustmentEventObject->type = AdjustmentValueChanged;
 	adjustmentEventObject->adjust_type = adjust_type;
 	adjustmentEventObject->value = value;

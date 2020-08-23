@@ -2,7 +2,7 @@
  *	File	: delay.c
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
  *	Purpose	: Primitives for suspension variables and agents
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -13,23 +13,25 @@
 #include "event.h"
 #include "frame.h"
 
-BPLONG true;
+BPLONG	true;
 
 BPLONG build_delayed_call_on_the_heap(BPLONG_PTR frame)
 {
-	SYM_REC_PTR sym_ptr;
-	BPLONG arity, i;
-	BPLONG call, arg;
-	BPLONG_PTR top;
+	SYM_REC_PTR	sym_ptr;
+	BPLONG		arity, i;
+	BPLONG		call, arg;
+	BPLONG_PTR	top;
 
-	sym_ptr = (SYM_REC_PTR)FOLLOW((BPLONG_PTR)AR_REEP(frame)+2);
+	sym_ptr = (SYM_REC_PTR)FOLLOW((BPLONG_PTR)AR_REEP(frame) + 2);
 	arity = GET_ARITY(sym_ptr);
 
-/*	printf("name=%s/arity=%d\n", GET_NAME(sym_ptr), arity); */
+#if 0
+	printf("name=%s/arity=%d\n", GET_NAME(sym_ptr), arity);
+#endif
 
-	for (i = arity; i>0; i--){
-		arg = FOLLOW(frame+i);
-		if (ISREF(arg) && ISFREE(arg)){
+	for (i = arity; i > 0; i--) {
+		arg = FOLLOW(frame + i);
+		if (ISREF(arg) && ISFREE(arg)) {
 			FOLLOW(arg) = (BPLONG)heap_top;
 			PUSHTRAIL(arg);
 			NEW_HEAP_FREE;
@@ -38,8 +40,8 @@ BPLONG build_delayed_call_on_the_heap(BPLONG_PTR frame)
 
 	call = ADDTAG(heap_top, STR);
 	FOLLOW(heap_top++) = (BPLONG)sym_ptr;
-	for (i = arity; i>0; i--){
-		arg = FOLLOW(frame+i);
+	for (i = arity; i > 0; i--) {
+		arg = FOLLOW(frame + i);
 		DEREF(arg);
 		if (IS_SUSP_VAR(arg))
 			NEW_HEAP_NODE(UNTAGGED_TOPON_ADDR(arg));
@@ -50,11 +52,11 @@ BPLONG build_delayed_call_on_the_heap(BPLONG_PTR frame)
 	return call;
 }
 
-int c_frozen_cf(void){
-	register BPLONG var, return_goal;
-	BPLONG goal;
-	BPLONG_PTR dv_ptr, dcs, list;
-	BPLONG_PTR top;
+int c_frozen_cf(void) {
+	register	BPLONG var, return_goal;
+	BPLONG		goal;
+	BPLONG_PTR	dv_ptr, dcs, list;
+	BPLONG_PTR	top;
 
 	var = ARG(1, 2);
 	return_goal = ARG(2, 2);
@@ -63,7 +65,7 @@ int c_frozen_cf(void){
 	list = heap_top;
 	goal = (BPLONG)list;
 	*heap_top = (BPLONG)heap_top; heap_top++;
-	if (IS_SUSP_VAR(var)){
+	if (IS_SUSP_VAR(var)) {
 		dv_ptr = (BPLONG_PTR)UNTAGGED_ADDR(var);
 		dcs = (BPLONG_PTR)DV_ins_cs(dv_ptr);
 		list = frozen_cs(dcs, list);
@@ -71,15 +73,15 @@ int c_frozen_cf(void){
 
 		dcs = (BPLONG_PTR)DV_minmax_cs(dv_ptr);
 		list = frozen_cs(dcs, list);
-		if ((BPLONG)list== -1) return BP_ERROR;
+		if ((BPLONG)list == -1) return BP_ERROR;
 
 		dcs = (BPLONG_PTR)DV_dom_cs(dv_ptr);
 		list = frozen_cs(dcs, list);
-		if ((BPLONG)list== -1) return BP_ERROR;
+		if ((BPLONG)list == -1) return BP_ERROR;
 
 		dcs = (BPLONG_PTR)DV_outer_dom_cs(dv_ptr);
 		list = frozen_cs(dcs, list);
-		if ((BPLONG)list== -1) return BP_ERROR;
+		if ((BPLONG)list == -1) return BP_ERROR;
 
 		FOLLOW(list) = nil_sym;
 
@@ -90,43 +92,43 @@ int c_frozen_cf(void){
 
 BPLONG_PTR frozen_cs(BPLONG_PTR cs, BPLONG_PTR Plist)
 {
-	BPLONG tmp;
-	BPLONG_PTR frame;
+	BPLONG		tmp;
+	BPLONG_PTR	frame;
 
-	while (ISLIST((BPLONG)cs)){
+	while (ISLIST((BPLONG)cs)) {
 		cs = (BPLONG_PTR)UNTAGGED_ADDR(cs);
-		frame = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(cs)));
+		frame = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(cs)));
 
-		if (!FRAME_IS_DEAD(frame)){
+		if (!FRAME_IS_DEAD(frame)) {
 			tmp = build_delayed_call_on_the_heap(frame);
-			if (tmp== -1) return (BPLONG_PTR)-1;
+			if (tmp == -1) return (BPLONG_PTR)-1;
 			FOLLOW(Plist) = ADDTAG(heap_top, LST);
 			NEW_HEAP_NODE(tmp);
-			Plist = heap_top;heap_top++;
+			Plist = heap_top; heap_top++;
 		}
 		cs = (BPLONG_PTR)LIST_NEXT(cs);
 	}
 	return Plist;
 }
 
-int c_frozen_f(void){
-	BPLONG P_goal, P_goal_rest;
-	BPLONG cell, tmp;
-	BPLONG_PTR frame;
-	BPLONG_PTR top;
+int c_frozen_f(void) {
+	BPLONG		P_goal, P_goal_rest;
+	BPLONG		cell, tmp;
+	BPLONG_PTR	frame;
+	BPLONG_PTR	top;
 
 	P_goal = ARG(1, 1);
 	DEREF(P_goal);
-	if (!ISREF(P_goal)){
+	if (!ISREF(P_goal)) {
 		exception = illegal_arguments;
 		return BP_ERROR;
 	}
 
 	frame = sfreg;
-	while (AR_PREV(frame)!=(BPLONG)frame) {	/* end of chain */
-		if (!FRAME_IS_DEAD(frame)){
+	while (AR_PREV(frame) != (BPLONG)frame) {	/* end of chain */
+		if (!FRAME_IS_DEAD(frame)) {
 			tmp = build_delayed_call_on_the_heap(frame);
-			if (tmp== -1) return BP_ERROR;
+			if (tmp == -1) return BP_ERROR;
 			cell = bp_build_list();
 			unify(bp_get_car(cell), tmp);
 			P_goal_rest = bp_get_cdr(cell);
@@ -145,19 +147,19 @@ int c_frozen_f(void){
 */
 int b_SUSP_ATTACH_TERM_cc(BPLONG Var, BPLONG Term)
 {
-	BPLONG_PTR top, dv_ptr;
+	BPLONG_PTR	top, dv_ptr;
 
 	DEREF(Var);
 	DEREF(Term);
-	if (ISREF(Term)){
+	if (ISREF(Term)) {
 		exception = illegal_arguments;
 		return BP_ERROR;
 	}
-	if (ISREF(Var)){
+	if (ISREF(Var)) {
 		CREATE_SUSP_VAR_nocs(Var);	/* dv_ptr set */
 		DV_attached(dv_ptr) = Term;
 		return 1;
-	} else if (IS_SUSP_VAR(Var)){
+	} else if (IS_SUSP_VAR(Var)) {
 		dv_ptr = (BPLONG_PTR)UNTAGGED_ADDR(Var);
 		top = A_DV_attached(dv_ptr);
 		PUSHTRAIL_H_NONATOMIC(top, FOLLOW(top));
@@ -176,10 +178,10 @@ int b_SUSP_ATTACH_TERM_cc(BPLONG Var, BPLONG Term)
 */
 int b_SUSP_ATTACHED_TERM_cf(BPLONG Var, BPLONG Term)
 {
-	BPLONG_PTR top, dv_ptr;
+	BPLONG_PTR	top, dv_ptr;
 
 	DEREF(Var);
-	if (!IS_SUSP_VAR(Var)){
+	if (!IS_SUSP_VAR(Var)) {
 		exception = illegal_arguments;
 		return BP_ERROR;
 	} else {
@@ -191,7 +193,7 @@ int b_SUSP_ATTACHED_TERM_cf(BPLONG Var, BPLONG Term)
 
 int b_SUSP_VAR_c(BPLONG var)
 {
-	BPLONG_PTR top;
+	BPLONG_PTR	top;
 
 	DEREF(var);
 	if (IS_SUSP_VAR(var)) return 1; else return 0;
@@ -200,17 +202,17 @@ int b_SUSP_VAR_c(BPLONG var)
 /* skip all the dead constraints in the list */
 BPLONG next_alive_susp_call(BPLONG cs_list, BPLONG_PTR breg)
 {
-	BPLONG_PTR constr_ar, ptr;
+	BPLONG_PTR	constr_ar, ptr;
 
-	while (cs_list!=nil_sym){
+	while (cs_list != nil_sym) {
 		ptr = (BPLONG_PTR)UNTAGGED_ADDR(cs_list);
-		constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(ptr)));
-		if (AR_STATUS(constr_ar)==SUSP_EXIT && constr_ar<breg){	/* permanently dead */
-			/*
+		constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(ptr)));
+		if (AR_STATUS(constr_ar) == SUSP_EXIT && constr_ar < breg) {	/* permanently dead */
+#if 0
 			printf("skip %x (breg=%x)\n", constr_ar, breg);
 			show_frame(constr_ar);
-			*/
-			cs_list = FOLLOW(ptr+1);
+#endif
+			cs_list = FOLLOW(ptr + 1);
 		} else return cs_list;
 	}
 	return cs_list;
@@ -218,17 +220,17 @@ BPLONG next_alive_susp_call(BPLONG cs_list, BPLONG_PTR breg)
 
 void print_cs(BPLONG cs_list)
 {
-	BPLONG_PTR constr_ar, ptr;
+	BPLONG_PTR	constr_ar, ptr;
 
-	while (cs_list!=nil_sym){
+	while (cs_list != nil_sym) {
 		ptr = (BPLONG_PTR)UNTAGGED_ADDR(cs_list);
-		constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(ptr)));
-		if (AR_STATUS(constr_ar)==SUSP_EXIT){
+		constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(ptr)));
+		if (AR_STATUS(constr_ar) == SUSP_EXIT) {
 			printf("-");
 		} else {
 			printf("*");
 		}
-		cs_list = FOLLOW(ptr+1);
+		cs_list = FOLLOW(ptr + 1);
 	}
 	printf("\n");
 }

@@ -11,9 +11,9 @@
 //-------------------------------------------------------------------------------------------------------------
 #include <stdio.h>
 
-int init_qc(void);
-int qc(int num, int pos);
-int output_res(int num, int prim_count);
+int	init_qc(void);
+int	qc(int num, int pos);
+int	output_res(int num, int prim_count);
 
 #define BP_TRUE		1
 #define BP_FALSE	0
@@ -21,17 +21,17 @@ int output_res(int num, int prim_count);
 #define QC_MAX		2048
 
 // Global fields:
-int minterm[QC_MAX][QC_MAX];
-int mask[QC_MAX][QC_MAX];					// mask of minterm
-int used[QC_MAX][QC_MAX];					// minterm used
-int result[QC_MAX];							// results
-int primmask[QC_MAX];						// mask for prime implicants
-int prim[QC_MAX];							// prime implicant
-int wprim[QC_MAX];							// essential prime implicant (BP_TRUE/BP_FALSE)
-int nwprim[QC_MAX];							// needed not essential prime implicant
+int	minterm[QC_MAX][QC_MAX];
+int	mask[QC_MAX][QC_MAX];					// mask of minterm
+int	used[QC_MAX][QC_MAX];					// minterm used
+int	result[QC_MAX];							// results
+int	primmask[QC_MAX];						// mask for prime implicants
+int	prim[QC_MAX];							// prime implicant
+int	wprim[QC_MAX];							// essential prime implicant (BP_TRUE/BP_FALSE)
+int	nwprim[QC_MAX];							// needed not essential prime implicant
 
 // Count all set bits of the integer number
-int popCount(unsigned x) {	// Taken from book "Hackers Delight"
+int	popCount(unsigned x) {	// Taken from book "Hackers Delight"
 	x = x - ((x >> 1) & 0x55555555);
 	x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
 	x = (x + (x >> 4)) & 0x0F0F0F0F;
@@ -48,8 +48,8 @@ int hammingWeight(int v1, int v2) {
 // Output upper part of term in console
 void upperTerm(int bitfield, int mask, int num) {
 	if (mask) {
-		int z;
-		for ( z = 0; z < num; z++) {
+		int	z;
+		for (z = 0; z < num; z++) {
 			if (mask & (1 << z)) {
 				if (bitfield & (1 << z))
 					printf("_");
@@ -63,7 +63,7 @@ void upperTerm(int bitfield, int mask, int num) {
 // Output lower part of term in console
 void lowerTerm(int mask, int num) {
 	if (mask) {
-		int z;
+		int	z;
 		for (z = 0; z < num; z++) {
 			if (mask & (1 << z)) {
 				printf("%c", 'z' - (num - 1) + z);
@@ -89,11 +89,11 @@ int contains(int value, int mask, int part, int partmask) {
 }
 
 int espresso_main(void) {
-	int num = 5;	// Number of Variables
-	int pos = 0;
-	int cur = 0;
-	int prim_count = 0;
-	int x;
+	int	num = 5;	// Number of Variables
+	int	pos = 0;
+	int	cur = 0;
+	int	prim_count = 0;
+	int	x;
 
 	init_qc();
 
@@ -102,22 +102,25 @@ int espresso_main(void) {
 	printf("pos=%d\n", pos);
 
 	cur = 0;
-	for ( x=0; x < pos; x++) {
-//      if (x!=13 && x!=18 && x!=23){
+	for (x = 0; x < pos; x++) {
+#if 0
+		if (x != 13 && x != 18 && x != 23)
+#endif
+		{
 			mask[cur][0] = ((1 << num)- 1);
 			minterm[cur][0] = x;
 			cur++;
 			result[x] = 1;
-//      }
+		}
 	}
 	prim_count = qc(num, pos);
 	output_res(num, prim_count);
 	return 0;
 }
 
-int init_qc(void){
-	int x = 0;
-	int y = 0;
+int init_qc(void) {
+	int	x = 0;
+	int	y = 0;
 
 	for (x = 0; x < QC_MAX; x++) {
 		primmask[x] = 0;
@@ -136,46 +139,46 @@ int init_qc(void){
 }
 
 int qc(int num, int pos) {
-	int cur = 0;
-	int reduction = 0;	//reduction step
-	int maderedction = BP_FALSE;
-	int prim_count = 0;
-	int term = 0;
-	int termmask = 0;
-	int found = 0;
-	int x = 0;
-	int y = 0;
-	int z = 0;
-	int count = 0;
-	int lastprim = 0;
-	int res = 0;	// actual result
+	int	cur = 0;
+	int	reduction = 0;	// reduction step
+	int	maderedction = BP_FALSE;
+	int	prim_count = 0;
+	int	term = 0;
+	int	termmask = 0;
+	int	found = 0;
+	int	x = 0;
+	int	y = 0;
+	int	z = 0;
+	int	count = 0;
+	int	lastprim = 0;
+	int	res = 0;	// actual result
 
 	for (reduction = 0; reduction < QC_MAX; reduction++) {
 		cur = 0;
 		maderedction = BP_FALSE;
-		for (y=0; y < QC_MAX; y++) {
-			for (x=0; x < QC_MAX; x++) {
+		for (y = 0; y < QC_MAX; y++) {
+			for (x = 0; x < QC_MAX; x++) {
 				if ((mask[x][reduction]) && (mask[y][reduction])) {
 					if (popCount(mask[x][reduction]) > 1) {	// Do not allow complete removal (problem if all terms are 1)
 						if ((hammingWeight(minterm[x][reduction] & mask[x][reduction], minterm[y][reduction] & mask[y][reduction]) == 1) && (mask[x][reduction] == mask[y][reduction])) {	// Simplification only possible if 1 bit differs
 							term = minterm[x][reduction];	// could be mintern x or y
-							//e.g.:
-							//1110
-							//1111
+							// e.g.:
+							// 1110
+							// 1111
 							// Should result in mask of 1110
 							termmask = mask[x][reduction]  ^ (minterm[x][reduction] ^ minterm[y][reduction]);
 							term  &= termmask;
 
 							found = BP_FALSE;
-							for ( z=0; z<cur; z++) {
-								if ((minterm[z][reduction+1] == term) && (mask[z][reduction+1] == termmask) ) {
+							for (z = 0; z < cur; z++) {
+								if ((minterm[z][reduction + 1] == term) && (mask[z][reduction + 1] == termmask) ) {
 									found = BP_TRUE;
 								}
 							}
 
 							if (found == BP_FALSE) {
-								minterm[cur][reduction+1] = term;
-								mask[cur][reduction+1] = termmask;
+								minterm[cur][reduction + 1] = term;
+								mask[cur][reduction + 1] = termmask;
 								cur++;
 							}
 							used[x][reduction] = BP_TRUE;
@@ -187,24 +190,28 @@ int qc(int num, int pos) {
 			}
 		}
 		if (maderedction == BP_FALSE)
-			break;	//exit loop early (speed optimisation)
+			break;	// exit loop early (speed optimisation)
 	}
 
 	prim_count = 0;
-//	printf("\nprime implicants:\n");
-	for ( reduction = 0 ; reduction < QC_MAX; reduction++) {
-		for ( x=0 ;x < QC_MAX; x++) {
+#if 0
+	printf("\nprime implicants:\n");
+#endif
+	for (reduction = 0 ; reduction < QC_MAX; reduction++) {
+		for (x = 0 ;x < QC_MAX; x++) {
 			// Determine all not used minterms
 			if ((used[x][reduction] == BP_FALSE) && (mask[x][reduction]) ) {
 				// Check if the same prime implicant is already in the list
 				found = BP_FALSE;
-				for ( z=0; z < prim_count; z++) {
+				for (z = 0; z < prim_count; z++) {
 					if (((prim[z] & primmask[z]) == (minterm[x][reduction] & mask[x][reduction])) &&  (primmask[z] == mask[x][reduction]) )
 						found = BP_TRUE;
 				}
 				if (found == BP_FALSE) {
-//					outputTerm(minterm[x][reduction], mask[x][reduction], num);
-//					printf("\n");
+#if 0
+					outputTerm(minterm[x][reduction], mask[x][reduction], num);
+					printf("\n");
+#endif
 					primmask[prim_count] = mask[x][reduction];
 					prim[prim_count] = minterm[x][reduction];
 					prim_count++;
@@ -215,11 +222,11 @@ int qc(int num, int pos) {
 
 	// Find essential and not essential prime implicants
 	// All alle prime implicants are set to "not essential" so far
-	for (y=0; y < pos; y++) {	//for all minterms
+	for (y = 0; y < pos; y++) {	// for all minterms
 		count = 0;
 		lastprim = 0;
 		if (mask[y][0]) {
-			for (x=0; x < prim_count; x++ ) {	//for all prime implicants
+			for (x = 0; x < prim_count; x++ ) {	// for all prime implicants
 				if (primmask[x]) {
 					// Check if the minterm contains prime implicant
 					if (contains(minterm[y][0], mask[y][0], prim[x], primmask[x])) {
@@ -236,27 +243,33 @@ int qc(int num, int pos) {
 	}
 
 	// Successively testing if it is possible to remove prime implicants from the rest matrix
-	for ( z=0; z < prim_count; z++) {
+	for (z = 0; z < prim_count; z++) {
 		if (primmask[z] ) {
 			if ((wprim[z] == BP_FALSE)) {	// && (rwprim[z] == BP_TRUE))
 				nwprim[z] = BP_FALSE;	// Mark as "not essential"
-				for ( y=0; y < pos; y++) {	// for all possibilities
+				for (y = 0; y < pos; y++) {	// for all possibilities
 					res = 0;
-					for ( x=0; x < prim_count; x++) {
-						if ( (wprim[x] == BP_TRUE) || (nwprim[x] == BP_TRUE)) {		//essential prime implicant or marked as required
+					for (x = 0; x < prim_count; x++) {
+						if ( (wprim[x] == BP_TRUE) || (nwprim[x] == BP_TRUE)) {		// essential prime implicant or marked as required
 							if ((y & primmask[x]) == (prim[x] & primmask[x])) {	// All bits must be 1
 								res = 1;
 								break;
 							}
 						}
 					}
-//					printf(" %d\t%d\n", result, result[y]);
+#if 0
+					printf(" %d\t%d\n", result, result[y]);
+#endif
 					if (res == result[y]) {		// compare calculated result with input value
-//						printf("not needed\n");	//prime implicant not required
+#if 0
+						printf("not needed\n");	// prime implicant not required
+#endif
 					}
 					else {
-//						printf("needed\n");
-						nwprim[z] = BP_TRUE;	//prime implicant required
+#if 0
+						printf("needed\n");
+#endif
+						nwprim[z] = BP_TRUE;	// prime implicant required
 					}
 				}
 			}
@@ -265,14 +278,14 @@ int qc(int num, int pos) {
 	return prim_count;
 }
 
-int output_res(int num, int prim_count){
-	int count = 0;
-	int x = 0;
+int output_res(int num, int prim_count) {
+	int	count = 0;
+	int	x = 0;
 
 	printf("\nResult:\n\n");
 	// Output of essential and required prime implicants
 	count = 0;
-	for ( x = 0 ; x < prim_count; x++) {
+	for (x = 0 ; x < prim_count; x++) {
 		if (wprim[x] == BP_TRUE) {
 			if (count > 0) printf("   ");
 			upperTerm(prim[x], primmask[x], num);
@@ -286,7 +299,7 @@ int output_res(int num, int prim_count){
 	}
 	printf("\n");
 	count = 0;
-	for ( x = 0 ; x < prim_count; x++) {
+	for (x = 0 ; x < prim_count; x++) {
 		if (wprim[x] == BP_TRUE) {
 			if (count > 0) printf(" + ");
 			lowerTerm(primmask[x], num);

@@ -1,14 +1,13 @@
 #include "config.h"
 
 const char *
-picosat_version (void)
+picosat_version(void)
 {
-  return PICOSAT_VERSION;
+	return PICOSAT_VERSION;
 }
 
 const char *
-picosat_config (void)
+picosat_config(void)
 {
-  return PICOSAT_CC " " PICOSAT_CFLAGS;
+	return PICOSAT_CC " " PICOSAT_CFLAGS;
 }
-

@@ -43,6 +43,9 @@ CPP_EXC=\maple\
 CPP_EXC=\picosat\
 CPP_EXC=\python\
 CPP_EXC=\jdk\
+CPP_EXC=\libunistd\
+CPP_EXC=\tcc
+CPP_EXC=\windows
 CPP_EXC=bp_regex
 CPP_EXC=cadical_picat
 CPP_EXC=ctest
@@ -80,8 +83,9 @@ CPP_DEF=NOPYTHON=1
 CPP_DEF=PICAT=1
 CPP_DEF=SAT=4
 #CPP_DEF=M64BITS=1
-CPP_DEF=WIN32=1
+#CPP_DEF=WIN32=1
 CPP_INC="${LOC_BAT}\Include"
+CPP_INC="${LOC_BAT}\Include\Win"
 CPP_INC="${LOC_SRC}\claspLib"
 CPP_INC="${LOC_SRC}\claspLib\libpotassco"
 CPP_INC="${LOC_SRC}\espresso"
@@ -94,11 +98,12 @@ CPP_INC="${LOC_SRC}\lingeling"
 CPP_INC="${LOC_SRC}\maple"
 CPP_INC="${LOC_SRC}\picosat"
 CPP_INC="${LOC_SRC}\python"
-CPP_INC="${LOC_SRC}\windows"
+#CPP_INC="${LOC_SRC}\libunistd\unistd"
+#CPP_INC="${LOC_SRC}\windows"
 #CPP_INC="${LOC_SRC}\windows\sys"
-CPP_INC="${LOC_SRC}\jdk\include"
-CPP_INC="${LOC_SRC}\jdk\include\win32"
-CPP_LIB=/Fo "$[LOC_DST]/$[NAME].o"
+#CPP_INC="${LOC_SRC}\jdk\include"
+#CPP_INC="${LOC_SRC}\jdk\include\win32"
+#CPP_LIB=/Fo "$[LOC_DST]\$[NAME].o"
 
 LNK_EXE=polink.exe
 #LNK_PWD=${CD}

@@ -2,7 +2,7 @@
  *	File	: toam.c
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
  *	Purpose	: Emulator of ATOAM
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -18,29 +18,29 @@
 #include <signal.h>
 /* #include <setjmp.h> */
 
-/*
-	#define DEBUG_CALL
-	#define DEBUG_INST
-	#define TRACE_BUILTIN
-	#define TRACE_TOAM
-	#define DEBUG_DELAY
-	#define DEBUG_INST
-*/
+#if 0
+#define DEBUG_CALL
+#define DEBUG_INST
+#define TRACE_BUILTIN
+#define TRACE_TOAM
+#define DEBUG_DELAY
+#define DEBUG_INST
+#endif
 
-extern Builtins builtins[];		//branch
-extern BPLONG_PTR *asp_rel_mins,*asp_rel_sizes;
-extern char *eventNoNameTable[];		//branch
+extern	Builtins	builtins[];					// branch
+extern	BPLONG_PTR	*asp_rel_mins, *asp_rel_sizes;
+extern	char		*eventNoNameTable[];		// branch
 
-BPLONG interrupt_sym;			/* the atom 'interrupt' */
-SYM_REC_PTR ball_psc;			/* the global var '$ball' */
-BPLONG_PTR  sreg = NULL;		/* current build or unify field */
-BYTE bprolog_initialized = 0;
+		BPLONG		interrupt_sym;		/* the atom 'interrupt' */
+		SYM_REC_PTR	ball_psc;			/* the global var '$ball' */
+		BPLONG_PTR	sreg = NULL;		/* current build or unify field */
+		BYTE		bprolog_initialized = 0;
 /* jmp_buf restart_env; */
 
-BPLONG gc_threshold = 50;
-BPLONG last_tabled_call_code = last_tabled_call;
-BPLONG table_allocate_code = table_allocate;
-
+		BPLONG		gc_threshold = 50;
+		BPLONG		last_tabled_call_code = last_tabled_call;
+		BPLONG		table_allocate_code = table_allocate;
+		
 #ifdef GCC
 void **jmp_table;
 #endif
@@ -51,55 +51,60 @@ void exception_handler(int signo)
 #ifdef BPSOLVER
 		case SIGXCPU:
 		case SIGSEGV:
-			fprintf(stderr,"%% unhandled signal %d\n", signo);
-			//    fprintf(stdout,"%% UNKNOWN\n");
+			fprintf(stderr, "%% unhandled signal %d\n", signo);
+#if 0
+			fprintf(stdout, "%% UNKNOWN\n");
+#endif
 			exit(1);
 #endif
 
 		case SIGINT:
-			/*    longjmp(restart_env,-1); */
+#if 0
+			longjmp(restart_env, -1);
+#endif
 			toam_signal_vec |= INTERRUPT;
-			if (signal(SIGINT, exception_handler)==SIG_ERR)
+			if (signal(SIGINT, exception_handler) == SIG_ERR)
 				printf("can't catch SIGINT\n");
 			break;
 
 		default:
-			if (user_signal_action[signo])		//branch
-			{		//branch
-				toam_signal_vec |= (INTERRUPT | USER_INTERRUPT);		//branch
-				user_signal = signo;		//branch
-			}		//branch
-			else		//branch
-			{		//branch
-				printf("signal not handled: signo=%d\n", signo);
+			if (user_signal_action[signo])							// branch
+			{														// branch
+				toam_signal_vec |= (INTERRUPT | USER_INTERRUPT);	// branch
+				user_signal = signo;								// branch
+			}														// branch
+			else													// branch
+			{														// branch
+				printf("signal not handled: signo = %d\n", signo);
 				exit(2);
-			}		//branch
+			}														// branch
 			break;
 	}
 }
 
-void init_signals(void){
-	int i;		//branch
+void init_signals(void) {
+	int	i;															// branch
 	toam_signal_vec = 0;
 
-	for (i = 0; i < NSIG; i++)		//branch
-	{		//branch
-		user_signal_action[i] = NULL;		//branch
-	}		//branch
-	if (signal(SIGINT, exception_handler)==SIG_ERR)
+	for (i = 0; i < NSIG; i++)										// branch
+	{																// branch
+		user_signal_action[i] = NULL;								// branch
+	}																// branch
+	if (signal(SIGINT, exception_handler) == SIG_ERR)
 		printf("can't catch SIGINT\n");
 #ifdef BPSOLVER
-	if (signal(SIGXCPU, exception_handler)==SIG_ERR)
+	if (signal(SIGXCPU, exception_handler) == SIG_ERR)
 		printf("can't catch SIGINT\n");
-	if (signal(SIGSEGV, exception_handler)==SIG_ERR)
+	if (signal(SIGSEGV, exception_handler) == SIG_ERR)
 		printf("can't catch SIGINT\n");
 #endif
 }
 
 int initialize_bprolog(int argc, char *argv[])
 {
-	BPLONG_PTR inst_begin0;
-	if (bprolog_initialized==1) return BP_TRUE;
+	BPLONG_PTR	inst_begin0;
+
+	if (bprolog_initialized == 1) return BP_TRUE;
 	init_toam(argc, argv);		/* first scan of the command line arguments */
 	file_init();
 
@@ -113,7 +118,7 @@ int initialize_bprolog(int argc, char *argv[])
 	bprolog_initialized = 1;
 	load_byte_code_from_c_array();
 
-	if (init_loading(argc, argv)==BP_ERROR){
+	if (init_loading(argc, argv) == BP_ERROR) {
 		exception = bp_initialization_error;
 		return BP_ERROR;
 	}
@@ -126,29 +131,33 @@ int initialize_bprolog(int argc, char *argv[])
 
 int toam(register BPLONG_PTR P, register BPLONG_PTR AR, register BPLONG_PTR LOCAL_TOP)
 {
-	register BPLONG op1;
-	register BPLONG_PTR top, sreg = NULL;
-	register BPLONG  op2, op3;
-	register SYM_REC_PTR     sym_ptr = NULL;
-	register BPLONG   arity, i;
-	register BPLONG_PTR dv_ptr;
-//	BYTE     table_flag;
-	BPLONG_PTR ep;
+	register	BPLONG		op1;
+	register	BPLONG_PTR	top, sreg = NULL;
+	register	BPLONG		op2, op3;
+	register	SYM_REC_PTR	sym_ptr = NULL;
+	register	BPLONG		arity, i;
+	register	BPLONG_PTR	dv_ptr;
+#if 0
+				BYTE		table_flag;
+#endif
+				BPLONG_PTR	ep;
 
-	BPLONG head_arity;
-	char *error_goal_name;
-	BPLONG error_goal_arity;
-	BPLONG first, last, available_sh_space;
+				BPLONG		head_arity;
+				char		*error_goal_name;
+				BPLONG		error_goal_arity;
+				BPLONG		first, last, available_sh_space;
 
-	BPLONG_PTR subgoal_entry;
-	BPLONG_PTR  stack_water_mark, heap_water_mark;
-	BPLONG_PTR constr_ar;
+				BPLONG_PTR	subgoal_entry;
+				BPLONG_PTR	stack_water_mark, heap_water_mark;
+				BPLONG_PTR	constr_ar;
 
 	op1 = 0;
 	i = 0;
+	error_goal_name = NULL;
+	error_goal_arity = 0;
 
 #ifdef GCC
-	if (P!=NULL){
+	if (P != NULL) {
 #endif
 
 #ifdef ToamProfile
@@ -158,15 +167,18 @@ int toam(register BPLONG_PTR P, register BPLONG_PTR AR, register BPLONG_PTR LOCA
 	RESET_WATER_MARKS;
 	gc_b = B;	/* bottom of the top segment that has been gc collected */
 	/**************************************************************************/
-#ifndef GCC		//branch
+#ifndef GCC		// branch
 contcase:							/* LOCAL_TOP OF EXECUTION LOOP : Read Mode */
-#endif		//branch
+#endif			// branch
 #ifdef DEBUG_INST
-//	if (trace_toam) {
+#if 0
+	if (trace_toam)
+#endif
+	{
 		cpreg = P;
 		printf("%d p(%x) ar(%x) lt(%x) h(%x)\n", toam_signal_vec, P, AR, LOCAL_TOP, H);
 		print_inst(stdout);
-//	}
+	}
 #endif
 #ifdef TRACE_TOAM
 	if (trace_toam) {
@@ -177,7 +189,7 @@ contcase:							/* LOCAL_TOP OF EXECUTION LOOP : Read Mode */
 #endif
 #ifdef TRACE_BUILTIN
 	cpreg = P;
-	if (*cpreg>=builtin0 && *cpreg<=builtin4){
+	if (*cpreg >= builtin0 && *cpreg <= builtin4) {
 		printf("ar(%x) lt(%x)", AR, LOCAL_TOP);
 		print_inst(curr_out);
 	}
@@ -191,51 +203,55 @@ contcase:							/* LOCAL_TOP OF EXECUTION LOOP : Read Mode */
 	execute_inst(*P);
 #endif
 
-/*	bookkeep_inst(*P); */
+#if 0
+	bookkeep_inst(*P);
+#endif
 
-/*
+#if 0
 #ifdef TRACE_INSTS
 	addExecTrace(*P);
 #endif
-	if (toam_signal_vec!=0) printf("toam_signal_vec=%x\n", toam_signal_vec);
-*/
+	if (toam_signal_vec != 0) printf("toam_signal_vec = %x\n", toam_signal_vec);
+#endif
 
 #include "emu_inst.h"
 
 interrupt_handler: {
-		BPLONG this_exception;
-		BPLONG_PTR btm_ptr;
-		BPLONG_PTR f = B;
+		BPLONG		this_exception;
+		BPLONG_PTR	btm_ptr;
+		BPLONG_PTR	f = B;
 
 #ifdef BPSOLVER
-		fprintf(stderr,"%% unhandled interrupt event	\n");
-//		fprintf(stdout,"%% UNKNOWN\n");
+		fprintf(stderr, "%% unhandled interrupt event	\n");
+#if 0
+		fprintf(stdout, "%% UNKNOWN\n");
+#endif
 		exit(1);
 #endif
-		if (exception==(BPLONG)NULL) exception = unknown_exception;
+		if (exception == (BPLONG)NULL) exception = unknown_exception;
 		event_func.func = NULL;
 		if (toam_signal_vec & USER_INTERRUPT)
 		{
 			(*user_signal_action[user_signal])(user_signal, user_signal_data[user_signal]);
 		}
-		while ((BPLONG)f != AR_B(f)){
+		while ((BPLONG)f != AR_B(f)) {
 			RESET_SUBGOAL_AR(f);
-			if (IS_CATCHER_FRAME(f)){
-				btm_ptr = (BPLONG_PTR)UNTAGGED_ADDR(AR_BTM(f));		/* a catcher frame is in the form of p(Flag, Cleanup, Calll, Exception, Recovery,...) */
-				this_exception = FOLLOW(btm_ptr-3);
-				if (is_UNIFIABLE(exception, this_exception)){
+			if (IS_CATCHER_FRAME(f)) {
+				btm_ptr = (BPLONG_PTR)UNTAGGED_ADDR(AR_BTM(f));		/* a catcher frame is in the form of p(Flag, Cleanup, Calll, Exception, Recovery, ...) */
+				this_exception = FOLLOW(btm_ptr - 3);
+				if (is_UNIFIABLE(exception, this_exception)) {
 					goto interrupt_end_while;
 				}
 			}
 			f = (BPLONG_PTR)AR_B(f);
 		}
 
-	interrupt_end_while:
+interrupt_end_while:
 		B = f;
 		HB = (BPLONG_PTR)AR_H(B);
 		if (toam_signal_vec & USER_INTERRUPT)
 		{
-			BPLONG_PTR parent_ar = (BPLONG_PTR)AR_AR(AR);
+			BPLONG_PTR	parent_ar = (BPLONG_PTR)AR_AR(AR);
 			toam_signal_vec = 0;
 			*LOCAL_TOP-- = MAKEINT(event_func.signo);
 
@@ -256,9 +272,9 @@ interrupt_handler: {
 	}
 
 	/*------------------------------------------------------------------*/
-catch_exception:{
-		BPLONG_PTR parent_ar = (BPLONG_PTR)AR_AR(AR);
-		if (exception==(BPLONG)NULL) exception = unknown_exception;
+catch_exception: {
+		BPLONG_PTR	parent_ar = (BPLONG_PTR)AR_AR(AR);
+		if (exception == (BPLONG)NULL) exception = unknown_exception;
 		*LOCAL_TOP-- = exception;
 		exception = (BPLONG)NULL;
 		*LOCAL_TOP-- = c_error_src(error_goal_name, error_goal_arity);
@@ -271,9 +287,9 @@ catch_exception:{
 		CONTCASE;
 	}
 
-forward_exception_as_is:{
-		BPLONG_PTR parent_ar = (BPLONG_PTR)AR_AR(AR);
-		if (exception==(BPLONG)NULL) exception = unknown_exception;
+forward_exception_as_is: {
+		BPLONG_PTR	parent_ar = (BPLONG_PTR)AR_AR(AR);
+		if (exception == (BPLONG)NULL) exception = unknown_exception;
 		*LOCAL_TOP-- = exception;
 		exception = (BPLONG)NULL;
 
@@ -286,35 +302,35 @@ forward_exception_as_is:{
 	}
 
 	/*------------------------------------------------------------------*/
-trigger_on_handler:{
-		BPLONG flag;
-		BPLONG time_out_event_index = 0;
-/*
-		if (trigger_no>2) printf("DEBUG==>handler %d	\n", trigger_no);
+trigger_on_handler: {
+		BPLONG	flag;
+		BPLONG	time_out_event_index = 0;
+#if 0
+		if (trigger_no > 2) printf("DEBUG==>handler %d	\n", trigger_no);
 		printf("DEBUG==>handler %d flag=%d\n", trigger_no, event_flag[trigger_no]);
 		write_term(FOLLOW(triggeredCs[trigger_no]));
 		printf("\n");
-*/
-		for (i = trigger_no;i>0;i--){
+#endif
+		for (i = trigger_no; i > 0; i--) {
 			flag = event_flag[i];
 			op1 = FOLLOW(triggeredCs[i]);
 
 			switch (flag) {
 				case EVENT_VAR_INS:
 				case EVENT_DVAR_INS:
-					while (ISLIST(op1)){
+					while (ISLIST(op1)) {
 						sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);	/* borrow sreg */
-						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
+						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
 						CONNECT_WOKEN_FRAME_ins(constr_ar);
 						op1 = LIST_NEXT(sreg);
 					}
 					break;
 
 				case EVENT_DVAR_MINMAX:
-					while (ISLIST(op1)){
+					while (ISLIST(op1)) {
 						sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
-						if (constr_ar!=triggering_frame[trigger_no]){
+						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
+						if (constr_ar != triggering_frame[trigger_no]) {
 							CONNECT_WOKEN_FRAME_min_max(constr_ar);
 						}
 						op1 = LIST_NEXT(sreg);
@@ -323,10 +339,10 @@ trigger_on_handler:{
 
 				case EVENT_DVAR_OUTER_DOM:
 				case EVENT_DVAR_DOM:
-					while (ISLIST(op1)){
+					while (ISLIST(op1)) {
 						sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
-						if (TAG(event_object[i])!=ATM){
+						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
+						if (TAG(event_object[i]) != ATM) {
 							op1 = (BPLONG)AR_OUT_ADDR(constr_ar);
 							PUSHTRAIL_S_NONATOMIC(op1, FOLLOW(op1));	/* trail for GC */
 						}
@@ -335,12 +351,12 @@ trigger_on_handler:{
 					}
 					break;
 				case TimeOut:
-					if (time_out_event_index==0){
-						time_out_event_index=i;
+					if (time_out_event_index == 0) {
+						time_out_event_index = i;
 					} else {
-						while (ISLIST(op1)){
+						while (ISLIST(op1)) {
 							sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-							constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
+							constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
 							CONNECT_WOKEN_FRAME_dom(constr_ar, dummy_event_object);
 							op1 = LIST_NEXT(sreg);
 						}
@@ -348,30 +364,30 @@ trigger_on_handler:{
 					break;
 
 				case EVENT_GENERAL:{
-					BPLONG prev_alive_node_cdr;
-					BPLONG_PTR prev_alive_node_ptr;
+					BPLONG		prev_alive_node_cdr;
+					BPLONG_PTR	prev_alive_node_ptr;
 
 					prev_alive_node_ptr = triggeredCs[i];
 					prev_alive_node_cdr = op1;
-					while (ISLIST(op1)){
+					while (ISLIST(op1)) {
 						sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
-						if (!FRAME_IS_DEAD(constr_ar)){	/* compact the list */
-							if (prev_alive_node_cdr!=op1){
+						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
+						if (!FRAME_IS_DEAD(constr_ar)) {	/* compact the list */
+							if (prev_alive_node_cdr != op1) {
 								PUSHTRAIL_H_NONATOMIC(prev_alive_node_ptr, prev_alive_node_cdr);
 								FOLLOW(prev_alive_node_ptr) = op1;
 							}
-							if (TAG(event_object[i])!=ATM){	/* neither Atom nor Integer */
+							if (TAG(event_object[i]) != ATM) {	/* neither Atom nor Integer */
 								op1 = (BPLONG)AR_OUT_ADDR(constr_ar);
 								PUSHTRAIL_S_NONATOMIC(op1, FOLLOW(op1));	/* trail for GC */
 							}
 							CONNECT_WOKEN_FRAME_dom(constr_ar, event_object[i]);
-							prev_alive_node_ptr = (sreg+1);
+							prev_alive_node_ptr = (sreg + 1);
 							prev_alive_node_cdr = FOLLOW(prev_alive_node_ptr);
 						}
 						op1 = LIST_NEXT(sreg);
 					}
-					if (prev_alive_node_cdr!=nil_sym){
+					if (prev_alive_node_cdr != nil_sym) {
 						PUSHTRAIL_H_NONATOMIC(prev_alive_node_ptr, prev_alive_node_cdr);
 						FOLLOW(prev_alive_node_ptr) = nil_sym;
 					}
@@ -387,8 +403,8 @@ trigger_on_handler:{
 				case MouseMoved:
 				case MouseDragged:{
 					extern mouse_event_psc;
-					BPLONG  bp_o;
-					CgMouseEventClass o = (CgMouseEventClass)event_object[i];
+					BPLONG				bp_o;
+					CgMouseEventClass	o = (CgMouseEventClass)event_object[i];
 					bp_o = ADDTAG(H, STR);
 					FOLLOW(H++) = mouse_event_psc;
 					FOLLOW(H++) = MAKEINT(o->type);
@@ -418,8 +434,8 @@ trigger_on_handler:{
 				case KeyReleased:
 				case KeyTyped:{
 					extern key_event_psc;
-					BPLONG  bp_o;
-					CgKeyEventClass o = (CgKeyEventClass)event_object[i];
+					BPLONG			bp_o;
+					CgKeyEventClass	o = (CgKeyEventClass)event_object[i];
 					bp_o = ADDTAG(H, STR);
 					FOLLOW(H++) = key_event_psc;
 					FOLLOW(H++) = MAKEINT(o->type);
@@ -436,8 +452,8 @@ trigger_on_handler:{
 				case ComponentHidden:
 				case ComponentShown:{
 					extern component_event_psc;
-					BPLONG  bp_o;
-					CgComponentEventClass o = (CgComponentEventClass)event_object[i];
+					BPLONG					bp_o;
+					CgComponentEventClass	o = (CgComponentEventClass)event_object[i];
 					bp_o = ADDTAG(H, STR);
 					FOLLOW(H++) = component_event_psc;
 					FOLLOW(H++) = MAKEINT(o->type);
@@ -451,8 +467,8 @@ trigger_on_handler:{
 				};
 				case ItemStateChanged:{
 					extern item_event_psc;
-					BPLONG  bp_o;
-					CgItemEventClass o = (CgItemEventClass)event_object[i];
+					BPLONG				bp_o;
+					CgItemEventClass	o = (CgItemEventClass)event_object[i];
 					bp_o = ADDTAG(H, STR);
 					FOLLOW(H++) = item_event_psc;
 					FOLLOW(H++) = MAKEINT(o->type);
@@ -464,8 +480,8 @@ trigger_on_handler:{
 				}
 				case AdjustmentValueChanged:{
 					extern adjustment_event_psc;
-					BPLONG  bp_o;
-					CgAdjustmentEventClass o = (CgAdjustmentEventClass)event_object[i];
+					BPLONG					bp_o;
+					CgAdjustmentEventClass	o = (CgAdjustmentEventClass)event_object[i];
 					bp_o = ADDTAG(H, STR);
 					FOLLOW(H++) = adjustment_event_psc;
 					FOLLOW(H++) = MAKEINT(o->type);
@@ -475,11 +491,11 @@ trigger_on_handler:{
 					free(o);
 
 					install_handlers:
-					while (ISLIST(op1)){
+					while (ISLIST(op1)) {
 						sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
-						if (event_handler_type(constr_ar)==flag){
-							if (TAG(event_object[i])!=ATM){
+						constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
+						if (event_handler_type(constr_ar) == flag) {
+							if (TAG(event_object[i]) != ATM) {
 								op1 = (BPLONG)AR_OUT_ADDR(constr_ar);
 								PUSHTRAIL_S_NONATOMIC(op1, FOLLOW(op1));
 							}
@@ -493,11 +509,11 @@ trigger_on_handler:{
 					break;
 			}
 		}
-		if (time_out_event_index!=0){	/* the most recent  time-event has top priority */
+		if (time_out_event_index != 0) {	/* the most recent  time - event has top priority */
 			op1 = FOLLOW(triggeredCs[time_out_event_index]);
-			while (ISLIST(op1)){
+			while (ISLIST(op1)) {
 				sreg = (BPLONG_PTR)UNTAGGED_ADDR(op1);
-				constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr-(BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
+				constr_ar = (BPLONG_PTR)((BPULONG)stack_up_addr - (BPULONG)UNTAGGED_CONT(FOLLOW(sreg)));
 				CONNECT_WOKEN_FRAME_dom(constr_ar, dummy_event_object);
 				op1 = LIST_NEXT(sreg);
 			}
@@ -506,10 +522,10 @@ trigger_on_handler:{
 		trigger_no = 0;
 		toam_signal_vec &= ~TRIGGER_ON;
 		toam_LOCAL_OVERFLOW_CHECK_SMALL_MARGIN(7);
-/*
-			printf("<==handler %d\n", trigger_no);
-			check_ar_chain(AR);
-*/
+#if 0
+		printf("<==handler %d\n", trigger_no);
+		check_ar_chain(AR);
+#endif
 		CONTCASE;
 	}
 #include "jmp_table.c"
@@ -522,36 +538,36 @@ trigger_on_handler:{
 		FOLLOW(addr_table_consume) = (BPLONG)local_jmp_table[table_consume];
 		last_tabled_call_code = (BPLONG)local_jmp_table[last_tabled_call];
 		table_allocate_code = (BPLONG)local_jmp_table[table_allocate];
-		return(BP_TRUE);		//branch
+		return (BP_TRUE);		// branch
 	}
 #endif
 }								/* end toam.c */
 
 
 /**************************************************/
-/*
+#if 0
 printEntrance(BPLONG_PTR p)
 {
-	SYM_REC_PTR sym_ptr;
+	SYM_REC_PTR	sym_ptr;
 
-	while (!is_allocate(p) && p>=parea_low_addr && p<parea_up_addr) p--;
-	if (p<=parea_low_addr || p>=parea_up_addr) return;
-	sym_ptr = (SYM_REC_PTR)FOLLOW(p+3);
-	if (GET_ETYPE(sym_ptr)==T_PRED && GET_EP(sym_ptr)>parea_low_addr && GET_EP(sym_ptr)<parea_up_addr)
-		printf("\t > %s/%d\n", GET_NAME(sym_ptr), GET_ARITY(sym_ptr));
+	while (!is_allocate(p) && p >= parea_low_addr && p < parea_up_addr) p--;
+	if (p <= parea_low_addr || p >= parea_up_addr) return;
+	sym_ptr = (SYM_REC_PTR)FOLLOW(p + 3);
+	if (GET_ETYPE(sym_ptr) == T_PRED && GET_EP(sym_ptr)>parea_low_addr && GET_EP(sym_ptr)<parea_up_addr)
+		printf("\t > %s / %d\n", GET_NAME(sym_ptr), GET_ARITY(sym_ptr));
 }
 
 is_allocate(BPLONG_PTR p)
 {
-	if (*p==allocate_det ||
-	*p ==allocate_det_b ||
+	if (*p == allocate_det ||
+	*p == allocate_det_b ||
 	*p == allocate_nondet ||
 	*p == allocate_susp ||
-	*p == table_allocate){
-		if (*(p+1)<100 && *(p+1)>=0 && *(p+2)<100 && *(p+2)>=0 &&
-		(BPLONG_PTR)*(p+3)>parea_low_addr && (BPLONG_PTR)*(p+3)<parea_up_addr)
+	*p == table_allocate) {
+		if (*(p + 1)<100 && *(p + 1) >= 0 && *(p + 2)<100 && *(p + 2) >= 0 &&
+		(BPLONG_PTR) * (p + 3)>parea_low_addr && (BPLONG_PTR) * (p + 3)<parea_up_addr)
 			return 1;
 	}
 	return 0;
 }
-*/
+#endif

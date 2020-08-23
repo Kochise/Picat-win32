@@ -2,7 +2,7 @@
  *	File	: kapi.c
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
  *	Purpose	: External language interface
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -19,21 +19,22 @@
 #define HALF_WORD_LONG	16
 #endif
 
-SYM_REC_PTR  objectRef;
-extern char *string_in;
+		SYM_REC_PTR	objectRef;
+extern	char		*string_in;
 char *bp_get_name();
 
 /* Prolog to C */
 
-/*
-	PvalueOfInt(BPLONG term){
+#if 0
+PvalueOfInt(BPLONG term) {
 	DEREF(term);
 	return INTVAL(term);
-	}
-*/
+}
+#endif
+
 double PvalueOfReal(BPLONG term)
 {
-	BPLONG_PTR top;
+	BPLONG_PTR	top;
 
 	double floatval();
 	DEREF(term);
@@ -42,13 +43,13 @@ double PvalueOfReal(BPLONG term)
 
 BPLONG PvalueOfAddr(BPLONG term)
 {
-	BPULONG w1, w2;
-	BPLONG_PTR top;
+	BPULONG		w1, w2;
+	BPLONG_PTR	top;
 
 	DEREF(term);
 	UNTAG_ADDR(term);
-	w1 = INTVAL(*((BPLONG_PTR)term+1));
-	w2 = INTVAL(*((BPLONG_PTR)term+2));
+	w1 = INTVAL(*((BPLONG_PTR)term + 1));
+	w2 = INTVAL(*((BPLONG_PTR)term + 2));
 	return (w2 << HALF_WORD_LONG | w1);
 }
 
@@ -62,7 +63,7 @@ char* PnumberToStr(BPLONG term)
 
 UW32 ParityOfCompound(BPLONG term)
 {
-	BPLONG_PTR top;
+	BPLONG_PTR	top;
 
 	DEREF(term);
 	return GET_ARITY(GET_SYM_REC(term));
@@ -70,7 +71,7 @@ UW32 ParityOfCompound(BPLONG term)
 
 BPLONG PargOfCompound(BPLONG term, BPLONG n)
 {
-	return picat_get_arg(n+1, term);
+	return picat_get_arg(n + 1, term);
 }
 
 /* Return functors as strings*/
@@ -99,7 +100,7 @@ int Punify(BPLONG term1, BPLONG term2)
 
 int PuInt(BPLONG term, BPLONG i)
 {
-	BPLONG op;
+	BPLONG	op;
 
 	op = MAKEINT(i);
 	return unify(term, op);
@@ -107,7 +108,7 @@ int PuInt(BPLONG term, BPLONG i)
 
 int PuAtom(BPLONG term, char *str)
 {
-	BPLONG op = picat_build_atom(str);
+	BPLONG	op = picat_build_atom(str);
 	return unify(term, op);
 }
 
@@ -118,11 +119,11 @@ void PuStr(BPLONG term, char *str)
 
 int PuAddr(BPLONG term, void *a)
 {
-	register BPLONG temp;
+	register	BPLONG	temp;
 
 	temp = ADDTAG(heap_top, STR);
 	NEW_HEAP_NODE((BPLONG)objectRef);	/* '$addr'(int1, int2) */
-	NEW_HEAP_NODE(MAKEINT(((BPULONG)a<<HALF_WORD_LONG)>>HALF_WORD_LONG));
+	NEW_HEAP_NODE(MAKEINT(((BPULONG)a << HALF_WORD_LONG)>>HALF_WORD_LONG));
 	NEW_HEAP_NODE(MAKEINT(((BPULONG)a >>HALF_WORD_LONG)));
 	return unify(term, temp);
 }
@@ -133,7 +134,7 @@ int PuReal(BPLONG term, double d)
 }
 
 /* Create terms */
-BPLONG PnewVar(void){
+BPLONG PnewVar(void) {
 	return picat_build_var();
 }
 
@@ -158,7 +159,7 @@ BPLONG Pfunctorn(BPLONG name, BPLONG arity)
 /* Manipulate lists */
 BPLONG get_CAR(BPLONG term)
 {
-	BPLONG_PTR top;
+	BPLONG_PTR	top;
 
 	DEREF(term);
 	return *((BPLONG_PTR)UNTAGGED_ADDR(term));
@@ -166,7 +167,7 @@ BPLONG get_CAR(BPLONG term)
 
 BPLONG PlistCar(BPLONG term)
 {
-	BPLONG_PTR top;
+	BPLONG_PTR	top;
 
 	DEREF(term);
 	return *((BPLONG_PTR)UNTAGGED_ADDR(term));
@@ -174,27 +175,27 @@ BPLONG PlistCar(BPLONG term)
 
 BPLONG get_CDR(BPLONG term)
 {
-	BPLONG_PTR top;
+	BPLONG_PTR	top;
 
 	DEREF(term);
-	return *((BPLONG_PTR)UNTAGGED_ADDR(term)+1);
+	return *((BPLONG_PTR)UNTAGGED_ADDR(term) + 1);
 }
 
 BPLONG PlistCdr(BPLONG term)
 {
-	BPLONG_PTR top;
+	BPLONG_PTR	top;
 
 	DEREF(term);
-	return *((BPLONG_PTR)UNTAGGED_ADDR(term)+1);
+	return *((BPLONG_PTR)UNTAGGED_ADDR(term) + 1);
 }
 
 BPLONG PlistLength(BPLONG term)
 {
-	register BPLONG len=0;
-	BPLONG_PTR top;
+	register	BPLONG		len = 0;
+				BPLONG_PTR	top;
 
 	DEREF(term);
-	while (!PisEndList(term)){
+	while (!PisEndList(term)) {
 		len++;
 		term = PlistCdr(term);
 		DEREF(term);
@@ -204,14 +205,14 @@ BPLONG PlistLength(BPLONG term)
 
 BPLONG Plistn(BPLONG length)
 {
-	BPLONG lst, tail, tmp;
+	BPLONG	lst, tail, tmp;
 
-	if (length<=0) return picat_build_nil();
+	if (length <= 0) return picat_build_nil();
 	else {
 		length--;
 		lst = bp_build_list();
 		tail = bp_get_cdr(lst);
-		while (length>0){
+		while (length > 0) {
 			tmp =bp_build_list();
 			FOLLOW(tail) = tmp;
 			tail = bp_get_cdr(tmp);

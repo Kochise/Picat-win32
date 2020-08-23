@@ -1,4 +1,4 @@
-char *inst_name[]={
+char *inst_name[] = {
 	"noop",
 	"noop1",
 	"allocate_det_b",
@@ -434,4 +434,4 @@ char *inst_name[]={
 	"asp_decode",
 	"asp_add_tuple",
 	"set_catcher_frame",
-	"filter_clauses"};
+	"filter_clauses" };

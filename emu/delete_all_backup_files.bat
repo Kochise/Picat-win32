@@ -3,6 +3,7 @@
 rem Delete all previous backup files
 dir "*.bak" /B /A:-D /ON /S > liste.txt
 dir "*.obj" /B /A:-D /ON /S>> liste.txt
+dir "*.o" /B /A:-D /ON /S>> liste.txt
 if exist "liste.txt" (
     for /f %%a in (liste.txt) do (
         del "%%a" /q 1>nul 2>nul

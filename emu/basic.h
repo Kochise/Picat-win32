@@ -1,7 +1,7 @@
 /********************************************************************
  *	File	: basic.h
  *	Author	: Neng-Fa ZHOU Copyright (C) 1994-2019
-
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -10,32 +10,32 @@
 #ifndef BP_BASIC_H
 #define BP_BASIC_H
 
-/*
+#if 0
 #define TRACE_INSTS
 #ifdef TRACE_INSTS
-extern int exec_trace[];
+extern	int		exec_trace[];
 #endif
-*/
+#endif
 
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 
 #ifdef M64BITS
-#define BP_NEG_1			-1LL
-#define BP_MAXINT_1W		72057594037927935LL
-#define BP_MININT_1W		-BP_MAXINT_1W
+#define BP_NEG_1				-1LL
+#define BP_MAXINT_1W			72057594037927935LL
+#define BP_MININT_1W			-BP_MAXINT_1W
 
 #else
 
-#define BP_NEG_1			-1
-#define BP_MAXINT_1W		268435455
-#define BP_MININT_1W		-BP_MAXINT_1W
+#define BP_NEG_1				-1
+#define BP_MAXINT_1W			268435455
+#define BP_MININT_1W			-BP_MAXINT_1W
 #endif
 
-/*
+#if 0
 #define TOAM_LOCAL_REGS
-*/
+#endif
 #define AlphabetSize			256
 #define MAX_STR_LEN				8192
 #define MAX_FILE_NAME_LEN		1024
@@ -62,7 +62,9 @@ extern int exec_trace[];
 #define OUT_OF_MEMORY			4
 
 #define SMALL_MARGIN			1250
-//#define LARGE_MARGIN			12500
+#if 0
+#define LARGE_MARGIN			12500
+#endif
 #define LARGE_MARGIN			125000
 
 /* maximum and minimum integers that are represented in one word */
@@ -84,9 +86,9 @@ typedef char					CHAR;		/*  8 bits */
 typedef unsigned char			BYTE;		/*  8 bits */
 typedef unsigned short int		UW16;		/* 16 bits */
 #ifdef M64BITS
-typedef long long int			BPLONG;		/* 64 bits for Win x64*/
-typedef long long int			TERM;		/* 64 bits for Win x64*/
-typedef unsigned long long int	BPULONG;	/* 64 bits for Win x64*/
+typedef long long int			BPLONG;		/* 64 bits for Win x64 */
+typedef long long int			TERM;		/* 64 bits for Win x64 */
+typedef unsigned long long int	BPULONG;	/* 64 bits for Win x64 */
 #define BPLONG_FMT_STR	"%lld"
 #define BPULONG_FMT_STR	"%llx"
 #else
@@ -115,18 +117,18 @@ typedef UW32					*UW32_PTR;
 typedef struct sym_rec			*SYM_REC_PTR;
 
 typedef struct sym_rec {
-	BYTE      etype;
-	BYTE      spy;
-	UW16      length;
-	UW32      arity;
-	CHAR_PTR  nameptr;
-	SYM_REC_PTR next;
-	int       (*ep)(void);		/* entry point to byte code, global var, c function */
+	BYTE		etype;
+	BYTE		spy;
+	UW16		length;
+	UW32		arity;
+	CHAR_PTR	nameptr;
+	SYM_REC_PTR	next;
+	int			(*ep)(void);		/* entry point to byte code, global var, c function */
 } SYM_REC;
 
 typedef struct event_func_data {
-	SYM_REC_PTR func;
-	int signo;
+	SYM_REC_PTR	func;
+	int			signo;
 } EVENT_FUNC;
 
 /* An interpreted predicate (consulted or dynamic) is stored as a record of the following form:
@@ -139,12 +141,12 @@ typedef struct event_func_data {
 	hashtable:		Pointer to the hashtable
 */
 typedef struct {
-	BPLONG ref_count;
-	BPLONG retr_count;
-	BPLONG cl_count;
-	BPLONG time_stamp;
-	BPLONG bucket_size;
-	BPLONG_PTR hashtable;
+	BPLONG		ref_count;
+	BPLONG		retr_count;
+	BPLONG		cl_count;
+	BPLONG		time_stamp;
+	BPLONG		bucket_size;
+	BPLONG_PTR	hashtable;
 } InterpretedPred;
 
 typedef InterpretedPred *InterpretedPredPtr;
@@ -154,8 +156,8 @@ typedef InterpretedPred *InterpretedPredPtr;
 	list : list of clauses hashed to this bucket
 */
 typedef struct {
-	BPLONG_PTR tail;
-	BPLONG list;
+	BPLONG_PTR	tail;
+	BPLONG		list;
 } InterpretedPredBucket;
 typedef InterpretedPredBucket *InterpretedPredBucketPtr;
 
@@ -167,27 +169,27 @@ typedef InterpretedPredBucket *InterpretedPredBucketPtr;
 	death_time_stamp: time it was retracted
 */
 typedef struct {
-	BPLONG cl_ref;
-	BPLONG head;
-	BPLONG body;
-	BPLONG birth_time_stamp;
-	BPLONG death_time_stamp;
+	BPLONG		cl_ref;
+	BPLONG		head;
+	BPLONG		body;
+	BPLONG		birth_time_stamp;
+	BPLONG		death_time_stamp;
 } InterpretedClause;
 typedef InterpretedClause *InterpretedClausePtr;
 
 /* used for hash-consing for the table area */
 typedef struct {
-	BPLONG_PTR htable;
-	BPLONG size;
-	BPLONG count;
+	BPLONG_PTR	htable;
+	BPLONG		size;
+	BPLONG		count;
 } GTERMS_HTABLE;
 typedef GTERMS_HTABLE *GTERMS_HTABLE_PTR;
 
 /* used for the table area*/
 typedef struct {
-	BPLONG_PTR low_addr, up_addr, top;
-	GTERMS_HTABLE_PTR gterms_htable_ptr;
-	int num_expansions;
+	BPLONG_PTR			low_addr, up_addr, top;
+	GTERMS_HTABLE_PTR	gterms_htable_ptr;
+	int					num_expansions;
 } NUMBERED_TERM_AREA_RECORD;
 typedef NUMBERED_TERM_AREA_RECORD *NUMBERED_TERM_AREA_RECORD_PTR;
 
@@ -197,76 +199,76 @@ typedef NUMBERED_TERM_AREA_RECORD *NUMBERED_TERM_AREA_RECORD_PTR;
 #define NUM_PICAT_GLOBAL_MAPS	97
 
 typedef struct {
-	BPLONG key;
-	BPLONG val;
-	BPLONG_PTR next;
+	BPLONG		key;
+	BPLONG		val;
+	BPLONG_PTR	next;
 } KEY_VAL_PAIR;
 typedef KEY_VAL_PAIR *KEY_VAL_PAIR_PTR;
 
 typedef struct {
-	BPLONG size;
-	BPLONG count;
-	BPLONG_PTR htable;
+	BPLONG		size;
+	BPLONG		count;
+	BPLONG_PTR	htable;
 } MAP_RECORD;
 typedef MAP_RECORD *MAP_RECORD_PTR;
 
 #ifdef BUILTIN_PROTO_CHECK
 typedef union {
-int  (*func0)(void);
-int  (*func1)(BPLONG w);
-int  (*func2)(BPLONG w, BPLONG x);
-int  (*func3)(BPLONG w, BPLONG x, BPLONG y);
-int  (*func4)(BPLONG w, BPLONG x, BPLONG y, BPLONG z);
+	int			(*func0)(void);
+	int			(*func1)(BPLONG w);
+	int			(*func2)(BPLONG w, BPLONG x);
+	int			(*func3)(BPLONG w, BPLONG x, BPLONG y);
+	int			(*func4)(BPLONG w, BPLONG x, BPLONG y, BPLONG z);
 } Builtin_funcs;
 
 typedef struct {
-	int argcount;
-	Builtin_funcs func;
+	int				argcount;
+	Builtin_funcs	func;
 } Builtins;
 
-#define INITIALIZE_BUILTIN0(index, function)			{builtins[index].argcount = 0; builtins[index].func.func0 = function;}
-#define INITIALIZE_BUILTIN1(index, function)			{builtins[index].argcount = 1; builtins[index].func.func1 = function;}
-#define INITIALIZE_BUILTIN2(index, function)			{builtins[index].argcount = 2; builtins[index].func.func2 = function;}
-#define INITIALIZE_BUILTIN3(index, function)			{builtins[index].argcount = 3; builtins[index].func.func3 = function;}
-#define INITIALIZE_BUILTIN4(index, function)			{builtins[index].argcount = 4; builtins[index].func.func4 = function;}
+#define INITIALIZE_BUILTIN0(index, function) { builtins[index].argcount = 0; builtins[index].func.func0 = function; }
+#define INITIALIZE_BUILTIN1(index, function) { builtins[index].argcount = 1; builtins[index].func.func1 = function; }
+#define INITIALIZE_BUILTIN2(index, function) { builtins[index].argcount = 2; builtins[index].func.func2 = function; }
+#define INITIALIZE_BUILTIN3(index, function) { builtins[index].argcount = 3; builtins[index].func.func3 = function; }
+#define INITIALIZE_BUILTIN4(index, function) { builtins[index].argcount = 4; builtins[index].func.func4 = function; }
 
-#define EXECUTE_BUILTIN0(res, index)	{int tempindex = index;						\
+#define EXECUTE_BUILTIN0(res, index) { int tempindex = index;				\
 			if (builtins[tempindex].argcount != 0)								\
 				printf("builtin[%d] called with 0 args, expected %d\n", tempindex, builtins[tempindex].argcount);	\
-			res = (*builtins[tempindex].func.func0)();}
-#define EXECUTE_BUILTIN1(res, index, op)	{int tempindex = index;					\
+			res = (*builtins[tempindex].func.func0)(); }
+#define EXECUTE_BUILTIN1(res, index, op) { int tempindex = index;			\
 			if (builtins[tempindex].argcount != 1)								\
 				printf("builtin[%d] called with 1 args, expected %d\n", tempindex, builtins[tempindex].argcount);	\
-			res = (*builtins[tempindex].func.func1)(op);}
-#define EXECUTE_BUILTIN2(res, index, op1, op2)	{int tempindex = index;				\
+			res = (*builtins[tempindex].func.func1)(op); }
+#define EXECUTE_BUILTIN2(res, index, op1, op2) { int tempindex = index;		\
 			if (builtins[tempindex].argcount != 2)								\
 				printf("builtin[%d] called with 2 args, expected %d\n", tempindex, builtins[tempindex].argcount);	\
-			res = (*builtins[tempindex].func.func2)(op1, op2);}
-#define EXECUTE_BUILTIN3(res, index, op1, op2, op3)	{int tempindex = index;			\
+			res = (*builtins[tempindex].func.func2)(op1, op2); }
+#define EXECUTE_BUILTIN3(res, index, op1, op2, op3) { int tempindex = index;	\
 			if (builtins[tempindex].argcount != 3)								\
 				printf("builtin[%d] called with 3 args, expected %d\n", tempindex, builtins[tempindex].argcount);	\
-			res = (*builtins[tempindex].func.func3)(op1, op2, op3);}
-#define EXECUTE_BUILTIN4(res, index, op1, op2, op3, op4)	{int tempindex = index;		\
+			res = (*builtins[tempindex].func.func3)(op1, op2, op3); }
+#define EXECUTE_BUILTIN4(res, index, op1, op2, op3, op4) { int tempindex = index;	\
 			if (builtins[tempindex].argcount != 4)								\
 				printf("builtin[%d] called with 4 args, expected %d\n", tempindex, builtins[tempindex].argcount);	\
-			res = (*builtins[tempindex].func.func4)(op1, op2, op3, op4);}
+			res = (*builtins[tempindex].func.func4)(op1, op2, op3, op4); }
 #else
-typedef int (*Builtins)();
+typedef int(*Builtins)();
 
-#define INITIALIZE_BUILTIN0(index, function)			builtins[index] = function
-#define INITIALIZE_BUILTIN1(index, function)			builtins[index] = function
-#define INITIALIZE_BUILTIN2(index, function)			builtins[index] = function
-#define INITIALIZE_BUILTIN3(index, function)			builtins[index] = function
-#define INITIALIZE_BUILTIN4(index, function)			builtins[index] = function
+#define INITIALIZE_BUILTIN0(index, function)	builtins[index] = function
+#define INITIALIZE_BUILTIN1(index, function)	builtins[index] = function
+#define INITIALIZE_BUILTIN2(index, function)	builtins[index] = function
+#define INITIALIZE_BUILTIN3(index, function)	builtins[index] = function
+#define INITIALIZE_BUILTIN4(index, function)	builtins[index] = function
 
-#define EXECUTE_BUILTIN0(res, index)					res = (*builtins[index])()
-#define EXECUTE_BUILTIN1(res, index, op)				res = (*builtins[index])(op)
-#define EXECUTE_BUILTIN2(res, index, op1, op2)			res = (*builtins[index])(op1, op2)
-#define EXECUTE_BUILTIN3(res, index, op1, op2, op3)		res = (*builtins[index])(op1, op2, op3)
+#define EXECUTE_BUILTIN0(res, index)						res = (*builtins[index])()
+#define EXECUTE_BUILTIN1(res, index, op)					res = (*builtins[index])(op)
+#define EXECUTE_BUILTIN2(res, index, op1, op2)				res = (*builtins[index])(op1, op2)
+#define EXECUTE_BUILTIN3(res, index, op1, op2, op3)			res = (*builtins[index])(op1, op2, op3)
 #define EXECUTE_BUILTIN4(res, index, op1, op2, op3, op4)	res = (*builtins[index])(op1, op2, op3, op4)
 #endif
 
-extern int curr_toam_status;
+extern	int	curr_toam_status;
 
 #ifdef DEBUG
 #define INLINE
@@ -294,234 +296,234 @@ extern int curr_toam_status;
 /* t1 is greater than t2 */
 #define TABLE_ANS_IS_GT(t1, t2)	((ISINT(t1) && ISINT(t2)) ? (INTVAL(t1)>INTVAL(t2)) : bp_compare(t1, t2)>0)
 
-extern int			bp_gc;
-extern int			old_bp_gc;
-extern int			redefine_warning;
+extern	int			bp_gc;
+extern	int			old_bp_gc;
+extern	int			redefine_warning;
 
-extern int			confirm_copy_right;
+extern	int			confirm_copy_right;
 
-extern BPLONG		n_backtracks;
-extern int			use_tabling;
-extern BPLONG_PTR	subgoalTable;
-extern BPLONG		subgoalTableBucketSize;
-extern BPLONG		subgoalTableEntriesCount;
-extern BPLONG		InitAnswerTableBucketSize;
+extern	BPLONG		n_backtracks;
+extern	int			use_tabling;
+extern	BPLONG_PTR	subgoalTable;
+extern	BPLONG		subgoalTableBucketSize;
+extern	BPLONG		subgoalTableEntriesCount;
+extern	BPLONG		InitAnswerTableBucketSize;
 
-extern BPLONG		global_call_number;
-extern BPLONG		number_of_spy_points;
-extern UW16			dg_flag_word;
+extern	BPLONG		global_call_number;
+extern	BPLONG		number_of_spy_points;
+extern	UW16		dg_flag_word;
 
-extern FILE			*curr_in, *curr_out;
+extern	FILE		*curr_in, *curr_out;
 
-extern BPLONG		stack_size, stack_size_limit, parea_size, findall_area_size, trail_size;	/* declared in init.c */
+extern	BPLONG		stack_size, stack_size_limit, parea_size, findall_area_size, trail_size;	/* declared in init.c */
 
 extern BPLONG_PTR	parea_low_addr;			/* psc records, instructions, p-names */
-extern BPLONG_PTR	parea_water_mark;		/* overflows when this mark is reached */
-extern BPLONG_PTR	trail_low_addr;			/* trail stack */
-extern BPLONG_PTR	trail_water_mark;		/* overflows when this mark is reached after compaction */
-extern BPLONG_PTR	trail_water_mark0;		/* compact when this mark is reached */
+extern	BPLONG_PTR	parea_water_mark;		/* overflows when this mark is reached */
+extern	BPLONG_PTR	trail_low_addr;			/* trail stack */
+extern	BPLONG_PTR	trail_water_mark;		/* overflows when this mark is reached after compaction */
+extern	BPLONG_PTR	trail_water_mark0;		/* compact when this mark is reached */
 
-extern BPLONG_PTR	stack_up_addr;
-extern BPLONG_PTR	stack_low_addr;
-extern BPLONG_PTR	trail_up_addr;
+extern	BPLONG_PTR	stack_up_addr;
+extern	BPLONG_PTR	stack_low_addr;
+extern	BPLONG_PTR	trail_up_addr;
 
-extern BPLONG_PTR	cpreg;
-extern CHAR_PTR		curr_fence;				/* ptr to next free byte in perm space */
+extern	BPLONG_PTR	cpreg;
+extern	CHAR_PTR	curr_fence;				/* ptr to next free byte in perm space */
 extern BPLONG_PTR	parea_up_addr;			/* ptr to last+1 free byte in perm space */
-extern BPLONG_PTR	inst_begin;				/* ptr to the beginning of inst. array */
-extern BPLONG_PTR	addr_halt;
-extern BPLONG_PTR	addr_halt0;
-extern BPLONG_PTR	addr_fail;
-extern BPLONG_PTR	addr_table_consume;
-extern BPLONG_PTR	addr_table_consume0;
+extern	BPLONG_PTR	inst_begin;				/* ptr to the beginning of inst. array */
+extern	BPLONG_PTR	addr_halt;
+extern	BPLONG_PTR	addr_halt0;
+extern	BPLONG_PTR	addr_fail;
+extern	BPLONG_PTR	addr_table_consume;
+extern	BPLONG_PTR	addr_table_consume0;
 
-extern BPLONG_PTR	gc_low;
-extern BPLONG_PTR	gc_upper;
-extern int			gc_is_working;
-extern BPLONG_PTR	copy_area_low, copy_area_high;
+extern	BPLONG_PTR	gc_low;
+extern	BPLONG_PTR	gc_upper;
+extern	int			gc_is_working;
+extern	BPLONG_PTR	copy_area_low, copy_area_high;
 
-extern BPLONG_PTR	top;
-extern BPLONG_PTR	arreg;					/* latest activation record       */
-extern BPLONG_PTR	local_top;
-extern BPLONG_PTR	local_top0;
-extern BPLONG_PTR	breg;					/* latest choice point          */
-extern BPLONG_PTR	breg0;					/* choice point where global variables for cglib are stored */
-extern BPLONG_PTR	heap_top;				/* top of heap                  */
-extern BPLONG_PTR	trail_top;				/* top of trail stack           */
-extern BPLONG_PTR	hbreg;					/* heap backtrack point         */
-extern BPLONG_PTR	sfreg;					/* latest suspension frame      */
-extern BPLONG_PTR	gc_b;
+extern	BPLONG_PTR	top;
+extern	BPLONG_PTR	arreg;					/* latest activation record */
+extern	BPLONG_PTR	local_top;
+extern	BPLONG_PTR	local_top0;
+extern	BPLONG_PTR	breg;					/* latest choice point */
+extern	BPLONG_PTR	breg0;					/* choice point where global variables for cglib are stored */
+extern	BPLONG_PTR	heap_top;				/* top of heap */
+extern	BPLONG_PTR	trail_top;				/* top of trail stack */
+extern	BPLONG_PTR	hbreg;					/* heap backtrack point */
+extern	BPLONG_PTR	sfreg;					/* latest suspension frame */
+extern	BPLONG_PTR	gc_b;
 
-extern BPLONG_PTR	triggeredCs[MAXTRIGGERS];
-extern int			event_flag[MAXTRIGGERS];
-extern BPLONG		event_object[MAXTRIGGERS];
-extern BPLONG_PTR	triggering_frame[MAXTRIGGERS];	/* list of awaken frames  */
-extern BPLONG		trigger_no;
-extern SYM_REC_PTR	hash_table[BUCKET_CHAIN];
-extern BPLONG		char_sym_table[AlphabetSize];
-extern BPLONG		number_of_symbols;
-extern BPULONG		toam_signal_vec;
-extern int			user_signal;
-extern int			in_critical_region;
-extern BPLONG		fd_region_low;
-extern BPLONG		fd_region_up;
+extern	BPLONG_PTR	triggeredCs[MAXTRIGGERS];
+extern	int			event_flag[MAXTRIGGERS];
+extern	BPLONG		event_object[MAXTRIGGERS];
+extern	BPLONG_PTR	triggering_frame[MAXTRIGGERS];	/* list of awaken frames  */
+extern	BPLONG		trigger_no;
+extern	SYM_REC_PTR	hash_table[BUCKET_CHAIN];
+extern	BPLONG		char_sym_table[AlphabetSize];
+extern	BPLONG		number_of_symbols;
+extern	BPULONG		toam_signal_vec;
+extern	int			user_signal;
+extern	int			in_critical_region;
+extern	BPLONG		fd_region_low;
+extern	BPLONG		fd_region_up;
 
-extern BPLONG		curr_line_no;
+extern	BPLONG		curr_line_no;
 
-extern int			disassem;
-extern BPLONG		num_line;			/* print instruction addresses on trace and disassem */
-extern int			trace_toam;
+extern	int			disassem;
+extern	BPLONG		num_line;			/* print instruction addresses on trace and disassem */
+extern	int			trace_toam;
 
-extern  double		double_v;
+extern	double		double_v;
 
-extern BPLONG		global_var_num;
-extern int			number_var_exception;
-extern BPLONG		global_unnumbervar_max;
-extern BPLONG_PTR	global_unnumbervar_ptr;
-extern BPLONG_PTR	global_unnumbervar_watermark;
+extern	BPLONG		global_var_num;
+extern	int			number_var_exception;
+extern	BPLONG		global_unnumbervar_max;
+extern	BPLONG_PTR	global_unnumbervar_ptr;
+extern	BPLONG_PTR	global_unnumbervar_watermark;
 
-extern BPLONG		exception;
-extern SYM_REC_PTR	list_psc;
-extern SYM_REC_PTR	equal_psc;
-extern SYM_REC_PTR	planner_explored_depth_psc;
-extern BPLONG		list_psc_int;
-extern BPLONG		list_psc_hashcode;
-extern SYM_REC_PTR	error_psc;
-extern SYM_REC_PTR	v2_psc;		/* v(_, _) */
-extern SYM_REC_PTR	v3_psc;		/* v(_, _, _) */
-extern SYM_REC_PTR	v4_psc;		/* v(_, _, _, _) */
-extern SYM_REC_PTR	findall_result0;
-extern SYM_REC_PTR	findall_result1;
-extern SYM_REC_PTR	findall_result2;
-extern SYM_REC_PTR	interval_psc;
-extern SYM_REC_PTR	call_cleanup_psc;
-extern SYM_REC_PTR	plan_psc;
-extern SYM_REC_PTR	set_constructor_psc;
-extern SYM_REC_PTR	comma_psc;
-extern SYM_REC_PTR	float_psc;
-extern SYM_REC_PTR	address_psc;
-extern SYM_REC_PTR	socket_psc;
-extern SYM_REC_PTR	stream_psc;
-extern SYM_REC_PTR	bigint_psc;
-extern SYM_REC_PTR	timer_psc;
-extern SYM_REC_PTR	enter_dyn_call;
-extern SYM_REC_PTR	enter_catch_call;
-extern SYM_REC_PTR	damon_load;
-extern SYM_REC_PTR	slash_psc;
-extern SYM_REC_PTR	handle_exception_psc;
-extern SYM_REC_PTR	forward_exception_psc;
-extern SYM_REC_PTR	vv_eq_c_arc;
-extern SYM_REC_PTR	v_eq_vc_arc;
-extern SYM_REC_PTR	uu_eq_c_arc;
-extern SYM_REC_PTR	u_eq_uc_arc;
-extern SYM_REC_PTR	c_object_ref_sym;
-extern SYM_REC_PTR	register_event_listener;
-extern SYM_REC_PTR	picat_log_psc;
+extern	BPLONG		exception;
+extern	SYM_REC_PTR	list_psc;
+extern	SYM_REC_PTR	equal_psc;
+extern	SYM_REC_PTR	planner_explored_depth_psc;
+extern	BPLONG		list_psc_int;
+extern	BPLONG		list_psc_hashcode;
+extern	SYM_REC_PTR	error_psc;
+extern	SYM_REC_PTR	v2_psc;		/* v(_, _) */
+extern	SYM_REC_PTR	v3_psc;		/* v(_, _, _) */
+extern	SYM_REC_PTR	v4_psc;		/* v(_, _, _, _) */
+extern	SYM_REC_PTR	findall_result0;
+extern	SYM_REC_PTR	findall_result1;
+extern	SYM_REC_PTR	findall_result2;
+extern	SYM_REC_PTR	interval_psc;
+extern	SYM_REC_PTR	call_cleanup_psc;
+extern	SYM_REC_PTR	plan_psc;
+extern	SYM_REC_PTR	set_constructor_psc;
+extern	SYM_REC_PTR	comma_psc;
+extern	SYM_REC_PTR	float_psc;
+extern	SYM_REC_PTR	address_psc;
+extern	SYM_REC_PTR	socket_psc;
+extern	SYM_REC_PTR	stream_psc;
+extern	SYM_REC_PTR	bigint_psc;
+extern	SYM_REC_PTR	timer_psc;
+extern	SYM_REC_PTR	enter_dyn_call;
+extern	SYM_REC_PTR	enter_catch_call;
+extern	SYM_REC_PTR	damon_load;
+extern	SYM_REC_PTR	slash_psc;
+extern	SYM_REC_PTR	handle_exception_psc;
+extern	SYM_REC_PTR	forward_exception_psc;
+extern	SYM_REC_PTR	vv_eq_c_arc;
+extern	SYM_REC_PTR	v_eq_vc_arc;
+extern	SYM_REC_PTR	uu_eq_c_arc;
+extern	SYM_REC_PTR	u_eq_uc_arc;
+extern	SYM_REC_PTR	c_object_ref_sym;
+extern	SYM_REC_PTR	register_event_listener;
+extern	SYM_REC_PTR	picat_log_psc;
 
-extern BPLONG		windows_atom;
-extern BPLONG		cygwin_atom;
-extern BPLONG		unix_atom;
+extern	BPLONG		windows_atom;
+extern	BPLONG		cygwin_atom;
+extern	BPLONG		unix_atom;
 
-extern BPLONG		unknown_exception;
-extern BPLONG		star_atom;
-extern BPLONG		eof_atom;
-extern BPLONG		true_atom;
-extern BPLONG		t_atom;
-extern BPLONG		f_atom;
-extern BPLONG		dec_ref_atom;
-extern BPLONG		dec_retr_atom;
-extern BPLONG		dummy_event_object;
-extern BPLONG		failure_atom;
-extern BPLONG		empty_set;
-extern BPLONG		not_care_symbol;
-extern BPLONG		nil_sym, period_sym, varid;
-extern BPLONG		atom_expected;
-extern BPLONG		string_expected;
-extern BPLONG		input_stream_expected;
-extern BPLONG		output_stream_expected;
-extern BPLONG		integer_expected;
-extern BPLONG		invalid_number_format;
-extern BPLONG		number_expected;
-extern BPLONG		no_number_expected;
-extern BPLONG		arith_expr_expected;
-extern BPLONG		list_expected;
-extern BPLONG		structure_expected;
-extern BPLONG		compound_expected;
-extern BPLONG		char_code_expected;
-extern BPLONG		char_expected;
-extern BPLONG		ground_expected;
-extern BPLONG		float_format_expected;
-extern BPLONG		operator_type_expected;
-extern BPLONG		variable_expected;
-extern BPLONG		nonvariable_expected;
-extern BPLONG		could_not_open_stream;
-extern BPLONG		file_does_not_exist;
-extern BPLONG		divide_by_zero;
-extern BPLONG		illegal_expression;
-extern BPLONG		illegal_timer;
-extern BPLONG		illegal_list;
-extern BPLONG		illegal_mode_string;
-extern BPLONG		illegal_predicate;
-extern BPLONG		not_modifiable;
-extern BPLONG		out_of_range;
-extern BPLONG		bp_out_of_memory_atom;
-extern BPLONG		bp_out_of_memory_stack_heap;
-extern BPLONG		bp_out_of_memory_table;
-extern BPLONG		undefined_predicate;
-extern BPLONG		invalid_byte_file;
-extern BPLONG		code_area_overflow;
-extern BPLONG		permission_error;
-extern BPLONG		control_stack_overflow;
-extern BPLONG		trail_stack_overflow;
-extern BPLONG		integer_overflow;
-extern BPLONG		illegal_arguments;
-extern BPLONG		out_of_bound;
-extern BPLONG		illegal_event;
-extern BPLONG		output_mode_error;
-extern BPLONG		java_exception;
-extern BPLONG		bp_initialization_error;
-extern BPLONG		run_time_error;
-extern BPLONG		call_damon_load_atom;
-extern BPLONG		dots_atom;
+extern	BPLONG		unknown_exception;
+extern	BPLONG		star_atom;
+extern	BPLONG		eof_atom;
+extern	BPLONG		true_atom;
+extern	BPLONG		t_atom;
+extern	BPLONG		f_atom;
+extern	BPLONG		dec_ref_atom;
+extern	BPLONG		dec_retr_atom;
+extern	BPLONG		dummy_event_object;
+extern	BPLONG		failure_atom;
+extern	BPLONG		empty_set;
+extern	BPLONG		not_care_symbol;
+extern	BPLONG		nil_sym, period_sym, varid;
+extern	BPLONG		atom_expected;
+extern	BPLONG		string_expected;
+extern	BPLONG		input_stream_expected;
+extern	BPLONG		output_stream_expected;
+extern	BPLONG		integer_expected;
+extern	BPLONG		invalid_number_format;
+extern	BPLONG		number_expected;
+extern	BPLONG		no_number_expected;
+extern	BPLONG		arith_expr_expected;
+extern	BPLONG		list_expected;
+extern	BPLONG		structure_expected;
+extern	BPLONG		compound_expected;
+extern	BPLONG		char_code_expected;
+extern	BPLONG		char_expected;
+extern	BPLONG		ground_expected;
+extern	BPLONG		float_format_expected;
+extern	BPLONG		operator_type_expected;
+extern	BPLONG		variable_expected;
+extern	BPLONG		nonvariable_expected;
+extern	BPLONG		could_not_open_stream;
+extern	BPLONG		file_does_not_exist;
+extern	BPLONG		divide_by_zero;
+extern	BPLONG		illegal_expression;
+extern	BPLONG		illegal_timer;
+extern	BPLONG		illegal_list;
+extern	BPLONG		illegal_mode_string;
+extern	BPLONG		illegal_predicate;
+extern	BPLONG		not_modifiable;
+extern	BPLONG		out_of_range;
+extern	BPLONG		bp_out_of_memory_atom;
+extern	BPLONG		bp_out_of_memory_stack_heap;
+extern	BPLONG		bp_out_of_memory_table;
+extern	BPLONG		undefined_predicate;
+extern	BPLONG		invalid_byte_file;
+extern	BPLONG		code_area_overflow;
+extern	BPLONG		permission_error;
+extern	BPLONG		control_stack_overflow;
+extern	BPLONG		trail_stack_overflow;
+extern	BPLONG		integer_overflow;
+extern	BPLONG		illegal_arguments;
+extern	BPLONG		out_of_bound;
+extern	BPLONG		illegal_event;
+extern	BPLONG		output_mode_error;
+extern	BPLONG		java_exception;
+extern	BPLONG		bp_initialization_error;
+extern	BPLONG		run_time_error;
+extern	BPLONG		call_damon_load_atom;
+extern	BPLONG		dots_atom;
 
-extern int			debugging_susp;
+extern	int			debugging_susp;
 
-extern BPLONG		main_args;
+extern	BPLONG		main_args;
 
-extern BPLONG		lastc;
+extern	BPLONG		lastc;
 
-extern BPLONG		eolcom_flag;
+extern	BPLONG		eolcom_flag;
 
 /* for threads */
-extern SYM_REC_PTR	thread_psc;
-extern SYM_REC_PTR	thread_start_psc;
-extern BPLONG		attr_cfd_atm;
-extern BPLONG		attr_neq_atm;
-extern SYM_REC_PTR	cfd_func_pair;
-extern SYM_REC_PTR	hashtable_psc;
-extern SYM_REC_PTR	ghashtable_psc;
-extern SYM_REC_PTR	thashtable_psc;
-extern BPLONG		thread_table_overflow;
-extern BPLONG_PTR	bp_threads;
-extern BPLONG		thread_table_size;
-extern BPLONG		thread_count;
-extern BPLONG		thread_current_no;
-extern BPLONG		thread_interruptable;
+extern	SYM_REC_PTR	thread_psc;
+extern	SYM_REC_PTR	thread_start_psc;
+extern	BPLONG		attr_cfd_atm;
+extern	BPLONG		attr_neq_atm;
+extern	SYM_REC_PTR	cfd_func_pair;
+extern	SYM_REC_PTR	hashtable_psc;
+extern	SYM_REC_PTR	ghashtable_psc;
+extern	SYM_REC_PTR	thashtable_psc;
+extern	BPLONG		thread_table_overflow;
+extern	BPLONG_PTR	bp_threads;
+extern	BPLONG		thread_table_size;
+extern	BPLONG		thread_count;
+extern	BPLONG		thread_current_no;
+extern	BPLONG		thread_interruptable;
 
 /* extern void *malloc(); */
 
 #ifdef LINUX
-extern BPLONG		addr_top_bit;
+extern	BPLONG		addr_top_bit;
 #endif
 
 #ifdef LINUX
-#define BP_MALLOC(ptr, size){													\
-				ptr = (BPLONG_PTR)(malloc(size*sizeof(BPLONG)));				\
-				if (ptr!=NULL){													\
-					if (addr_top_bit == BP_NEG_1){								\
+#define BP_MALLOC(ptr, size) {													\
+				ptr = (BPLONG_PTR)(malloc(size * sizeof(BPLONG)));				\
+				if (ptr != NULL) {												\
+					if (addr_top_bit == BP_NEG_1) {								\
 						addr_top_bit = ((BPLONG)ptr & TOP_BIT);					\
 					} else {													\
-						if (addr_top_bit!=((BPLONG)ptr & TOP_BIT)){				\
+						if (addr_top_bit != ((BPLONG)ptr & TOP_BIT)) {			\
 							free(ptr);											\
 							ptr = NULL;											\
 						}														\
@@ -529,10 +531,10 @@ extern BPLONG		addr_top_bit;
 				}																\
 			}
 #else
-#define BP_MALLOC(ptr, size){													\
-				ptr = (BPLONG_PTR)(malloc(size*sizeof(BPLONG)));				\
-				if (ptr!=NULL){													\
-					if ((BPLONG)ptr & TOP_BIT){									\
+#define BP_MALLOC(ptr, size) {													\
+				ptr = (BPLONG_PTR)(malloc(size * sizeof(BPLONG)));				\
+				if (ptr != NULL) {												\
+					if ((BPLONG)ptr & TOP_BIT) {								\
 						free(ptr);												\
 						ptr = NULL;												\
 					}															\
@@ -540,12 +542,12 @@ extern BPLONG		addr_top_bit;
 			}
 #endif
 
-extern BPLONG		use_gl_getline;
-extern BPLONG		num_stack_expansions;
-extern BPLONG		num_trail_expansions;
-extern BPLONG		num_parea_expansions;
+extern	BPLONG		use_gl_getline;
+extern	BPLONG		num_stack_expansions;
+extern	BPLONG		num_trail_expansions;
+extern	BPLONG		num_parea_expansions;
 
-extern SYM_REC_PTR
+extern	SYM_REC_PTR
 	str_BUILTIN_ERROR1,
 	str_BUILTIN_ERROR2,
 	str_BUILTIN_ERROR3,
@@ -560,7 +562,7 @@ extern SYM_REC_PTR
 	str_TYPE_ERROR,
 	str_SYNTAX_ERROR;
 
-extern BPLONG
+extern	BPLONG
 	et_OUT_OF_MEMORY,
 	et_OUT_OF_MEMORY_STACK,
 	et_OUT_OF_MEMORY_TABLE,
